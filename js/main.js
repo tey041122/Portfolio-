@@ -128,71 +128,255 @@ function applyPortfolioConfiguration() {
 }
 
 /* --------------------------------------------------------------------------
-   3.1. SIGNATURE HANDWRITING MOTION CONTROLLER (AUTHENTIC VIDEO SYNC)
-   Plays the authentic video handwriting motion with sparkling golden lens
-   flare and particle trails directly from the reference video.
-   Smooth single-play on page load, freezes on the crisp completed signature,
-   and seamlessly replays when tapped or clicked.
+   3.1. SIGNATURE HANDWRITING MOTION CONTROLLER (PURE SVG & PARTICLE DUST)
+   Authentic human handwriting motion following the reference video choreography:
+   - Full unbroken letter-by-letter reveal (zero clipped strokes)
+   - Golden sparkling lens flare with diamond rays at the active pen tip
+   - Floating ember particles & dust trail emitted from the writing tip
+   - Synchronized fade-in of 'CHAIRMAN & FOUNDER' and gold divider at completion
+   - Single-play on load with smooth tap-to-replay
    -------------------------------------------------------------------------- */
 function initSignatureAnimation() {
-  const video = document.getElementById('heroSignatureVideo');
-  const wrap = document.getElementById('signatureWrap');
-  if (!video || !wrap) return;
+  const svg = document.getElementById('heroSignatureSvg');
+  const sigImg = document.getElementById('heroSignatureImg');
+  const spark = document.getElementById('sparkFlareGroup');
+  const sigWrap = document.getElementById('signatureWrap');
+  const particleCanvas = document.getElementById('heroParticlesCanvas');
+  const execTitle = document.getElementById('executiveTitle');
+  const goldDivider = document.getElementById('heroGoldDivider');
 
-  // Guarantee cross-browser inline autoplay without iOS audio policy blocks
-  video.muted = true;
-  video.defaultMuted = true;
-  video.playsInline = true;
-  video.setAttribute('playsinline', '');
-  video.setAttribute('webkit-playsinline', '');
+  if (!svg || !sigImg) return;
 
-  function playVideo() {
-    wrap.classList.remove('is-ended');
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(err => {
-        console.warn('Signature video autoplay deferred by browser policy:', err);
+  const maskSequence = [
+    { id: 'sigMask1', envId: 'envS',    start: 0.1, end: 1.3, dur: 1.2 }, // S
+    { id: 'sigMask2', envId: 'envRey',  start: 1.3, end: 2.6, dur: 1.3 }, // rey + flourish
+    { id: 'sigMask3', envId: 'envA',    start: 2.7, end: 3.9, dur: 1.2 }, // Capital A
+    { id: 'sigMask4', envId: 'envRun',  start: 3.9, end: 5.1, dur: 1.2 }, // A crossbar + run
+    { id: 'sigMask5', envId: 'envR',    start: 5.1, end: 6.1, dur: 1.0 }, // Capital R
+    { id: 'sigMask6', envId: 'envAtha', start: 6.1, end: 7.1, dur: 1.0 }, // atha
+    { id: 'sigMask7', envId: 'envFull', start: 7.1, end: 8.2, dur: 1.1 }  // Underline flourish + crossbar
+  ];
+
+  // Pre-calculate path lengths and cache envelope rect elements
+  const paths = maskSequence.map(item => {
+    const el = document.getElementById(item.id);
+    const env = document.getElementById(item.envId);
+    let len = 1200;
+    if (el && typeof el.getTotalLength === 'function') {
+      try { len = el.getTotalLength(); } catch (_) {}
+    }
+    if (el) {
+      el.style.strokeDasharray = `${len} ${len}`;
+      el.style.strokeDashoffset = `${len}`;
+    }
+    return { ...item, el, env, len };
+  });
+
+  // Floating Golden Embers & Trail Dust Particles System
+  let particleCtx = null;
+  let particles = [];
+  if (particleCanvas && particleCanvas.getContext) {
+    particleCtx = particleCanvas.getContext('2d');
+    // Initialize ambient golden embers drifting gently in 3D space
+    for (let i = 0; i < 35; i++) {
+      particles.push({
+        x: Math.random() * 1256,
+        y: Math.random() * 552,
+        vx: (Math.random() - 0.45) * 0.4,
+        vy: -0.2 - Math.random() * 0.45,
+        size: 0.8 + Math.random() * 2.2,
+        alpha: 0.1 + Math.random() * 0.7,
+        baseAlpha: 0.1 + Math.random() * 0.7,
+        pulseSpeed: 0.02 + Math.random() * 0.04,
+        isTrail: false
       });
     }
   }
 
-  // Attempt autoplay immediately
-  playVideo();
+  function emitTrailParticle(x, y) {
+    if (!particles || particles.length > 90) return;
+    particles.push({
+      x: x + (Math.random() - 0.5) * 16,
+      y: y + (Math.random() - 0.5) * 16,
+      vx: (Math.random() - 0.5) * 0.8,
+      vy: (Math.random() - 0.5) * 0.8 - 0.2,
+      size: 1.2 + Math.random() * 2.0,
+      alpha: 0.9,
+      baseAlpha: 0.9,
+      pulseSpeed: 0.05,
+      isTrail: true,
+      life: 1.0
+    });
+  }
 
-  // Once video reaches completion (holds complete signature, title, and gold bar),
-  // freeze cleanly on the final state
-  video.addEventListener('timeupdate', () => {
-    // Reference video is ~10s. At 9.8s, the full signature and title are held complete.
-    if (video.currentTime >= 9.8 && !video.paused) {
-      video.pause();
-      wrap.classList.add('is-ended');
+  function renderParticles() {
+    if (!particleCtx || !particleCanvas) return;
+    particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.isTrail) {
+        p.life -= 0.025;
+        p.alpha = Math.max(0, p.life * 0.85);
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+      } else {
+        p.alpha = p.baseAlpha * (0.6 + 0.4 * Math.sin(Date.now() * p.pulseSpeed * 0.05));
+        if (p.y < -10) p.y = 560;
+        if (p.x < -10) p.x = 1266;
+        if (p.x > 1266) p.x = -10;
+      }
+
+      particleCtx.save();
+      particleCtx.beginPath();
+      particleCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      particleCtx.fillStyle = `rgba(245, 207, 123, ${p.alpha.toFixed(2)})`;
+      particleCtx.shadowColor = '#e5a93b';
+      particleCtx.shadowBlur = 6;
+      particleCtx.fill();
+      particleCtx.restore();
     }
-  });
+  }
 
-  video.addEventListener('ended', () => {
-    wrap.classList.add('is-ended');
-  });
+  let startTime = null;
+  let animId = null;
 
-  // Tap or click anywhere on the signature to replay from the beginning
-  wrap.addEventListener('click', () => {
-    video.currentTime = 0;
-    playVideo();
-  });
+  function easeInOut(t) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
 
-  wrap.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      video.currentTime = 0;
-      playVideo();
+  function updateToTime(elapsed) {
+    // 1. Update each stroke mask and letter envelope
+    paths.forEach(p => {
+      if (!p.el) return;
+
+      if (elapsed < p.start) {
+        p.el.style.strokeDashoffset = `${p.len}`;
+        if (p.env) p.env.setAttribute('opacity', '0');
+      } else if (elapsed >= p.end) {
+        p.el.style.strokeDashoffset = '0';
+        // Once this letter stroke is completed, unlock the full letter envelope!
+        // This guarantees that 100% of letter loops and flourishes are NEVER clipped!
+        if (p.env) p.env.setAttribute('opacity', '1');
+      } else {
+        const progress = Math.min(1, Math.max(0, (elapsed - p.start) / p.dur));
+        const eased = easeInOut(progress);
+        const currentOffset = p.len * (1 - eased);
+        p.el.style.strokeDashoffset = `${currentOffset.toFixed(1)}`;
+
+        // Attach golden spark flare directly to the active writing tip
+        if (spark && typeof p.el.getPointAtLength === 'function') {
+          try {
+            const pt = p.el.getPointAtLength(p.len * eased);
+            spark.setAttribute('transform', `translate(${pt.x.toFixed(1)}, ${pt.y.toFixed(1)})`);
+            spark.style.opacity = '1';
+            // Emit sparkling trail dust
+            if (Math.random() > 0.35) {
+              emitTrailParticle(pt.x, pt.y);
+            }
+          } catch (_) {}
+        }
+      }
+    });
+
+    // 2. Swift smooth pen transition between 'Srey' flourish (960, 140) and Capital 'A' (80, 480)
+    if (elapsed >= 2.6 && elapsed < 2.7 && spark) {
+      const tGlide = (elapsed - 2.6) / 0.1;
+      const gx = 960 + (80 - 960) * tGlide;
+      const gy = 140 + (480 - 140) * tGlide;
+      spark.setAttribute('transform', `translate(${gx.toFixed(1)}, ${gy.toFixed(1)})`);
+      spark.style.opacity = (1 - tGlide * 0.35).toFixed(2);
     }
-  });
 
-  // Re-trigger playback if tab becomes active after backgrounding
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && video.paused && video.currentTime < 1.0) {
-      playVideo();
+    // 3. Touchdown spark flare at start (0.0s -> 0.1s)
+    if (elapsed < 0.1 && spark) {
+      spark.setAttribute('transform', 'translate(440, 95)');
+      spark.style.opacity = (elapsed / 0.1).toFixed(2);
     }
-  });
+
+    // 4. Spark dissolve after underline completion (8.2s -> 8.5s)
+    if (elapsed >= 8.2 && elapsed < 8.5 && spark) {
+      const fade = (elapsed - 8.2) / 0.3;
+      spark.style.opacity = Math.max(0, 1 - fade).toFixed(2);
+    }
+
+    // 5. Completion State (8.2s and beyond)
+    if (elapsed >= 8.2) {
+      if (spark) spark.style.opacity = '0';
+      // Unlock all envelopes and remove mask for pristine retina clarity
+      paths.forEach(p => {
+        if (p.el) p.el.style.strokeDashoffset = '0';
+        if (p.env) p.env.setAttribute('opacity', '1');
+      });
+      sigImg.removeAttribute('mask');
+
+      // Reveal 'CHAIRMAN & FOUNDER' and gold divider right below signature
+      if (execTitle) execTitle.classList.add('is-visible');
+      if (goldDivider) goldDivider.classList.add('is-visible');
+    } else {
+      if (!sigImg.hasAttribute('mask')) {
+        sigImg.setAttribute('mask', 'url(#sigHandwriteMask)');
+      }
+      if (execTitle) execTitle.classList.remove('is-visible');
+      if (goldDivider) goldDivider.classList.remove('is-visible');
+    }
+
+    // Render particle layer
+    renderParticles();
+  }
+
+  function renderFrame(timestamp) {
+    if (!startTime) startTime = timestamp || performance.now() || Date.now();
+    const now = timestamp || performance.now() || Date.now();
+    const elapsed = (now - startTime) / 1000;
+
+    updateToTime(elapsed);
+
+    // Keep ambient dust floating even after signature finishes
+    animId = requestAnimationFrame(renderFrame);
+  }
+
+  function playAnimation() {
+    if (animId) cancelAnimationFrame(animId);
+    startTime = null;
+    sigImg.setAttribute('mask', 'url(#sigHandwriteMask)');
+    paths.forEach(p => {
+      if (p.el) p.el.style.strokeDashoffset = `${p.len}`;
+      if (p.env) p.env.setAttribute('opacity', '0');
+    });
+    if (spark) spark.style.opacity = '0';
+    if (execTitle) execTitle.classList.remove('is-visible');
+    if (goldDivider) goldDivider.classList.remove('is-visible');
+
+    animId = requestAnimationFrame(renderFrame);
+  }
+
+  // Tap-to-replay anywhere on signature container
+  if (sigWrap) {
+    sigWrap.addEventListener('click', () => {
+      playAnimation();
+    });
+    sigWrap.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        playAnimation();
+      }
+    });
+  }
+
+  // Preview specific time via URL query ?t=2.5 or play initially
+  const urlParams = new URLSearchParams(window.location.search);
+  const testT = urlParams.get('t');
+  if (testT !== null) {
+    updateToTime(parseFloat(testT));
+  } else {
+    playAnimation();
+  }
 }
 
 /**

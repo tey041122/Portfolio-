@@ -108,22 +108,116 @@
       <!-- Semantic Accessible Heading for SEO & Screen Readers -->
       <h1 class="sr-only">Srey ArunRatha — Chairman &amp; Founder</h1>
 
-      <!-- Authentic Video Signature Motion (Exact handwriting motion, golden spark flare, and particle trail from reference video) -->
-      <div class="hero-signature-video-wrap" id="signatureWrap" title="Click or tap to replay handwriting animation" role="button" tabindex="0" aria-label="Srey ArunRatha handwritten signature animation">
-        <video id="heroSignatureVideo" class="hero-signature-video"
-               src="assets/signature_motion.mp4"
-               poster="assets/signature_final.png"
-               autoplay muted playsinline webkit-playsinline preload="auto">
-          <img src="assets/signature_final.png" alt="Srey ArunRatha - Chairman &amp; Founder" class="hero-signature-fallback-img">
-        </video>
-        <div class="signature-replay-hint" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="1 4 1 10 7 10"></polyline>
-            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-          </svg>
-          <span>Replay</span>
-        </div>
+      <!-- Authentic Signature Handwriting Presentation (Pure SVG + Canvas Particle System, No Video Box) -->
+      <div class="hero-signature-wrap" id="signatureWrap" title="Click or tap to replay handwriting animation" role="button" tabindex="0" aria-label="Srey ArunRatha handwritten signature">
+        <svg class="hero-signature-svg" id="heroSignatureSvg" viewBox="0 0 1256 552" aria-hidden="true">
+          <defs>
+            <!-- Glowing Spark Filters & Gradients -->
+            <filter id="sparkGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="6" result="blur1" />
+              <feGaussianBlur stdDeviation="16" result="blur2" />
+              <feMerge>
+                <feMergeNode in="blur2" />
+                <feMergeNode in="blur1" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <radialGradient id="sparkCenter" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+              <stop offset="25%" stop-color="#fff4cc" stop-opacity="0.9" />
+              <stop offset="60%" stop-color="#e5b158" stop-opacity="0.6" />
+              <stop offset="100%" stop-color="#c98a2c" stop-opacity="0" />
+            </radialGradient>
+
+            <radialGradient id="starFlareGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+              <stop offset="35%" stop-color="#ffd56b" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#e5a93b" stop-opacity="0" />
+            </radialGradient>
+
+            <!-- Progressive Handwriting Mask with Letter Envelope Unmasking -->
+            <mask id="sigHandwriteMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1256" height="552">
+              <rect width="1256" height="552" fill="black" />
+
+              <!-- Letter completed reveal envelopes (non-overlapping so subsequent letters stay hidden until written) -->
+              <rect id="envS" x="0" y="0" width="460" height="350" fill="white" opacity="0" />
+              <rect id="envRey" x="380" y="0" width="876" height="230" fill="white" opacity="0" />
+              <rect id="envA" x="0" y="220" width="380" height="332" fill="white" opacity="0" />
+              <rect id="envRun" x="380" y="240" width="280" height="230" fill="white" opacity="0" />
+              <rect id="envR" x="600" y="230" width="270" height="322" fill="white" opacity="0" />
+              <rect id="envAtha" x="850" y="230" width="406" height="322" fill="white" opacity="0" />
+              <rect id="envFull" x="0" y="0" width="1256" height="552" fill="white" opacity="0" />
+
+              <!-- 1. Capital S -->
+              <path id="sigMask1" class="sig-mask-stroke" stroke-width="150"
+                    stroke-dasharray="2500" stroke-dashoffset="2500"
+                    d="M 440,95 C 400,35 340,15 260,20 C 180,55 130,95 115,140 C 140,180 230,195 320,215 C 350,255 310,305 220,340 C 120,345 40,320 20,275 C 50,235 130,235 240,265 C 300,280 360,290 390,290" />
+
+              <!-- 2. rey + flourish -->
+              <path id="sigMask2" class="sig-mask-stroke" stroke-width="140"
+                    stroke-dasharray="2500" stroke-dashoffset="2500"
+                    d="M 390,290 C 420,210 450,195 470,225 C 490,235 520,195 545,205 C 525,235 555,225 585,210 C 600,260 590,320 550,345 C 530,310 570,255 640,220 C 740,185 850,155 960,140" />
+
+              <!-- 3. Capital A -->
+              <path id="sigMask3" class="sig-mask-stroke" stroke-width="150"
+                    stroke-dasharray="2500" stroke-dashoffset="2500"
+                    d="M 80,480 C 140,380 220,270 300,190 C 350,180 370,230 340,340 C 290,470 270,520 265,545" />
+
+              <!-- 4. A crossbar + run -->
+              <path id="sigMask4" class="sig-mask-stroke" stroke-width="140"
+                    stroke-dasharray="2500" stroke-dashoffset="2500"
+                    d="M 130,440 C 240,410 350,385 435,375 C 465,340 485,365 505,395 C 535,350 555,385 580,355 C 595,390 615,350 635,385 C 655,355 670,395 680,395" />
+
+              <!-- 5. Capital R -->
+              <path id="sigMask5" class="sig-mask-stroke" stroke-width="140"
+                    stroke-dasharray="2500" stroke-dashoffset="2500"
+                    d="M 690,275 C 665,360 635,460 610,520 M 690,275 C 760,240 830,250 825,320 C 740,360 760,390 820,440 C 850,455 885,470 895,470" />
+
+              <!-- 6. atha -->
+              <path id="sigMask6" class="sig-mask-stroke" stroke-width="140"
+                    stroke-dasharray="2500" stroke-dashoffset="2500"
+                    d="M 895,470 C 865,420 895,445 945,340 C 970,275 955,380 945,445 C 1015,310 1055,235 1025,370 C 1060,440 1105,410 1135,440" />
+
+              <!-- 7. Flourish & t crossbar -->
+              <path id="sigMask7" class="sig-mask-stroke" stroke-width="140"
+                    stroke-dasharray="2500" stroke-dashoffset="2500"
+                    d="M 470,500 C 620,490 780,470 950,435 C 1100,395 1200,370 1235,360 M 910,370 L 1010,355" />
+            </mask>
+          </defs>
+
+          <!-- Signature Image unmasked progressively -->
+          <image href="assets/signature.png" id="heroSignatureImg" x="0" y="0" width="1256" height="552" mask="url(#sigHandwriteMask)" />
+
+          <!-- Golden Spark Lens Flare at Active Pen Tip -->
+          <g id="sparkFlareGroup" filter="url(#sparkGlow)" opacity="0">
+            <!-- 4-pointed radiant diamond star flare -->
+            <path d="M 0,-34 Q 0,0 34,0 Q 0,0 0,34 Q 0,0 -34,0 Q 0,0 0,-34" fill="url(#starFlareGrad)" />
+            <!-- Soft wide golden aura -->
+            <circle r="26" fill="url(#sparkCenter)" />
+            <!-- Intense white-hot core -->
+            <circle r="7" fill="#ffffff" />
+            <circle r="3" fill="#ffffff" />
+
+            <!-- Sparkling mini glitter stars -->
+            <circle cx="-16" cy="12" r="1.8" fill="#ffd97d" opacity="0.85" />
+            <circle cx="18" cy="-10" r="2.0" fill="#ffffff" opacity="0.9" />
+            <circle cx="10" cy="18" r="1.5" fill="#ffd97d" opacity="0.75" />
+            <circle cx="-12" cy="-16" r="1.6" fill="#ffffff" opacity="0.8" />
+          </g>
+        </svg>
+
+        <!-- Floating Golden Embers Canvas (Exact particle dust from reference video) -->
+        <canvas id="heroParticlesCanvas" class="hero-particles-canvas" width="1256" height="552"></canvas>
       </div>
+
+      <!-- Executive Title: Below Signature (Exact Composition of Reference Video) -->
+      <div class="hero-executive-title" id="executiveTitle">
+        C H A I R M A N <span class="gold-amp">&amp;</span> F O U N D E R
+      </div>
+
+      <!-- Short Gold Decorative Line -->
+      <div class="gold-divider-short" id="heroGoldDivider" aria-hidden="true"></div>
 
       <!-- Personal Statement -->
       <p class="hero-tagline" id="heroTagline">

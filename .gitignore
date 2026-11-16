@@ -8,6 +8,7 @@ test_fonts.html
 !assets/**
 reference_video.mp4
 frame_dom.txt
+spark_trajectory.csv
 
 # OS metadata
 Thumbs.db
