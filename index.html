@@ -29,34 +29,66 @@
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Main Stylesheet (with cache-busting token) -->
-  <link rel="stylesheet" href="css/style.css?v=canvas_spark_v16" />
+  <link rel="stylesheet" href="css/style.css?v=pen_write_v17" />
 
-  <!-- Single-Play Crisp Handwriting Reveal Engine -->
+  <!-- Pen Writing Signature Animation Engine v17 -->
   <style>
+    /* ── Signature wrap container ── */
     .hero-signature-wrap {
-      width: min(325px, 86vw);
+      width: min(360px, 94vw);
       height: auto;
-      aspect-ratio: 1256 / 552;
-      margin: 0.1rem auto 0.4rem;
+      aspect-ratio: 560 / 260;
+      margin: 0.2rem auto 0.5rem;
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       cursor: pointer;
       user-select: none;
       -webkit-user-select: none;
-      transition: transform 0.25s ease;
     }
-    .sr-only {
+
+    /* ── The SVG that holds the drawn strokes ── */
+    .sig-draw-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+
+    /* ── All signature stroke paths ── */
+    .sig-stroke {
+      fill: none;
+      stroke: #ffffff;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 5.5;
+      /* dasharray/dashoffset set by JS per path length */
+    }
+
+    /* ── Pen nib cursor ── */
+    #penCursor {
       position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+      width: 24px;
+      height: 24px;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 10;
+    }
+
+    /* ── ambient golden ember canvas ── */
+    .sig-ember-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .sr-only {
+      position: absolute; width:1px; height:1px; padding:0;
+      margin:-1px; overflow:hidden; clip:rect(0,0,0,0);
+      white-space:nowrap; border:0;
     }
   </style>
 </head>
@@ -108,107 +140,110 @@
       <!-- Semantic Accessible Heading for SEO & Screen Readers -->
       <h1 class="sr-only">Srey ArunRatha — Chairman &amp; Founder</h1>
 
-      <!-- Authentic Signature Handwriting Presentation (Pure SVG + Canvas Particle System, No Video Box) -->
-      <div class="hero-signature-wrap" id="signatureWrap" title="Click or tap to replay handwriting animation" role="button" tabindex="0" aria-label="Srey ArunRatha handwritten signature">
-        <svg class="hero-signature-svg" id="heroSignatureSvg" viewBox="0 0 1256 552" aria-hidden="true">
-          <defs>
-            <!-- Glowing Spark Filters & Gradients -->
-            <filter id="sparkGlow" x="-60%" y="-60%" width="220%" height="220%">
-              <feGaussianBlur stdDeviation="6" result="blur1" />
-              <feGaussianBlur stdDeviation="16" result="blur2" />
-              <feMerge>
-                <feMergeNode in="blur2" />
-                <feMergeNode in="blur1" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
+      <!-- ═══════════════════════════════════════════════════════
+           PEN SIGNATURE WRITING ANIMATION
+           SVG viewBox = 560 × 260 (matches aspect-ratio above)
+           Paths traced from the actual signature lettering.
+           Each <path> is one continuous pen stroke in writing order.
+           JS animates stroke-dashoffset on each path sequentially.
+           ═══════════════════════════════════════════════════════ -->
+      <div class="hero-signature-wrap" id="signatureWrap"
+           role="button" tabindex="0"
+           title="Tap to replay signature animation"
+           aria-label="Srey ArunRatha handwritten signature — tap to replay">
 
-            <radialGradient id="sparkCenter" cx="50%" cy="50%" r="50%">
+        <!-- Golden ink-glow filter + ember canvas -->
+        <canvas class="sig-ember-canvas" id="sigEmberCanvas"></canvas>
+
+        <!-- Pen nib golden spark cursor element -->
+        <svg id="penCursor" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="sparkGrad" cx="50%" cy="50%" r="50%">
               <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-              <stop offset="25%" stop-color="#fff4cc" stop-opacity="0.9" />
-              <stop offset="60%" stop-color="#e5b158" stop-opacity="0.6" />
+              <stop offset="35%" stop-color="#ffe17d" stop-opacity="0.9" />
+              <stop offset="70%" stop-color="#e5a93b" stop-opacity="0.4" />
               <stop offset="100%" stop-color="#c98a2c" stop-opacity="0" />
             </radialGradient>
-
-            <radialGradient id="starFlareGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-              <stop offset="35%" stop-color="#ffd56b" stop-opacity="0.8" />
-              <stop offset="100%" stop-color="#e5a93b" stop-opacity="0" />
-            </radialGradient>
-
-            <!-- Progressive Handwriting Mask with Letter Envelope Unmasking -->
-            <mask id="sigHandwriteMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1256" height="552">
-              <rect width="1256" height="552" fill="black" />
-
-              <!-- Letter completed reveal envelopes (non-overlapping so subsequent letters stay hidden until written) -->
-              <rect id="envS" x="0" y="0" width="460" height="350" fill="white" opacity="0" />
-              <rect id="envRey" x="380" y="0" width="876" height="230" fill="white" opacity="0" />
-              <rect id="envA" x="0" y="220" width="380" height="332" fill="white" opacity="0" />
-              <rect id="envRun" x="380" y="240" width="280" height="230" fill="white" opacity="0" />
-              <rect id="envR" x="600" y="230" width="270" height="322" fill="white" opacity="0" />
-              <rect id="envAtha" x="850" y="230" width="406" height="322" fill="white" opacity="0" />
-              <rect id="envFull" x="0" y="0" width="1256" height="552" fill="white" opacity="0" />
-
-              <!-- 1. Capital S -->
-              <path id="sigMask1" class="sig-mask-stroke" stroke-width="150"
-                    stroke-dasharray="2500" stroke-dashoffset="2500"
-                    d="M 440,95 C 400,35 340,15 260,20 C 180,55 130,95 115,140 C 140,180 230,195 320,215 C 350,255 310,305 220,340 C 120,345 40,320 20,275 C 50,235 130,235 240,265 C 300,280 360,290 390,290" />
-
-              <!-- 2. rey + flourish -->
-              <path id="sigMask2" class="sig-mask-stroke" stroke-width="140"
-                    stroke-dasharray="2500" stroke-dashoffset="2500"
-                    d="M 390,290 C 420,210 450,195 470,225 C 490,235 520,195 545,205 C 525,235 555,225 585,210 C 600,260 590,320 550,345 C 530,310 570,255 640,220 C 740,185 850,155 960,140" />
-
-              <!-- 3. Capital A -->
-              <path id="sigMask3" class="sig-mask-stroke" stroke-width="150"
-                    stroke-dasharray="2500" stroke-dashoffset="2500"
-                    d="M 80,480 C 140,380 220,270 300,190 C 350,180 370,230 340,340 C 290,470 270,520 265,545" />
-
-              <!-- 4. A crossbar + run -->
-              <path id="sigMask4" class="sig-mask-stroke" stroke-width="140"
-                    stroke-dasharray="2500" stroke-dashoffset="2500"
-                    d="M 130,440 C 240,410 350,385 435,375 C 465,340 485,365 505,395 C 535,350 555,385 580,355 C 595,390 615,350 635,385 C 655,355 670,395 680,395" />
-
-              <!-- 5. Capital R -->
-              <path id="sigMask5" class="sig-mask-stroke" stroke-width="140"
-                    stroke-dasharray="2500" stroke-dashoffset="2500"
-                    d="M 690,275 C 665,360 635,460 610,520 M 690,275 C 760,240 830,250 825,320 C 740,360 760,390 820,440 C 850,455 885,470 895,470" />
-
-              <!-- 6. atha -->
-              <path id="sigMask6" class="sig-mask-stroke" stroke-width="140"
-                    stroke-dasharray="2500" stroke-dashoffset="2500"
-                    d="M 895,470 C 865,420 895,445 945,340 C 970,275 955,380 945,445 C 1015,310 1055,235 1025,370 C 1060,440 1105,410 1135,440" />
-
-              <!-- 7. Flourish & t crossbar -->
-              <path id="sigMask7" class="sig-mask-stroke" stroke-width="140"
-                    stroke-dasharray="2500" stroke-dashoffset="2500"
-                    d="M 470,500 C 620,490 780,470 950,435 C 1100,395 1200,370 1235,360 M 910,370 L 1010,355" />
-            </mask>
           </defs>
-
-          <!-- Signature Image unmasked progressively -->
-          <image href="assets/signature.png" id="heroSignatureImg" x="0" y="0" width="1256" height="552" mask="url(#sigHandwriteMask)" />
-
-          <!-- Golden Spark Lens Flare at Active Pen Tip -->
-          <g id="sparkFlareGroup" filter="url(#sparkGlow)" opacity="0">
-            <!-- 4-pointed radiant diamond star flare -->
-            <path d="M 0,-34 Q 0,0 34,0 Q 0,0 0,34 Q 0,0 -34,0 Q 0,0 0,-34" fill="url(#starFlareGrad)" />
-            <!-- Soft wide golden aura -->
-            <circle r="26" fill="url(#sparkCenter)" />
-            <!-- Intense white-hot core -->
-            <circle r="7" fill="#ffffff" />
-            <circle r="3" fill="#ffffff" />
-
-            <!-- Sparkling mini glitter stars -->
-            <circle cx="-16" cy="12" r="1.8" fill="#ffd97d" opacity="0.85" />
-            <circle cx="18" cy="-10" r="2.0" fill="#ffffff" opacity="0.9" />
-            <circle cx="10" cy="18" r="1.5" fill="#ffd97d" opacity="0.75" />
-            <circle cx="-12" cy="-16" r="1.6" fill="#ffffff" opacity="0.8" />
-          </g>
+          <!-- Outer luminous corona -->
+          <circle cx="16" cy="16" r="14" fill="url(#sparkGrad)" />
+          <!-- 4-point golden star flare -->
+          <path d="M16,2 Q16.8,14.5 16,16 Q15.2,14.5 16,2 M16,30 Q16.8,17.5 16,16 Q15.2,17.5 16,30 M2,16 Q14.5,15.2 16,16 Q14.5,16.8 2,16 M30,16 Q17.5,15.2 16,16 Q17.5,16.8 30,16"
+                fill="#fff6d6" opacity="0.9" />
+          <!-- Diamond core -->
+          <polygon points="16,10 18,16 16,22 14,16" fill="#ffffff" />
+          <!-- Ultra-bright pinpoint center -->
+          <circle cx="16" cy="16" r="2.5" fill="#ffffff" />
         </svg>
 
-        <!-- Floating Golden Embers Canvas (Exact particle dust from reference video) -->
-        <canvas id="heroParticlesCanvas" class="hero-particles-canvas" width="1256" height="552"></canvas>
+        <!-- The signature drawing SVG. viewBox matches the hand-traced paths below. -->
+        <svg class="sig-draw-svg" id="sigDrawSvg" viewBox="0 0 560 260"
+             xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <!-- Ink glow filter -->
+            <filter id="inkGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="2.5" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <!-- Nib tip bright flare filter -->
+            <filter id="nibFlare" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="5" result="b1"/>
+              <feGaussianBlur stdDeviation="12" result="b2"/>
+              <feMerge>
+                <feMergeNode in="b2"/>
+                <feMergeNode in="b1"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+
+          <!-- ══ STROKE GROUP — all strokes rendered with ink glow ══ -->
+                                                  <mask id="sigMask">
+            <rect width="560" height="260" fill="#000000" />
+            <g id="maskStrokes">
+            <path id="wstroke_1" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 162.7,47.6 L 187.7,26.4 L 190.8,17.4 L 187.3,11.3 L 169.4,8.0 L 141.8,13.2 L 110.1,25.4 L 80.7,42.9 L 65.5,57.5 L 63.8,64.5 L 67.3,70.2 L 86.9,75.8 L 146.7,82.4 L 155.6,88.6 L 155.2,98.9 L 144.9,111.2 L 123.1,127.6 L 77.1,151.7 L 34.8,164.4 L 16.9,163.9 L 12.9,160.6 L 12.5,154.0 L 15.6,148.4 L 34.8,130.0 L 63.8,112.1 L 87.8,102.7" />
+            <path id="wstroke_2" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 192.2,65.5 L 165.4,90.9" />
+            <path id="wstroke_3" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 214.9,78.2 L 192.2,87.1 L 191.3,82.4 L 198.4,71.6 L 197.1,67.4 L 192.2,65.5 L 194.8,58.4" />
+            <path id="wstroke_4" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 222.9,71.6 L 227.8,64.1 L 235.4,63.6 L 233.2,69.7" />
+            <path id="wstroke_5" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 222.9,71.6 L 215.4,78.2 L 218.9,86.2 L 248.8,75.8 L 257.3,65.9 L 248.3,77.2 L 249.7,82.0 L 255.0,81.5 L 270.6,72.5 L 277.8,64.5 L 270.2,73.9 L 266.6,85.7 L 257.3,95.6 L 267.1,86.2 L 300.5,74.4 L 326.4,69.7 L 347.8,71.1" />
+            <path id="wstroke_6" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 256.8,96.1 L 237.6,129.1 L 226.5,139.4 L 218.9,140.4 L 218.5,132.8 L 225.6,120.1 L 243.9,102.2 L 256.4,95.6" />
+            <path id="wstroke_7" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 56.6,255.8 L 112.8,180.4 L 109.7,178.5 L 93.2,181.8 L 61.1,193.1" />
+            <path id="wstroke_8" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 113.2,179.9 L 122.2,174.7 L 123.9,170.0 L 166.8,127.2 L 185.0,114.9 L 161.0,166.3 L 161.4,169.6 L 172.5,169.6 L 122.6,174.3" />
+            <path id="wstroke_9" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 135.1,225.6 L 156.5,171.9 L 162.7,188.4 L 190.4,158.3 L 186.4,166.7 L 192.2,169.6 L 186.8,185.6 L 208.2,176.6 L 217.6,165.8 L 226.5,175.7 L 209.6,183.7 L 207.8,177.6 L 227.4,176.2 L 228.3,181.3 L 231.0,182.3 L 257.7,174.3 L 268.0,167.7 L 270.2,168.6 L 269.7,180.4 L 295.2,171.0 L 300.1,173.3" />
+            <path id="wstroke_10" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 235.0,166.7 L 227.4,175.2 L 245.7,181.3 L 255.9,165.8" />
+            <path id="wstroke_11" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 282.2,141.8 L 284.9,135.2 L 295.2,128.6 L 317.0,120.1 L 331.7,117.8 L 347.8,118.2 L 359.4,122.5 L 364.7,127.2 L 366.9,138.0 L 361.1,149.3 L 342.0,164.4 L 318.3,173.3 L 308.1,175.2 L 302.7,172.9 L 329.0,131.9" />
+            <path id="wstroke_12" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 279.1,213.8 L 300.1,173.8 L 307.2,175.2 L 321.0,189.8 L 349.6,208.2 L 360.3,211.5 L 374.5,211.0" />
+            <path id="wstroke_13" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 371.0,168.2 L 365.6,163.9 L 360.3,165.8 L 351.3,173.3 L 350.4,179.5 L 356.2,179.5 L 369.6,172.4 L 374.1,180.4 L 391.9,174.7 L 406.6,150.7 L 388.3,151.7 L 407.5,150.3 L 412.4,147.4 L 430.7,148.4 L 432.9,150.7 L 446.3,147.0 L 457.9,149.8 L 447.2,144.6 L 466.4,122.9 L 472.2,109.7 L 465.0,111.2 L 454.8,121.5 L 414.6,179.0 L 408.4,179.9 L 397.3,188.9 L 391.5,190.3 L 388.8,187.5 L 391.0,175.7 L 375.4,165.8 L 370.5,171.9" />
+            <path id="wstroke_14" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 413.3,147.0 L 426.2,128.1" />
+            <path id="wstroke_15" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 457.5,176.2 L 440.5,180.4 L 440.5,166.3 L 419.1,174.7" />
+            <path id="wstroke_16" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 481.5,168.2 L 477.5,163.9 L 469.9,165.3 L 459.2,173.8 L 458.3,178.5 L 465.5,179.5 L 480.2,171.9 L 487.3,164.9 L 480.6,172.9 L 482.4,179.9 L 526.1,172.9 L 547.5,173.8" />
+            </g>
+          </mask>
+          <!-- Base original pristine signature revealed by progressive mask -->
+          <image id="maskedSigImg" href="assets/signature.png" x="0" y="0" width="560" height="260" mask="url(#sigMask)" />
+          <!-- Direct SVG letterform stroke group (for spark path following) -->
+          <g id="sigStrokeGroup" opacity="0">
+            <path id="wstroke_1" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 162.7,47.6 L 187.7,26.4 L 190.8,17.4 L 187.3,11.3 L 169.4,8.0 L 141.8,13.2 L 110.1,25.4 L 80.7,42.9 L 65.5,57.5 L 63.8,64.5 L 67.3,70.2 L 86.9,75.8 L 146.7,82.4 L 155.6,88.6 L 155.2,98.9 L 144.9,111.2 L 123.1,127.6 L 77.1,151.7 L 34.8,164.4 L 16.9,163.9 L 12.9,160.6 L 12.5,154.0 L 15.6,148.4 L 34.8,130.0 L 63.8,112.1 L 87.8,102.7" />
+            <path id="wstroke_2" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 192.2,65.5 L 165.4,90.9" />
+            <path id="wstroke_3" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 214.9,78.2 L 192.2,87.1 L 191.3,82.4 L 198.4,71.6 L 197.1,67.4 L 192.2,65.5 L 194.8,58.4" />
+            <path id="wstroke_4" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 222.9,71.6 L 227.8,64.1 L 235.4,63.6 L 233.2,69.7" />
+            <path id="wstroke_5" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 222.9,71.6 L 215.4,78.2 L 218.9,86.2 L 248.8,75.8 L 257.3,65.9 L 248.3,77.2 L 249.7,82.0 L 255.0,81.5 L 270.6,72.5 L 277.8,64.5 L 270.2,73.9 L 266.6,85.7 L 257.3,95.6 L 267.1,86.2 L 300.5,74.4 L 326.4,69.7 L 347.8,71.1" />
+            <path id="wstroke_6" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 256.8,96.1 L 237.6,129.1 L 226.5,139.4 L 218.9,140.4 L 218.5,132.8 L 225.6,120.1 L 243.9,102.2 L 256.4,95.6" />
+            <path id="wstroke_7" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 56.6,255.8 L 112.8,180.4 L 109.7,178.5 L 93.2,181.8 L 61.1,193.1" />
+            <path id="wstroke_8" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 113.2,179.9 L 122.2,174.7 L 123.9,170.0 L 166.8,127.2 L 185.0,114.9 L 161.0,166.3 L 161.4,169.6 L 172.5,169.6 L 122.6,174.3" />
+            <path id="wstroke_9" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 135.1,225.6 L 156.5,171.9 L 162.7,188.4 L 190.4,158.3 L 186.4,166.7 L 192.2,169.6 L 186.8,185.6 L 208.2,176.6 L 217.6,165.8 L 226.5,175.7 L 209.6,183.7 L 207.8,177.6 L 227.4,176.2 L 228.3,181.3 L 231.0,182.3 L 257.7,174.3 L 268.0,167.7 L 270.2,168.6 L 269.7,180.4 L 295.2,171.0 L 300.1,173.3" />
+            <path id="wstroke_10" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 235.0,166.7 L 227.4,175.2 L 245.7,181.3 L 255.9,165.8" />
+            <path id="wstroke_11" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 282.2,141.8 L 284.9,135.2 L 295.2,128.6 L 317.0,120.1 L 331.7,117.8 L 347.8,118.2 L 359.4,122.5 L 364.7,127.2 L 366.9,138.0 L 361.1,149.3 L 342.0,164.4 L 318.3,173.3 L 308.1,175.2 L 302.7,172.9 L 329.0,131.9" />
+            <path id="wstroke_12" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 279.1,213.8 L 300.1,173.8 L 307.2,175.2 L 321.0,189.8 L 349.6,208.2 L 360.3,211.5 L 374.5,211.0" />
+            <path id="wstroke_13" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 371.0,168.2 L 365.6,163.9 L 360.3,165.8 L 351.3,173.3 L 350.4,179.5 L 356.2,179.5 L 369.6,172.4 L 374.1,180.4 L 391.9,174.7 L 406.6,150.7 L 388.3,151.7 L 407.5,150.3 L 412.4,147.4 L 430.7,148.4 L 432.9,150.7 L 446.3,147.0 L 457.9,149.8 L 447.2,144.6 L 466.4,122.9 L 472.2,109.7 L 465.0,111.2 L 454.8,121.5 L 414.6,179.0 L 408.4,179.9 L 397.3,188.9 L 391.5,190.3 L 388.8,187.5 L 391.0,175.7 L 375.4,165.8 L 370.5,171.9" />
+            <path id="wstroke_14" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 413.3,147.0 L 426.2,128.1" />
+            <path id="wstroke_15" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 457.5,176.2 L 440.5,180.4 L 440.5,166.3 L 419.1,174.7" />
+            <path id="wstroke_16" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 481.5,168.2 L 477.5,163.9 L 469.9,165.3 L 459.2,173.8 L 458.3,178.5 L 465.5,179.5 L 480.2,171.9 L 487.3,164.9 L 480.6,172.9 L 482.4,179.9 L 526.1,172.9 L 547.5,173.8" />
+          </g>
+        </svg>
       </div>
 
       <!-- Executive Title: Below Signature (Exact Composition of Reference Video) -->
@@ -365,6 +400,6 @@
   </div>
 
   <!-- Main JavaScript Controller -->
-  <script src="js/main.js?v=canvas_spark_v16"></script>
+  <script src="js/main.js?v=pen_write_v17"></script>
 </body>
 </html>
