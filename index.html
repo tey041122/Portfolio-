@@ -29,7 +29,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Main Stylesheet (with cache-busting token) -->
-  <link rel="stylesheet" href="css/style.css?v=gold_signature_v9" />
+  <link rel="stylesheet" href="css/style.css?v=pen_motion_v10" />
 
   <!-- Single-Play Crisp Handwriting Reveal Engine -->
   <style>
@@ -128,58 +128,94 @@
       <div class="hero-signature-wrap" id="signatureWrap" title="Click to replay handwriting animation">
         <svg class="hero-signature-svg" id="heroSignatureSvg" viewBox="0 0 1256 552" aria-label="Srey ArunRatha handwritten signature">
           <defs>
-            <clipPath id="clipSreyPoly">
-              <polygon points="0,0 1256,0 1256,220 660,235 555,325 460,325 415,230 330,230 220,385 0,385" />
-            </clipPath>
-            <clipPath id="clipArunPoly">
-              <polygon points="0,385 220,385 330,230 415,230 460,325 555,325 660,235 900,210 1256,210 1256,552 0,552" />
-            </clipPath>
-
             <mask id="sigHandwriteMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1256" height="552">
               <rect width="1256" height="552" fill="black" />
-              <!-- Stroke 1 (Srey): Writes once cleanly from 0.15s to 1.15s -->
-              <g clip-path="url(#clipSreyPoly)">
-                <path class="sig-mask-stroke"
-                      d="M 310,105 C 395,80 435,20 355,25 C 245,30 115,105 155,145 C 200,185 370,150 350,210 C 325,275 110,360 35,340 C 10,325 90,260 225,220 C 345,185 405,155 445,145 C 475,138 500,170 530,165 C 555,160 580,145 605,155 C 625,165 645,140 660,165 C 675,190 545,295 510,295 C 485,295 570,210 640,175 C 700,150 755,150 795,152"
-                      fill="none" stroke="white" stroke-width="98" stroke-linecap="round" stroke-linejoin="round"
-                      stroke-dasharray="2350" stroke-dashoffset="2350">
-                  <animate attributeName="stroke-dashoffset"
-                           from="2350" to="0"
-                           dur="1.0s"
-                           begin="0.15s"
-                           fill="freeze"
-                           calcMode="spline"
-                           keyTimes="0; 1"
-                           keySplines="0.25 0.1 0.25 1" />
-                </path>
-              </g>
-              <!-- Stroke 2 (ArunRatha): Writes once cleanly from 0.95s to 2.25s -->
-              <g clip-path="url(#clipArunPoly)">
-                <path class="sig-mask-stroke"
-                      d="M 115,540 C 195,435 285,320 385,245 C 395,295 340,395 315,445 M 135,425 C 225,390 325,375 400,365 C 445,360 475,375 515,375 C 550,375 575,355 610,375 C 635,388 665,335 715,285 M 640,320 C 715,255 815,245 835,295 C 855,345 770,365 660,390 C 640,425 630,470 625,495 M 660,390 C 685,405 745,435 795,455 C 825,470 855,465 895,445 C 925,430 960,305 975,295 C 965,345 925,405 935,405 C 975,395 1035,260 1065,245 C 1075,275 1015,380 1045,390 C 1075,400 1120,340 1165,370 C 1190,385 1220,370 1245,365"
-                      fill="none" stroke="white" stroke-width="125" stroke-linecap="round" stroke-linejoin="round"
-                      stroke-dasharray="4000" stroke-dashoffset="4000">
-                  <animate attributeName="stroke-dashoffset"
-                           from="4000" to="0"
-                           dur="1.3s"
-                           begin="0.95s"
-                           fill="freeze"
-                           calcMode="spline"
-                           keyTimes="0; 1"
-                           keySplines="0.25 0.1 0.25 1" />
-                </path>
-              </g>
-              <!-- Full solid white lock at 2.15s: guarantees 100% razor-sharp unclipped display permanently -->
+
+              <!-- ================= SREY ================= -->
+              <!-- Stroke 1: S main cursive body (0.15s -> 0.8s) -->
+              <path class="sig-mask-stroke"
+                    d="M 175,130 C 135,160 160,205 240,195 C 290,180 270,265 190,305 C 110,345 30,340 30,315 C 30,285 105,255 195,235 C 265,220 310,215 340,210"
+                    stroke-width="56"
+                    stroke-dasharray="1000" stroke-dashoffset="1000">
+                <animate attributeName="stroke-dashoffset" from="1000" to="0" dur="0.65s" begin="0.15s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.35 0 0.25 1" />
+              </path>
+
+              <!-- Stroke 2: Accent mark / top flourish flick (0.8s -> 0.98s) -->
+              <path class="sig-mask-stroke"
+                    d="M 315,115 C 345,65 375,30 405,32 C 425,35 415,80 365,115"
+                    stroke-width="48"
+                    stroke-dasharray="300" stroke-dashoffset="300">
+                <animate attributeName="stroke-dashoffset" from="300" to="0" dur="0.18s" begin="0.8s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.2 0 0.2 1" />
+              </path>
+
+              <!-- Stroke 3: r-e-y cursive flow (1.0s -> 1.75s) -->
+              <path class="sig-mask-stroke"
+                    d="M 335,210 C 355,185 375,160 400,155 C 415,152 420,180 420,205 C 425,185 450,155 480,155 C 500,155 470,215 455,215 C 475,185 500,175 525,180 C 540,185 545,215 540,215 C 555,185 570,175 585,175 C 600,175 605,200 595,250 C 585,290 550,325 515,315 C 485,305 530,250 565,235 C 615,215 675,180 740,165 C 800,150 860,152 900,155"
+                    stroke-width="52"
+                    stroke-dasharray="1600" stroke-dashoffset="1600">
+                <animate attributeName="stroke-dashoffset" from="1600" to="0" dur="0.75s" begin="1.0s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.3 0 0.2 1" />
+              </path>
+
+              <!-- ================= ARUNRATHA ================= -->
+              <!-- Stroke 4: A ascending & descending legs (1.8s -> 2.35s) -->
+              <path class="sig-mask-stroke"
+                    d="M 105,535 C 160,460 240,360 330,285 C 370,250 395,240 395,260 C 395,290 355,380 320,445"
+                    stroke-width="56"
+                    stroke-dasharray="800" stroke-dashoffset="800">
+                <animate attributeName="stroke-dashoffset" from="800" to="0" dur="0.55s" begin="1.8s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.35 0 0.2 1" />
+              </path>
+
+              <!-- Stroke 5: A crossbar + r-u-n cursive flow (2.35s -> 3.05s) -->
+              <path class="sig-mask-stroke"
+                    d="M 135,430 C 220,395 320,380 405,370 C 430,368 450,335 470,340 C 485,345 490,395 490,410 C 500,370 520,345 540,350 C 555,355 550,405 550,415 C 560,370 580,350 605,355 C 625,360 625,410 625,420 C 635,395 645,365 655,345"
+                    stroke-width="52"
+                    stroke-dasharray="1100" stroke-dashoffset="1100">
+                <animate attributeName="stroke-dashoffset" from="1100" to="0" dur="0.7s" begin="2.35s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.3 0 0.2 1" />
+              </path>
+
+              <!-- Stroke 6: Capital R stem, bowl & leg (3.05s -> 3.65s) -->
+              <path class="sig-mask-stroke"
+                    d="M 685,305 C 675,350 645,435 625,495 M 680,310 C 715,260 795,245 830,280 C 855,310 820,355 765,365 C 720,375 680,375 660,385 C 695,410 770,445 840,465"
+                    stroke-width="54"
+                    stroke-dasharray="1000" stroke-dashoffset="1000">
+                <animate attributeName="stroke-dashoffset" from="1000" to="0" dur="0.6s" begin="3.05s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.35 0 0.2 1" />
+              </path>
+
+              <!-- Stroke 7: a-t-h-a + sweeping underline flourish (3.65s -> 4.45s) -->
+              <path class="sig-mask-stroke"
+                    d="M 845,425 C 870,395 895,395 905,430 C 910,445 895,455 885,455 C 870,455 885,425 915,410 C 935,390 965,305 975,290 C 975,325 940,425 940,445 C 955,425 1020,270 1055,245 C 1075,245 1060,315 1030,390 C 1020,425 1035,445 1055,445 C 1075,445 1085,395 1105,395 C 1125,395 1135,440 1150,440 C 1165,440 1195,395 1250,365"
+                    stroke-width="52"
+                    stroke-dasharray="1700" stroke-dashoffset="1700">
+                <animate attributeName="stroke-dashoffset" from="1700" to="0" dur="0.8s" begin="3.65s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.3 0 0.2 1" />
+              </path>
+
+              <!-- Stroke 8: t crossbar slash (4.4s -> 4.58s) -->
+              <path class="sig-mask-stroke"
+                    d="M 915,365 L 1005,355"
+                    stroke-width="48"
+                    stroke-dasharray="120" stroke-dashoffset="120">
+                <animate attributeName="stroke-dashoffset" from="120" to="0" dur="0.18s" begin="4.4s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.1 0 0.1 1" />
+              </path>
+
+              <!-- Full solid white lock at 4.58s: guarantees 100% razor-sharp unclipped display permanently -->
               <rect class="sig-full-reveal" width="1256" height="552" fill="white" opacity="0">
                 <animate attributeName="opacity"
                          from="0" to="1"
                          dur="0.25s"
-                         begin="2.15s"
+                         begin="4.58s"
                          fill="freeze" />
               </rect>
             </mask>
           </defs>
-          <image href="assets/signature.png?v=clear_sig_v5" id="heroSignatureImg" x="0" y="0" width="1256" height="552" mask="url(#sigHandwriteMask)" />
+          <image href="assets/signature.png?v=pen_motion_v10" id="heroSignatureImg" x="0" y="0" width="1256" height="552" mask="url(#sigHandwriteMask)" />
         </svg>
         <div class="hero-signature-fallback" id="heroSignatureFallback" style="display: none;">Srey ArunRatha</div>
       </div>
@@ -333,6 +369,6 @@
   </div>
 
   <!-- Main JavaScript Controller -->
-  <script src="js/main.js?v=ventures_v7"></script>
+  <script src="js/main.js?v=pen_motion_v10"></script>
 </body>
 </html>
