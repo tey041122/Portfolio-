@@ -61,7 +61,7 @@
 
 html, body {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   background-color: var(--primary-bg);
   color: var(--text-light);
   font-family: var(--font-sans);
@@ -216,11 +216,11 @@ a:focus-visible, button:focus-visible {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   background-color: var(--primary-bg);
-  overflow: hidden;
-  padding: 0 1.25rem 1.75rem;
+  overflow-x: hidden;
+  padding: 0 1.25rem 3.5rem;
 }
 
 /* Replaceable Hero Portrait Background Layer */
@@ -229,7 +229,7 @@ a:focus-visible, button:focus-visible {
   top: 0;
   left: 0;
   width: 100%;
-  height: 60%;
+  height: 540px;
   background-image: var(--portrait-image);
   background-size: cover;
   background-position: var(--portrait-position, center top);
@@ -241,7 +241,10 @@ a:focus-visible, button:focus-visible {
 /* Cinematic Dark Navy Gradient Overlays */
 .hero-gradient-overlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 540px;
   z-index: 2;
   pointer-events: none;
 }
@@ -254,7 +257,7 @@ a:focus-visible, button:focus-visible {
   left: 0;
   width: 100%;
   height: 120px;
-  background: linear-gradient(180deg, rgba(5, 13, 25, 0.65) 0%, rgba(5, 13, 25, 0.15) 60%, transparent 100%);
+  background: linear-gradient(180deg, rgba(5, 13, 25, 0.75) 0%, rgba(5, 13, 25, 0.15) 60%, transparent 100%);
 }
 
 /* 2. Buttery smooth multi-stop fade into bottom canvas */
@@ -264,13 +267,12 @@ a:focus-visible, button:focus-visible {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 62%;
+  height: 240px;
   background: linear-gradient(
     180deg,
     rgba(5, 13, 25, 0) 0%,
-    rgba(5, 13, 25, 0.42) 28%,
-    rgba(5, 13, 25, 0.88) 55%,
-    #050d19 80%,
+    rgba(5, 13, 25, 0.45) 30%,
+    rgba(5, 13, 25, 0.9) 65%,
     #050d19 100%
   );
 }
@@ -278,7 +280,10 @@ a:focus-visible, button:focus-visible {
 /* Subtle side vignette */
 .hero-vignette {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 540px;
   z-index: 3;
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 28%, transparent 62%, rgba(5, 13, 25, 0.35) 100%);
@@ -290,7 +295,7 @@ a:focus-visible, button:focus-visible {
   z-index: 10;
   width: 100%;
   max-width: 360px;
-  margin: 0 auto;
+  margin: 450px auto 0;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -673,8 +678,19 @@ a:focus-visible, button:focus-visible {
 }
 
 /* --------------------------------------------------------------------------
-   6. RESPONSIVE DESIGN (Tablets & Desktop Presentation)
+   6. RESPONSIVE DESIGN (Compact Phones & Desktop Presentation)
    -------------------------------------------------------------------------- */
+@media (max-width: 380px) {
+  .hero-portrait,
+  .hero-gradient-overlay,
+  .hero-vignette {
+    height: 480px;
+  }
+  .hero-content {
+    margin-top: 400px;
+  }
+}
+
 @media (min-width: 1024px) {
   .site-header {
     padding: 1.75rem 3rem;
