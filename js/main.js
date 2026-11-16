@@ -10,8 +10,6 @@
 
 /* --------------------------------------------------------------------------
    1. EDITABLE CENTRAL PORTFOLIO CONFIGURATION
-   Update your name, executive position, personal statement, assets, and
-   social media links here. All components update automatically.
    -------------------------------------------------------------------------- */
 const portfolioConfig = {
   name: "Srey ArunRatha",
@@ -22,20 +20,17 @@ const portfolioConfig = {
 
   images: {
     portrait: "assets/portrait.jpg",
-    signature: "assets/signature.png?v=full_reveal_v15"
+    signature: "assets/signature.png"
   },
 
-  // Optional external link for 'Explore My Journey' (e.g. LinkedIn, Bio, or CV URL).
-  // If left empty (""), tapping the button opens the executive profile drawer.
   journeyUrl: "",
 
   social: {
-    // Direct official executive channels:
     telegram: "https://t.me/arunratha",
     linkedin: "",
     facebook: "https://www.facebook.com/share/19figcq498/?mibextid=wwXIfr",
     youtube: "",
-    email: "office@arunratha.com" // Update with official executive email
+    email: "office@arunratha.com"
   },
 
   office: {
@@ -59,13 +54,10 @@ document.addEventListener('DOMContentLoaded', () => {
    3. APPLY CENTRAL CONFIGURATION TO DOM
    -------------------------------------------------------------------------- */
 function applyPortfolioConfiguration() {
-  // Update Executive Name
-  const brandSignatures = document.querySelectorAll('.brand-signature, .modal-signature');
-  brandSignatures.forEach(el => {
+  document.querySelectorAll('.brand-signature, .modal-signature').forEach(el => {
     el.textContent = portfolioConfig.name;
   });
 
-  // Update Executive Position (Preserve gold ampersand formatting)
   const executiveTitleEl = document.getElementById('executiveTitle');
   if (executiveTitleEl) {
     const parts = portfolioConfig.position.split('&');
@@ -77,22 +69,14 @@ function applyPortfolioConfiguration() {
   }
 
   const modalTitleEl = document.querySelector('.modal-title');
-  if (modalTitleEl) {
-    modalTitleEl.textContent = portfolioConfig.position;
-  }
+  if (modalTitleEl) modalTitleEl.textContent = portfolioConfig.position;
 
-  // Update Tagline / Personal Statement
   const taglineEl = document.getElementById('heroTagline');
-  if (taglineEl) {
-    taglineEl.textContent = portfolioConfig.tagline.replace(/^"|"$/g, '');
-  }
+  if (taglineEl) taglineEl.textContent = portfolioConfig.tagline.replace(/^"|"$/g, '');
 
   const modalQuoteEl = document.querySelector('.modal-bio-quote');
-  if (modalQuoteEl) {
-    modalQuoteEl.textContent = `“${portfolioConfig.tagline.replace(/^"|"$/g, '')}”`;
-  }
+  if (modalQuoteEl) modalQuoteEl.textContent = `"${portfolioConfig.tagline.replace(/^"|"$/g, '')}"`;
 
-  // Update Portrait Background via CSS Variable
   if (portfolioConfig.images.portrait) {
     const cssPath = portfolioConfig.images.portrait.startsWith('../')
       ? portfolioConfig.images.portrait
@@ -100,320 +84,352 @@ function applyPortfolioConfiguration() {
     document.documentElement.style.setProperty('--portrait-image', `url("${cssPath}")`);
   }
 
-  // Update Signature Image & Cursive Fallback
-  const sigImg = document.getElementById('heroSignatureImg');
-  const sigFallback = document.getElementById('heroSignatureFallback');
-  if (sigImg) {
-    if (portfolioConfig.images.signature) {
-      const currentHref = sigImg.getAttribute('href') || sigImg.getAttribute('xlink:href');
-      if (currentHref !== portfolioConfig.images.signature) {
-        if (sigImg.tagName.toLowerCase() === 'image') {
-          sigImg.setAttribute('href', portfolioConfig.images.signature);
-        } else {
-          sigImg.src = portfolioConfig.images.signature;
-        }
-      }
-      sigImg.alt = `${portfolioConfig.name} Signature`;
-    } else {
-      sigImg.style.display = 'none';
-      if (sigFallback) {
-        sigFallback.style.display = 'block';
-        sigFallback.textContent = portfolioConfig.name;
-      }
-    }
-  }
-
-  // Bind Social Links
   bindSocialLinks();
 }
 
 /* --------------------------------------------------------------------------
-   3.1. SIGNATURE HANDWRITING MOTION CONTROLLER (PURE SVG & PARTICLE DUST)
-   Authentic human handwriting motion following the reference video choreography:
-   - Full unbroken letter-by-letter reveal (zero clipped strokes)
-   - Golden sparkling lens flare with diamond rays at the active pen tip
-   - Floating ember particles & dust trail emitted from the writing tip
-   - Synchronized fade-in of 'CHAIRMAN & FOUNDER' and gold divider at completion
-   - Single-play on load with smooth tap-to-replay
+   3.1  SIGNATURE HANDWRITING ANIMATION — CANVAS PIXEL-SCAN APPROACH
+   The signature PNG is loaded onto a hidden canvas. We scan opaque pixels
+   left-to-right per segment band to build accurate waypoints that follow the
+   actual ink strokes. The golden spark follows those waypoints exactly.
    -------------------------------------------------------------------------- */
 function initSignatureAnimation() {
-  const svg = document.getElementById('heroSignatureSvg');
-  const sigImg = document.getElementById('heroSignatureImg');
-  const spark = document.getElementById('sparkFlareGroup');
-  const sigWrap = document.getElementById('signatureWrap');
-  const particleCanvas = document.getElementById('heroParticlesCanvas');
+  const sigWrap   = document.getElementById('signatureWrap');
   const execTitle = document.getElementById('executiveTitle');
-  const goldDivider = document.getElementById('heroGoldDivider');
+  const goldDiv   = document.getElementById('heroGoldDivider');
 
-  if (!svg || !sigImg) return;
+  // Hide the SVG-based approach; we use canvas instead
+  const oldSvg = document.getElementById('heroSignatureSvg');
+  if (oldSvg) oldSvg.style.display = 'none';
 
-  const maskSequence = [
-    { id: 'sigMask1', envId: 'envS',    start: 0.1, end: 1.3, dur: 1.2 }, // S
-    { id: 'sigMask2', envId: 'envRey',  start: 1.3, end: 2.6, dur: 1.3 }, // rey + flourish
-    { id: 'sigMask3', envId: 'envA',    start: 2.7, end: 3.9, dur: 1.2 }, // Capital A
-    { id: 'sigMask4', envId: 'envRun',  start: 3.9, end: 5.1, dur: 1.2 }, // A crossbar + run
-    { id: 'sigMask5', envId: 'envR',    start: 5.1, end: 6.1, dur: 1.0 }, // Capital R
-    { id: 'sigMask6', envId: 'envAtha', start: 6.1, end: 7.1, dur: 1.0 }, // atha
-    { id: 'sigMask7', envId: 'envFull', start: 7.1, end: 8.2, dur: 1.1 }  // Underline flourish + crossbar
-  ];
+  // Create main signature canvas
+  let canvas = document.getElementById('heroSigCanvas');
+  if (!canvas) {
+    canvas = document.createElement('canvas');
+    canvas.id = 'heroSigCanvas';
+    canvas.style.cssText =
+      'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;';
+    if (sigWrap) sigWrap.appendChild(canvas);
+  }
 
-  // Pre-calculate path lengths and cache envelope rect elements
-  const paths = maskSequence.map(item => {
-    const el = document.getElementById(item.id);
-    const env = document.getElementById(item.envId);
-    let len = 1200;
-    if (el && typeof el.getTotalLength === 'function') {
-      try { len = el.getTotalLength(); } catch (_) {}
+  // Create particle/spark canvas (on top)
+  let pCanvas = document.getElementById('heroParticlesCanvas');
+  if (!pCanvas) {
+    pCanvas = document.createElement('canvas');
+    pCanvas.id = 'heroParticlesCanvas';
+    pCanvas.style.cssText =
+      'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;';
+    if (sigWrap) sigWrap.appendChild(pCanvas);
+  }
+
+  // Load the signature PNG
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+
+  img.onload = () => {
+    const W = img.naturalWidth;   // 1256
+    const H = img.naturalHeight;  // 552
+
+    canvas.width = W;
+    canvas.height = H;
+    pCanvas.width = W;
+    pCanvas.height = H;
+
+    // Off-screen canvas to read pixel data
+    const offscreen = document.createElement('canvas');
+    offscreen.width = W;
+    offscreen.height = H;
+    const octx = offscreen.getContext('2d');
+    octx.drawImage(img, 0, 0);
+    const pixData = octx.getImageData(0, 0, W, H).data;
+
+    // Full-signature canvas (source of truth for drawing)
+    const revealCanvas = document.createElement('canvas');
+    revealCanvas.width = W;
+    revealCanvas.height = H;
+    revealCanvas.getContext('2d').drawImage(img, 0, 0);
+
+    const ALPHA = 60; // opacity threshold for "ink"
+
+    // Writing segments: each defines which portion of the signature to reveal
+    // and what XY band is used to find the spark waypoints.
+    // ts=time start, te=time end (seconds), xs/xe=x range, ys/ye=y range for centroid scan
+    const segments = [
+      { xs: 15,  xe: 480, ys: 10,  ye: 360, ts: 0.1, te: 1.3 },  // S
+      { xs: 380, xe: 970, ys: 80,  ye: 360, ts: 1.3, te: 2.6 },  // rey + flourish sweep
+      { xs: 15,  xe: 390, ys: 155, ye: 552, ts: 2.7, te: 3.9 },  // capital A
+      { xs: 100, xe: 695, ys: 300, ye: 480, ts: 3.9, te: 5.1 },  // a crossbar + run
+      { xs: 625, xe: 905, ys: 220, ye: 552, ts: 5.1, te: 6.1 },  // capital R
+      { xs: 840, xe: 1256,ys: 215, ye: 475, ts: 6.1, te: 7.1 },  // atha
+      { xs: 440, xe: 1256,ys: 320, ye: 552, ts: 7.1, te: 8.2 },  // underline flourish
+    ];
+
+    // Build column-centroid waypoints for each segment
+    segments.forEach(seg => {
+      const pts = [];
+      for (let x = seg.xs; x <= seg.xe; x += 2) {
+        let sumY = 0, count = 0;
+        for (let y = seg.ys; y <= seg.ye; y++) {
+          const idx = (y * W + x) * 4;
+          if (pixData[idx + 3] > ALPHA) { sumY += y; count++; }
+        }
+        if (count > 0) pts.push({ x, y: sumY / count });
+      }
+      seg.pts = pts;
+    });
+
+    // Smooth the waypoints with a simple moving-average to prevent jitter
+    function smoothPts(pts, win = 5) {
+      if (pts.length < win) return pts;
+      return pts.map((p, i) => {
+        let sx = 0, sy = 0, cnt = 0;
+        for (let k = Math.max(0, i - win); k <= Math.min(pts.length - 1, i + win); k++) {
+          sx += pts[k].x; sy += pts[k].y; cnt++;
+        }
+        return { x: sx / cnt, y: sy / cnt };
+      });
     }
-    if (el) {
-      el.style.strokeDasharray = `${len} ${len}`;
-      el.style.strokeDashoffset = `${len}`;
-    }
-    return { ...item, el, env, len };
-  });
+    segments.forEach(seg => { seg.pts = smoothPts(seg.pts, 6); });
 
-  // Floating Golden Embers & Trail Dust Particles System
-  let particleCtx = null;
-  let particles = [];
-  if (particleCanvas && particleCanvas.getContext) {
-    particleCtx = particleCanvas.getContext('2d');
-    // Initialize ambient golden embers drifting gently in 3D space
-    for (let i = 0; i < 35; i++) {
+    // Interpolate position along a waypoint array at fraction t (0..1)
+    function ptAt(pts, t) {
+      if (!pts || !pts.length) return { x: 0, y: 0 };
+      if (t <= 0) return pts[0];
+      if (t >= 1) return pts[pts.length - 1];
+      const fi = t * (pts.length - 1);
+      const lo = Math.floor(fi), hi = Math.min(lo + 1, pts.length - 1);
+      const f = fi - lo;
+      return { x: pts[lo].x + (pts[hi].x - pts[lo].x) * f,
+               y: pts[lo].y + (pts[hi].y - pts[lo].y) * f };
+    }
+
+    // Particle system
+    const pctx = pCanvas.getContext('2d');
+    const particles = [];
+    for (let i = 0; i < 28; i++) {
       particles.push({
-        x: Math.random() * 1256,
-        y: Math.random() * 552,
+        x: Math.random() * W, y: Math.random() * H,
         vx: (Math.random() - 0.45) * 0.4,
-        vy: -0.2 - Math.random() * 0.45,
-        size: 0.8 + Math.random() * 2.2,
-        alpha: 0.1 + Math.random() * 0.7,
-        baseAlpha: 0.1 + Math.random() * 0.7,
+        vy: -0.2 - Math.random() * 0.5,
+        size: 0.7 + Math.random() * 1.8,
+        baseAlpha: 0.1 + Math.random() * 0.55,
+        alpha: 0,
         pulseSpeed: 0.02 + Math.random() * 0.04,
         isTrail: false
       });
     }
-  }
 
-  function emitTrailParticle(x, y) {
-    if (!particles || particles.length > 90) return;
-    particles.push({
-      x: x + (Math.random() - 0.5) * 16,
-      y: y + (Math.random() - 0.5) * 16,
-      vx: (Math.random() - 0.5) * 0.8,
-      vy: (Math.random() - 0.5) * 0.8 - 0.2,
-      size: 1.2 + Math.random() * 2.0,
-      alpha: 0.9,
-      baseAlpha: 0.9,
-      pulseSpeed: 0.05,
-      isTrail: true,
-      life: 1.0
-    });
-  }
-
-  function renderParticles() {
-    if (!particleCtx || !particleCanvas) return;
-    particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-
-    for (let i = particles.length - 1; i >= 0; i--) {
-      const p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-
-      if (p.isTrail) {
-        p.life -= 0.025;
-        p.alpha = Math.max(0, p.life * 0.85);
-        if (p.life <= 0) {
-          particles.splice(i, 1);
-          continue;
-        }
-      } else {
-        p.alpha = p.baseAlpha * (0.6 + 0.4 * Math.sin(Date.now() * p.pulseSpeed * 0.05));
-        if (p.y < -10) p.y = 560;
-        if (p.x < -10) p.x = 1266;
-        if (p.x > 1266) p.x = -10;
-      }
-
-      particleCtx.save();
-      particleCtx.beginPath();
-      particleCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      particleCtx.fillStyle = `rgba(245, 207, 123, ${p.alpha.toFixed(2)})`;
-      particleCtx.shadowColor = '#e5a93b';
-      particleCtx.shadowBlur = 6;
-      particleCtx.fill();
-      particleCtx.restore();
-    }
-  }
-
-  let startTime = null;
-  let animId = null;
-
-  function easeInOut(t) {
-    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-  }
-
-  function updateToTime(elapsed) {
-    // 1. Update each stroke mask and letter envelope
-    paths.forEach(p => {
-      if (!p.el) return;
-
-      if (elapsed < p.start) {
-        p.el.style.strokeDashoffset = `${p.len}`;
-        if (p.env) p.env.setAttribute('opacity', '0');
-      } else if (elapsed >= p.end) {
-        p.el.style.strokeDashoffset = '0';
-        // Once this letter stroke is completed, unlock the full letter envelope!
-        // This guarantees that 100% of letter loops and flourishes are NEVER clipped!
-        if (p.env) p.env.setAttribute('opacity', '1');
-      } else {
-        const progress = Math.min(1, Math.max(0, (elapsed - p.start) / p.dur));
-        const eased = easeInOut(progress);
-        const currentOffset = p.len * (1 - eased);
-        p.el.style.strokeDashoffset = `${currentOffset.toFixed(1)}`;
-
-        // Attach golden spark flare directly to the active writing tip
-        if (spark && typeof p.el.getPointAtLength === 'function') {
-          try {
-            const pt = p.el.getPointAtLength(p.len * eased);
-            spark.setAttribute('transform', `translate(${pt.x.toFixed(1)}, ${pt.y.toFixed(1)})`);
-            spark.style.opacity = '1';
-            // Emit sparkling trail dust
-            if (Math.random() > 0.35) {
-              emitTrailParticle(pt.x, pt.y);
-            }
-          } catch (_) {}
-        }
-      }
-    });
-
-    // 2. Swift smooth pen transition between 'Srey' flourish (960, 140) and Capital 'A' (80, 480)
-    if (elapsed >= 2.6 && elapsed < 2.7 && spark) {
-      const tGlide = (elapsed - 2.6) / 0.1;
-      const gx = 960 + (80 - 960) * tGlide;
-      const gy = 140 + (480 - 140) * tGlide;
-      spark.setAttribute('transform', `translate(${gx.toFixed(1)}, ${gy.toFixed(1)})`);
-      spark.style.opacity = (1 - tGlide * 0.35).toFixed(2);
-    }
-
-    // 3. Touchdown spark flare at start (0.0s -> 0.1s)
-    if (elapsed < 0.1 && spark) {
-      spark.setAttribute('transform', 'translate(440, 95)');
-      spark.style.opacity = (elapsed / 0.1).toFixed(2);
-    }
-
-    // 4. Spark dissolve after underline completion (8.2s -> 8.5s)
-    if (elapsed >= 8.2 && elapsed < 8.5 && spark) {
-      const fade = (elapsed - 8.2) / 0.3;
-      spark.style.opacity = Math.max(0, 1 - fade).toFixed(2);
-    }
-
-    // 5. Completion State (8.2s and beyond)
-    if (elapsed >= 8.2) {
-      if (spark) spark.style.opacity = '0';
-      // Unlock all envelopes and remove mask for pristine retina clarity
-      paths.forEach(p => {
-        if (p.el) p.el.style.strokeDashoffset = '0';
-        if (p.env) p.env.setAttribute('opacity', '1');
+    function emitTrail(x, y) {
+      if (particles.length > 90) return;
+      particles.push({
+        x: x + (Math.random() - 0.5) * 20,
+        y: y + (Math.random() - 0.5) * 20,
+        vx: (Math.random() - 0.5) * 1.0,
+        vy: (Math.random() - 0.5) * 1.0 - 0.3,
+        size: 1.0 + Math.random() * 2.4,
+        alpha: 0.9, baseAlpha: 0.9, pulseSpeed: 0.05,
+        isTrail: true, life: 1.0
       });
-      sigImg.removeAttribute('mask');
-
-      // Reveal 'CHAIRMAN & FOUNDER' and gold divider right below signature
-      if (execTitle) execTitle.classList.add('is-visible');
-      if (goldDivider) goldDivider.classList.add('is-visible');
-    } else {
-      if (!sigImg.hasAttribute('mask')) {
-        sigImg.setAttribute('mask', 'url(#sigHandwriteMask)');
-      }
-      if (execTitle) execTitle.classList.remove('is-visible');
-      if (goldDivider) goldDivider.classList.remove('is-visible');
     }
 
-    // Render particle layer
-    renderParticles();
-  }
+    function drawSparkFlare(ctx2, x, y, op) {
+      ctx2.save();
+      ctx2.globalAlpha = op;
+      ctx2.translate(x, y);
 
-  function renderFrame(timestamp) {
-    if (!startTime) startTime = timestamp || performance.now() || Date.now();
-    const now = timestamp || performance.now() || Date.now();
-    const elapsed = (now - startTime) / 1000;
+      // Outer soft aura
+      const aura = ctx2.createRadialGradient(0,0,0,0,0,52);
+      aura.addColorStop(0,   'rgba(255,255,255,0.95)');
+      aura.addColorStop(0.18,'rgba(255,235,120,0.8)');
+      aura.addColorStop(0.5, 'rgba(220,160,50,0.35)');
+      aura.addColorStop(1,   'rgba(200,130,30,0)');
+      ctx2.beginPath();
+      ctx2.arc(0,0,52,0,Math.PI*2);
+      ctx2.fillStyle = aura;
+      ctx2.fill();
 
-    updateToTime(elapsed);
+      // 4-point star
+      ctx2.save();
+      ctx2.shadowColor = '#ffd56b';
+      ctx2.shadowBlur = 20;
+      ctx2.fillStyle = 'rgba(255,245,180,0.92)';
+      const s = new Path2D('M0,-36 Q3,-3 0,0 Q-3,-3 0,-36 M0,36 Q3,3 0,0 Q-3,3 0,36 M-36,0 Q-3,3 0,0 Q-3,-3 -36,0 M36,0 Q3,3 0,0 Q3,-3 36,0');
+      ctx2.fill(s);
+      ctx2.restore();
 
-    // Keep ambient dust floating even after signature finishes
-    animId = requestAnimationFrame(renderFrame);
-  }
+      // Bright core
+      ctx2.beginPath(); ctx2.arc(0,0,8,0,Math.PI*2);
+      ctx2.fillStyle = '#fff';
+      ctx2.shadowColor = '#fff'; ctx2.shadowBlur = 22;
+      ctx2.fill();
 
-  function playAnimation() {
-    if (animId) cancelAnimationFrame(animId);
-    startTime = null;
-    sigImg.setAttribute('mask', 'url(#sigHandwriteMask)');
-    paths.forEach(p => {
-      if (p.el) p.el.style.strokeDashoffset = `${p.len}`;
-      if (p.env) p.env.setAttribute('opacity', '0');
-    });
-    if (spark) spark.style.opacity = '0';
-    if (execTitle) execTitle.classList.remove('is-visible');
-    if (goldDivider) goldDivider.classList.remove('is-visible');
+      // Sparkle dots
+      [[-16,10],[15,-11],[10,16],[-13,-17]].forEach(([dx,dy]) => {
+        ctx2.beginPath(); ctx2.arc(dx,dy,2.0,0,Math.PI*2);
+        ctx2.fillStyle = 'rgba(255,218,100,0.88)';
+        ctx2.shadowBlur = 7; ctx2.fill();
+      });
 
-    animId = requestAnimationFrame(renderFrame);
-  }
+      ctx2.restore();
+    }
 
-  // Tap-to-replay anywhere on signature container
-  if (sigWrap) {
-    sigWrap.addEventListener('click', () => {
-      playAnimation();
-    });
-    sigWrap.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        playAnimation();
+    function renderParticles(spx, spy, spOp) {
+      pctx.clearRect(0,0,W,H);
+      const now = Date.now();
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        if (p.isTrail) {
+          p.life -= 0.028; p.alpha = Math.max(0, p.life * 0.85);
+          if (p.life <= 0) { particles.splice(i,1); continue; }
+        } else {
+          p.alpha = p.baseAlpha * (0.55 + 0.45 * Math.sin(now * p.pulseSpeed * 0.05));
+          if (p.y < -10) p.y = H+10;
+          if (p.x < -10) p.x = W+10;
+          if (p.x > W+10) p.x = -10;
+        }
+        pctx.save();
+        pctx.beginPath();
+        pctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        pctx.fillStyle = `rgba(245,207,123,${p.alpha.toFixed(2)})`;
+        pctx.shadowColor = '#e5a93b'; pctx.shadowBlur = 7;
+        pctx.fill(); pctx.restore();
       }
-    });
-  }
+      if (spOp > 0.01) drawSparkFlare(pctx, spx, spy, spOp);
+    }
 
-  // Preview specific time via URL query ?t=2.5 or play initially
-  const urlParams = new URLSearchParams(window.location.search);
-  const testT = urlParams.get('t');
-  if (testT !== null) {
-    updateToTime(parseFloat(testT));
-  } else {
-    playAnimation();
-  }
+    const ctx = canvas.getContext('2d');
+    let startTime = null, animId = null;
+    let sparkX = 0, sparkY = 0, sparkOp = 0;
+
+    function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+    function updateToTime(elapsed) {
+      ctx.clearRect(0,0,W,H);
+      sparkOp = 0; // reset, will be set by active segment
+
+      segments.forEach(seg => {
+        if (elapsed < seg.ts) return;
+        const frac = elapsed >= seg.te
+          ? 1.0
+          : ease(Math.min(1, Math.max(0, (elapsed - seg.ts) / (seg.te - seg.ts))));
+
+        if (frac <= 0) return;
+
+        // Clip region: reveal up to revealX for this segment
+        const revealX = seg.xs + (seg.xe - seg.xs) * frac;
+        const PAD_Y = 45, PAD_X = 20;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(
+          Math.max(0, seg.xs - PAD_X),
+          Math.max(0, seg.ys - PAD_Y),
+          revealX - seg.xs + PAD_X * 2,
+          (seg.ye - seg.ys) + PAD_Y * 2
+        );
+        ctx.clip();
+        ctx.drawImage(revealCanvas, 0, 0);
+        ctx.restore();
+
+        // Update spark for the currently active (in-progress) segment
+        if (elapsed >= seg.ts && elapsed < seg.te) {
+          const pt = ptAt(seg.pts, frac);
+          sparkX = pt.x; sparkY = pt.y; sparkOp = 1;
+          if (Math.random() > 0.4) emitTrail(pt.x, pt.y);
+        }
+      });
+
+      // Pen lift glide: end-of-rey → start-of-A
+      if (elapsed >= 2.6 && elapsed < 2.7) {
+        const tg = (elapsed - 2.6) / 0.1;
+        const rPts = segments[1].pts, aPts = segments[2].pts;
+        const ep = rPts.length ? rPts[rPts.length-1] : {x:960,y:140};
+        const sp = aPts.length ? aPts[0]              : {x:80, y:480};
+        sparkX = ep.x + (sp.x - ep.x) * tg;
+        sparkY = ep.y + (sp.y - ep.y) * tg;
+        sparkOp = 1 - tg * 0.4;
+      }
+
+      // Touchdown
+      if (elapsed < 0.1) {
+        const sp0 = segments[0].pts;
+        sparkX = sp0.length ? sp0[0].x : 440;
+        sparkY = sp0.length ? sp0[0].y : 95;
+        sparkOp = elapsed / 0.1;
+      }
+
+      // Fade out after completion
+      if (elapsed >= 8.2 && elapsed < 8.6) sparkOp = Math.max(0, 1 - (elapsed - 8.2) / 0.4);
+      if (elapsed >= 8.6) sparkOp = 0;
+
+      // Full reveal after completion (sharp, no mask)
+      if (elapsed >= 8.2) {
+        ctx.clearRect(0,0,W,H);
+        ctx.drawImage(revealCanvas, 0, 0);
+        if (execTitle) execTitle.classList.add('is-visible');
+        if (goldDiv)   goldDiv.classList.add('is-visible');
+      } else {
+        if (execTitle) execTitle.classList.remove('is-visible');
+        if (goldDiv)   goldDiv.classList.remove('is-visible');
+      }
+
+      renderParticles(sparkX, sparkY, sparkOp);
+    }
+
+    function renderFrame(ts) {
+      if (!startTime) startTime = ts;
+      updateToTime((ts - startTime) / 1000);
+      animId = requestAnimationFrame(renderFrame);
+    }
+
+    function playAnimation() {
+      if (animId) cancelAnimationFrame(animId);
+      startTime = null; sparkOp = 0;
+      ctx.clearRect(0,0,W,H);
+      if (execTitle) execTitle.classList.remove('is-visible');
+      if (goldDiv)   goldDiv.classList.remove('is-visible');
+      animId = requestAnimationFrame(renderFrame);
+    }
+
+    if (sigWrap) {
+      sigWrap.addEventListener('click', playAnimation);
+      sigWrap.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); playAnimation(); }
+      });
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const testT = urlParams.get('t');
+    if (testT !== null) updateToTime(parseFloat(testT));
+    else playAnimation();
+  };
+
+  img.onerror = () => console.warn('[Sig] Failed to load signature PNG.');
+  img.src = portfolioConfig.images.signature;
 }
 
-/**
- * Configure social icons based on portfolioConfig.social.
- * If a URL is empty, safely notify user via toast rather than navigating nowhere.
- */
+/* --------------------------------------------------------------------------
+   SOCIAL LINKS
+   -------------------------------------------------------------------------- */
 function bindSocialLinks() {
-  const socialMapping = [
+  const mapping = [
     { key: 'telegram', selector: '.social-link-telegram', label: 'Telegram' },
     { key: 'linkedin', selector: '.social-link-linkedin', label: 'LinkedIn' },
     { key: 'facebook', selector: '.social-link-facebook', label: 'Facebook' },
-    { key: 'youtube', selector: '.social-link-youtube', label: 'YouTube' },
-    { key: 'email', selector: '.social-link-email', label: 'Official Email' }
+    { key: 'youtube',  selector: '.social-link-youtube',  label: 'YouTube' },
+    { key: 'email',    selector: '.social-link-email',    label: 'Official Email' }
   ];
 
-  socialMapping.forEach(({ key, selector, label }) => {
-    const links = document.querySelectorAll(selector);
+  mapping.forEach(({ key, selector, label }) => {
     let url = portfolioConfig.social[key];
-
-    // Normalize telegram handle if format is @username or t.me/username
     if (key === 'telegram' && url) {
-      if (url.startsWith('@')) {
-        url = `https://t.me/${url.substring(1)}`;
-      } else if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        url = `https://t.me/${url.replace(/^t\.me\//, '')}`;
-      }
+      if (url.startsWith('@')) url = `https://t.me/${url.substring(1)}`;
+      else if (!url.startsWith('http')) url = `https://t.me/${url.replace(/^t\.me\//, '')}`;
     }
-
-    links.forEach(link => {
-      if (url && url.trim() !== '') {
-        if (key === 'email' && !url.startsWith('mailto:')) {
-          link.href = `mailto:${url}`;
-        } else {
-          link.href = url;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-        }
+    document.querySelectorAll(selector).forEach(link => {
+      if (url && url.trim()) {
+        link.href = (key === 'email' && !url.startsWith('mailto:')) ? `mailto:${url}` : url;
+        if (key !== 'email') { link.target = '_blank'; link.rel = 'noopener noreferrer'; }
         link.classList.remove('disabled');
         link.removeAttribute('aria-disabled');
         link.title = `Connect on ${label}`;
@@ -423,8 +439,7 @@ function bindSocialLinks() {
         link.setAttribute('aria-disabled', 'true');
         link.setAttribute('role', 'button');
         link.title = `${label} channel available upon direct inquiry`;
-
-        link.addEventListener('click', (e) => {
+        link.addEventListener('click', e => {
           e.preventDefault();
           showToast(`Official ${label} channel will be shared upon direct executive inquiry.`);
         });
@@ -432,154 +447,103 @@ function bindSocialLinks() {
     });
   });
 
-  // Update modal direct email button
-  const modalEmailBtn = document.getElementById('modalEmailBtn');
-  if (modalEmailBtn && portfolioConfig.social.email) {
-    modalEmailBtn.href = `mailto:${portfolioConfig.social.email}`;
-  }
+  const modalEmail = document.getElementById('modalEmailBtn');
+  if (modalEmail && portfolioConfig.social.email)
+    modalEmail.href = `mailto:${portfolioConfig.social.email}`;
 }
 
 /* --------------------------------------------------------------------------
-   4. EXECUTIVE OVERLAY MODAL & HAMBURGER CONTROLLER
+   4. EXECUTIVE OVERLAY MODAL
    -------------------------------------------------------------------------- */
 let isModalOpen = false;
 
 function initExecutiveModal() {
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const modal = document.getElementById('executiveModal');
-  const backdrop = document.getElementById('modalBackdrop');
-  const closeBtn = document.getElementById('modalCloseBtn');
-  const desktopProfileBtn = document.getElementById('btnDesktopProfile');
-  const desktopContactBtn = document.getElementById('btnDesktopContact');
+  const hamburgerBtn   = document.getElementById('hamburgerBtn');
+  const modal          = document.getElementById('executiveModal');
+  const backdrop       = document.getElementById('modalBackdrop');
+  const closeBtn       = document.getElementById('modalCloseBtn');
+  const desktopProfile = document.getElementById('btnDesktopProfile');
+  const desktopContact = document.getElementById('btnDesktopContact');
 
   if (!modal) return;
 
   function openModal() {
-    isModalOpen = true;
-    modal.classList.add('open');
+    isModalOpen = true; modal.classList.add('open');
     modal.setAttribute('aria-hidden', 'false');
-    if (hamburgerBtn) {
-      hamburgerBtn.classList.add('active');
-      hamburgerBtn.setAttribute('aria-expanded', 'true');
-    }
+    if (hamburgerBtn) { hamburgerBtn.classList.add('active'); hamburgerBtn.setAttribute('aria-expanded','true'); }
     document.body.style.overflow = 'hidden';
   }
-
   function closeModal() {
-    isModalOpen = false;
-    modal.classList.remove('open');
+    isModalOpen = false; modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
-    if (hamburgerBtn) {
-      hamburgerBtn.classList.remove('active');
-      hamburgerBtn.setAttribute('aria-expanded', 'false');
-    }
+    if (hamburgerBtn) { hamburgerBtn.classList.remove('active'); hamburgerBtn.setAttribute('aria-expanded','false'); }
     document.body.style.overflow = '';
   }
 
-  if (hamburgerBtn) {
-    hamburgerBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (isModalOpen) closeModal();
-      else openModal();
-    });
-  }
-
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  if (backdrop) backdrop.addEventListener('click', closeModal);
-
-  if (desktopProfileBtn) desktopProfileBtn.addEventListener('click', openModal);
-  if (desktopContactBtn) {
-    desktopContactBtn.addEventListener('click', () => {
-      if (portfolioConfig.social.email) {
-        window.location.href = `mailto:${portfolioConfig.social.email}`;
-      } else {
-        openModal();
-      }
-    });
-  }
-
-  // Close on Escape key
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isModalOpen) {
-      closeModal();
-    }
+  if (hamburgerBtn) hamburgerBtn.addEventListener('click', e => { e.preventDefault(); isModalOpen ? closeModal() : openModal(); });
+  if (closeBtn)  closeBtn.addEventListener('click', closeModal);
+  if (backdrop)  backdrop.addEventListener('click', closeModal);
+  if (desktopProfile) desktopProfile.addEventListener('click', openModal);
+  if (desktopContact) desktopContact.addEventListener('click', () => {
+    if (portfolioConfig.social.email) window.location.href = `mailto:${portfolioConfig.social.email}`;
+    else openModal();
   });
 
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && isModalOpen) closeModal(); });
   window.executiveModal = { open: openModal, close: closeModal };
 }
 
 /* --------------------------------------------------------------------------
-   5. PRIMARY ACTION BUTTONS
+   5. ACTION BUTTONS
    -------------------------------------------------------------------------- */
 function initActionButtons() {
-  const btnJourney = document.getElementById('btnExploreJourney');
-  const btnTouch = document.getElementById('btnGetInTouch');
-
-  if (btnJourney) {
-    btnJourney.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (portfolioConfig.journeyUrl && portfolioConfig.journeyUrl.trim() !== '') {
-        window.open(portfolioConfig.journeyUrl, '_blank', 'noopener,noreferrer');
-      } else if (window.executiveModal) {
-        window.executiveModal.open();
-      }
-    });
-  }
-
-  if (btnTouch) {
-    btnTouch.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (portfolioConfig.social.email) {
-        window.location.href = `mailto:${portfolioConfig.social.email}`;
-      } else if (window.executiveModal) {
-        window.executiveModal.open();
-      }
-    });
-  }
+  const btnJ = document.getElementById('btnExploreJourney');
+  const btnT = document.getElementById('btnGetInTouch');
+  if (btnJ) btnJ.addEventListener('click', e => {
+    e.preventDefault();
+    if (portfolioConfig.journeyUrl?.trim()) window.open(portfolioConfig.journeyUrl,'_blank','noopener,noreferrer');
+    else if (window.executiveModal) window.executiveModal.open();
+  });
+  if (btnT) btnT.addEventListener('click', e => {
+    e.preventDefault();
+    if (portfolioConfig.social.email) window.location.href = `mailto:${portfolioConfig.social.email}`;
+    else if (window.executiveModal) window.executiveModal.open();
+  });
 }
 
 /* --------------------------------------------------------------------------
-   6. VCARD GENERATION & DOWNLOAD
+   6. VCARD
    -------------------------------------------------------------------------- */
 function initVCardDownload() {
-  const vcardBtns = document.querySelectorAll('.download-vcard-btn');
-  vcardBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      downloadExecutiveVCard();
-    });
-  });
+  document.querySelectorAll('.download-vcard-btn').forEach(btn =>
+    btn.addEventListener('click', e => { e.preventDefault(); downloadExecutiveVCard(); })
+  );
 }
 
 function downloadExecutiveVCard() {
   const emailVal = portfolioConfig.social.email || 'office@arunratha.com';
-  const vCardContent = [
-    'BEGIN:VCARD',
-    'VERSION:3.0',
-    `FN:${portfolioConfig.name}`,
-    `N:ArunRatha;Srey;;;`,
+  const vc = [
+    'BEGIN:VCARD','VERSION:3.0',
+    `FN:${portfolioConfig.name}`, `N:ArunRatha;Srey;;;`,
     `TITLE:${portfolioConfig.position}`,
-    `ORG:LBC, Magic Iron, BG, Statesman, Saravan`,
+    'ORG:LBC, Magic Iron, BG, Statesman, Saravan',
     `EMAIL;TYPE=INTERNET,WORK:${emailVal}`,
-    `NOTE:${portfolioConfig.tagline} (${portfolioConfig.office.role} of ${portfolioConfig.office.ventures})`,
+    `NOTE:${portfolioConfig.tagline}`,
     'END:VCARD'
   ].join('\r\n');
 
-  const blob = new Blob([vCardContent], { type: 'text/vcard;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const downloadLink = document.createElement('a');
-  downloadLink.href = url;
-  downloadLink.setAttribute('download', `${portfolioConfig.name.replace(/\s+/g, '_')}_Executive.vcf`);
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  document.body.removeChild(downloadLink);
+  const blob = new Blob([vc], { type: 'text/vcard;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.setAttribute('download', `${portfolioConfig.name.replace(/\s+/g,'_')}_Executive.vcf`);
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
-
   showToast('Executive vCard downloaded.');
 }
 
 /* --------------------------------------------------------------------------
-   7. TOAST NOTIFICATION UTILITY
+   7. TOAST
    -------------------------------------------------------------------------- */
 function showToast(message) {
   let toast = document.getElementById('executiveToast');
@@ -587,33 +551,22 @@ function showToast(message) {
     toast = document.createElement('div');
     toast.id = 'executiveToast';
     toast.style.cssText = `
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(30px);
-      background: rgba(8, 20, 38, 0.95);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--gold, #e4ac41);
-      color: #ffffff;
-      padding: 12px 22px;
-      border-radius: 9999px;
-      font-size: 0.84rem;
-      font-family: inherit;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(228, 172, 65, 0.25);
-      z-index: 9999;
-      opacity: 0;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      pointer-events: none;
-      text-align: center;
-      max-width: 90vw;
+      position:fixed;bottom:24px;left:50%;
+      transform:translateX(-50%) translateY(30px);
+      background:rgba(8,20,38,0.95);backdrop-filter:blur(12px);
+      border:1px solid var(--gold,#e4ac41);color:#fff;
+      padding:12px 22px;border-radius:9999px;
+      font-size:0.84rem;font-family:inherit;
+      box-shadow:0 10px 30px rgba(0,0,0,0.6),0 0 15px rgba(228,172,65,0.25);
+      z-index:9999;opacity:0;
+      transition:all 0.35s cubic-bezier(0.16,1,0.3,1);
+      pointer-events:none;text-align:center;max-width:90vw;
     `;
     document.body.appendChild(toast);
   }
-
   toast.textContent = message;
   toast.style.opacity = '1';
   toast.style.transform = 'translateX(-50%) translateY(0)';
-
   clearTimeout(toast._timer);
   toast._timer = setTimeout(() => {
     toast.style.opacity = '0';
