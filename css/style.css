@@ -1,0 +1,795 @@
+/* ==========================================================================
+   PREMIUM EXECUTIVE PERSONAL PORTFOLIO â€” STYLESHEET
+   Client / Subject: Srey ArunRatha â€” Chairman & Founder
+   Design Philosophy: Luxury Executive / Modern Cinematic / Dark Navy & Gold
+   Target Viewport: Mobile-First (390pxâ€“430px) matching the reference mockup
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS & CSS VARIABLES
+   -------------------------------------------------------------------------- */
+:root {
+  /* Replaceable Background Portrait (Configurable via CSS & JS) */
+  --portrait-image: url("../assets/portrait.jpg");
+  --portrait-position: center top;
+
+  /* Color Palette */
+  --primary-bg: #050d19;        /* Deep luxury midnight navy */
+  --surface-bg: #081426;        /* Elevated card surface */
+  --surface-glass: rgba(8, 20, 38, 0.92);
+  --border-gold: rgba(228, 172, 65, 0.65);
+  --border-gold-subtle: rgba(228, 172, 65, 0.2);
+  --border-gold-strong: rgba(228, 172, 65, 0.9);
+
+  /* Gold Color Scheme */
+  --gold: #e4ac41;
+  --gold-light: #f5cf7b;
+  --gold-dark: #c99327;
+  --gold-gradient: linear-gradient(90deg, #e4ac41 0%, #f5cf7b 50%, #c99327 100%);
+  --gold-gradient-hover: linear-gradient(90deg, #f5cf7b 0%, #e4ac41 50%, #f5cf7b 100%);
+  --gold-glow: 0 4px 20px rgba(228, 172, 65, 0.35);
+
+  /* Typography Colors */
+  --text-white: #ffffff;
+  --text-light: #f1f5f9;
+  --text-muted: #94a3b8;
+
+  /* Typography Stacks */
+  --font-serif: 'Cinzel', 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-signature: 'Alex Brush', 'Great Vibes', cursive;
+
+  /* Layout & Radii */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   2. RESET & BASE ELEMENTS
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-bg);
+  color: var(--text-light);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Focus ring for accessibility */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   3. GLOBAL FLOATING HEADER (Top Bar)
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  padding: 1.25rem 1.4rem;
+  pointer-events: none; /* Allows click-through to background except on buttons */
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  pointer-events: auto;
+}
+
+/* Signature brand mark on top-left */
+.brand-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.brand-signature {
+  font-family: var(--font-signature);
+  font-size: 1.8rem;
+  color: var(--text-white);
+  line-height: 1.05;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+}
+
+.brand-line {
+  width: 52px;
+  height: 3px;
+  background: linear-gradient(90deg, #dfa93e 0%, #f7d483 100%);
+  margin-top: 6px;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(223, 169, 62, 0.4);
+}
+
+/* Desktop header actions (hidden on mobile) */
+.desktop-header-actions {
+  display: none;
+}
+
+/* Clean 3-line Hamburger Menu Button on top-right */
+.hamburger-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 8px 6px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  z-index: 105;
+  transition: transform var(--transition-fast);
+}
+
+.hamburger-line {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background-color: var(--text-white);
+  border-radius: 2px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.hamburger-btn:hover .hamburger-line {
+  background-color: var(--gold-light);
+}
+
+/* Hamburger transformation when active */
+.hamburger-btn.active .hamburger-line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-8px);
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* --------------------------------------------------------------------------
+   4. HERO CARD (Single-Screen Mobile Layout)
+   -------------------------------------------------------------------------- */
+.hero-section {
+  position: relative;
+  width: 100%;
+  flex: 1 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: var(--primary-bg);
+  overflow: hidden;
+  padding: 0 1.25rem 1.75rem;
+}
+
+/* Replaceable Hero Portrait Background Layer */
+.hero-portrait {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background-image: var(--portrait-image);
+  background-size: cover;
+  background-position: var(--portrait-position, center top);
+  background-repeat: no-repeat;
+  z-index: 1;
+  transition: background-image 0.5s ease;
+}
+
+/* Cinematic Dark Navy Gradient Overlays */
+.hero-gradient-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* 1. Subtle top vignette for header legibility */
+.hero-gradient-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  background: linear-gradient(180deg, rgba(5, 13, 25, 0.65) 0%, rgba(5, 13, 25, 0.15) 60%, transparent 100%);
+}
+
+/* 2. Buttery smooth multi-stop fade into bottom canvas */
+.hero-gradient-overlay::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 62%;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 13, 25, 0) 0%,
+    rgba(5, 13, 25, 0.42) 28%,
+    rgba(5, 13, 25, 0.88) 55%,
+    #050d19 80%,
+    #050d19 100%
+  );
+}
+
+/* Subtle side vignette */
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 28%, transparent 62%, rgba(5, 13, 25, 0.35) 100%);
+}
+
+/* Hero Content Stack (Lower Portion) */
+.hero-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Executive Title: C H A I R M A N  &  F O U N D E R */
+.hero-executive-title {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--text-white);
+  margin-bottom: 0.3rem;
+  line-height: 1.4;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95);
+}
+
+.gold-amp {
+  color: #dfa93e;
+  font-weight: 700;
+  margin: 0 0.16em;
+  font-size: 1.05em;
+  text-shadow: 0 0 10px rgba(223, 169, 62, 0.4);
+}
+
+/* Main Signature Presentation: Srey ArunRatha with Single-Play Handwriting Reveal */
+.hero-signature-wrap {
+  position: relative;
+  width: min(325px, 86vw);
+  height: auto;
+  aspect-ratio: 1256 / 552;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.1rem auto 0.4rem;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.25s ease;
+}
+
+.hero-signature-wrap:hover .hero-signature-svg {
+  transform: scale(1.02);
+}
+
+.hero-signature-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.sig-mask-stroke {
+  stroke: white;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.hero-signature-fallback {
+  font-family: var(--font-signature);
+  font-size: 2.6rem;
+  color: var(--text-white);
+  line-height: 1.1;
+  font-weight: 400;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
+  white-space: nowrap;
+}
+
+/* Short Gold Decorative Horizontal Line Underneath */
+.gold-divider-short {
+  width: 34px;
+  height: 3.5px;
+  background: linear-gradient(90deg, #dfa93e 0%, #f7d483 100%);
+  margin: 0.35rem auto 1.1rem;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(223, 169, 62, 0.4);
+  transform-origin: center;
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+/* Personal Statement */
+.hero-tagline {
+  font-size: 0.92rem;
+  font-weight: 400;
+  color: #f1f5f9;
+  line-height: 1.48;
+  max-width: 310px;
+  margin: 0 auto 1.45rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95);
+}
+
+/* Primary Action Buttons */
+.hero-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 1.45rem;
+  align-items: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 340px;
+  height: 48px;
+  padding: 0 22px;
+  font-size: 0.94rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  user-select: none;
+}
+
+.btn:active {
+  transform: scale(0.975);
+}
+
+/* Button 1: Explore My Journey (Gold Gradient) */
+.btn-gold {
+  background: linear-gradient(90deg, #e4ac41 0%, #f5cf7b 50%, #c99327 100%);
+  color: #050d19;
+  box-shadow: 0 4px 18px rgba(228, 172, 65, 0.32);
+}
+
+.btn-gold:hover {
+  background: linear-gradient(90deg, #f5cf7b 0%, #e4ac41 50%, #f5cf7b 100%);
+  box-shadow: 0 6px 24px rgba(228, 172, 65, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-gold .btn-arrow-icon {
+  width: 18px;
+  height: 18px;
+  stroke: #050d19;
+  transition: transform var(--transition-fast);
+}
+
+.btn-gold:hover .btn-arrow-icon {
+  transform: translateX(4px);
+}
+
+/* Button 2: Get in Touch (Transparent Dark with Gold Border) */
+.btn-outline {
+  background: #050d19;
+  border: 1.5px solid #e4ac41;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.btn-outline:hover {
+  background: rgba(228, 172, 65, 0.12);
+  border-color: #f5cf7b;
+  color: #f5cf7b;
+  box-shadow: 0 6px 22px rgba(228, 172, 65, 0.25);
+  transform: translateY(-1px);
+}
+
+/* Social Media Circular Icons (5 Items) */
+.hero-social-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  width: 100%;
+}
+
+.social-circle-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(228, 172, 65, 0.65);
+  background: #081220;
+  color: #ffffff;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.social-circle-link svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  transition: transform var(--transition-fast);
+}
+
+.social-circle-link:hover {
+  border-color: var(--gold);
+  background: rgba(228, 172, 65, 0.2);
+  color: var(--gold-light);
+  box-shadow: 0 0 14px rgba(228, 172, 65, 0.35);
+  transform: translateY(-2px);
+}
+
+.social-circle-link:hover svg {
+  transform: scale(1.1);
+}
+
+.social-circle-link.disabled {
+  opacity: 0.65;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   5. EXECUTIVE MODAL / OVERLAY DRAWER
+   -------------------------------------------------------------------------- */
+.executive-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.35s ease;
+}
+
+.executive-modal.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(3, 8, 16, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.modal-card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, #0a172a 0%, #050d19 100%);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-lg);
+  padding: 2.2rem 1.75rem 2rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(228, 172, 65, 0.15);
+  transform: scale(0.94) translateY(15px);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.executive-modal.open .modal-card {
+  transform: scale(1) translateY(0);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all var(--transition-fast);
+}
+
+.modal-close-btn:hover {
+  color: var(--text-white);
+  background: rgba(228, 172, 65, 0.2);
+  transform: rotate(90deg);
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 1.4rem;
+}
+
+.modal-signature {
+  font-family: var(--font-signature);
+  font-size: 2.2rem;
+  color: var(--text-white);
+  line-height: 1.1;
+  display: block;
+}
+
+.modal-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-top: 0.2rem;
+}
+
+.modal-gold-line {
+  width: 44px;
+  height: 2px;
+  background: var(--gold-gradient);
+  margin: 0.6rem auto 0;
+  border-radius: 2px;
+}
+
+.modal-bio-quote {
+  font-size: 0.92rem;
+  font-style: italic;
+  color: var(--text-light);
+  line-height: 1.5;
+  text-align: center;
+  margin-bottom: 1.4rem;
+  padding: 0 0.5rem;
+}
+
+.modal-info-block {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-gold-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.1rem;
+  margin-bottom: 1.4rem;
+  text-align: center;
+}
+
+.modal-section-heading {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 0.4rem;
+}
+
+.modal-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 0.6rem;
+}
+
+.modal-locations {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-white);
+  letter-spacing: 0.08em;
+  line-height: 1.7;
+}
+
+.modal-actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.4rem;
+}
+
+.modal-socials-wrap {
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding-top: 1.2rem;
+}
+
+.modal-social-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   6. RESPONSIVE DESIGN (Tablets & Desktop Presentation)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  .site-header {
+    padding: 1.75rem 3rem;
+  }
+
+  .header-inner {
+    max-width: 1200px;
+  }
+
+  .brand-signature {
+    font-size: 2.1rem;
+  }
+
+  .desktop-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .btn-desktop-profile,
+  .btn-desktop-contact {
+    padding: 9px 22px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-desktop-profile {
+    color: var(--text-light);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .btn-desktop-profile:hover {
+    color: var(--text-white);
+    border-color: var(--gold);
+    background: rgba(228, 172, 65, 0.12);
+  }
+
+  .btn-desktop-contact {
+    color: var(--primary-bg);
+    background: var(--gold-gradient);
+    box-shadow: 0 4px 15px rgba(228, 172, 65, 0.25);
+  }
+
+  .btn-desktop-contact:hover {
+    box-shadow: 0 6px 20px rgba(228, 172, 65, 0.4);
+    transform: translateY(-1px);
+  }
+
+  /* Desktop split presentation */
+  .hero-section {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 6rem 3rem 4rem;
+    gap: 4rem;
+  }
+
+  .hero-portrait {
+    position: relative;
+    width: 480px;
+    height: 640px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-gold-subtle);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(228, 172, 65, 0.12);
+    flex-shrink: 0;
+    order: 2;
+  }
+
+  .hero-gradient-overlay::after {
+    display: none;
+  }
+
+  .hero-content {
+    max-width: 460px;
+    align-items: flex-start;
+    text-align: left;
+    margin: 0;
+    order: 1;
+  }
+
+  .hero-signature-wrap {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+
+  .gold-divider-short {
+    margin-left: 0;
+  }
+
+  .hero-tagline {
+    margin-left: 0;
+    text-align: left;
+    max-width: 420px;
+    font-size: 1.05rem;
+  }
+
+  .hero-actions {
+    flex-direction: row;
+    gap: 1rem;
+    width: auto;
+  }
+
+  .hero-actions .btn {
+    width: auto;
+    padding: 0 28px;
+  }
+
+  .hero-social-list {
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
+}
+
