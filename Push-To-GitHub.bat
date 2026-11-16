@@ -2,13 +2,18 @@
 set "PATH=%LOCALAPPDATA%\Programs\MinGit\cmd;%PATH%"
 cd /d "%~dp0"
 echo ======================================================================
-echo   Pushing Portfolio to GitHub: https://github.com/tey041122/portfolio_boss
+echo   Updating Portfolio on GitHub: https://github.com/tey041122/portfolio_boss
 echo ======================================================================
 echo.
-echo If GitHub asks you to sign in, please complete the browser login prompt.
+echo 1. Staging any new changes...
+git add .
 echo.
+echo 2. Committing changes...
+git commit -m "Update website content and assets"
+echo.
+echo 3. Pushing to GitHub...
 git push -u origin main
 echo.
 echo ======================================================================
-echo Push complete! Press any key to close this window.
+echo Done! Your live website will automatically update in 1 to 2 minutes.
 pause
