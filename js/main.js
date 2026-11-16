@@ -135,7 +135,7 @@ function initSignatureAnimation() {
   // Interactive Replay: Clicking or tapping signature replays the single-play handwriting timeline
   sigWrap.addEventListener('click', () => {
     try {
-      const anims = svg ? svg.querySelectorAll('animate') : [];
+      const anims = svg ? svg.querySelectorAll('animate, animateMotion, animateTransform') : [];
       if (anims && anims.length > 0) {
         anims.forEach(a => {
           if (typeof a.beginElement === 'function') {

@@ -29,7 +29,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <!-- Main Stylesheet (with cache-busting token) -->
-  <link rel="stylesheet" href="css/style.css?v=human_flow_v11" />
+  <link rel="stylesheet" href="css/style.css?v=video_spark_v13" />
 
   <!-- Single-Play Crisp Handwriting Reveal Engine -->
   <style>
@@ -47,6 +47,9 @@
       -webkit-user-select: none;
       transition: transform 0.25s ease;
     }
+    .hero-signature-wrap {
+      overflow: visible !important;
+    }
     .hero-signature-wrap:hover .hero-signature-svg {
       transform: scale(1.02);
     }
@@ -54,6 +57,10 @@
       width: 100% !important;
       height: 100% !important;
       display: block !important;
+      overflow: visible !important;
+    }
+    #sparkFlareGroup {
+      pointer-events: none;
     }
     .sig-mask-stroke {
       stroke: white;
@@ -62,7 +69,12 @@
       fill: none;
     }
     @media (prefers-reduced-motion: reduce) {
-      .hero-signature-svg animate {
+      .hero-signature-svg animate,
+      .hero-signature-svg animateMotion,
+      .hero-signature-svg animateTransform {
+        display: none !important;
+      }
+      #sparkFlareGroup {
         display: none !important;
       }
       .sig-mask-stroke {
@@ -124,60 +136,159 @@
         C H A I R M A N <span class="gold-amp">&amp;</span> F O U N D E R
       </div>
 
-      <!-- Main Signature Presentation: Single-Play Handwriting Reveal (Razor-Sharp 4x Retina) -->
+      <!-- Main Signature Presentation: Single-Play Handwriting Reveal with Golden Lens Flare Spark (Following Video Motion) -->
       <div class="hero-signature-wrap" id="signatureWrap" title="Click to replay handwriting animation">
         <svg class="hero-signature-svg" id="heroSignatureSvg" viewBox="0 0 1256 552" aria-label="Srey ArunRatha handwritten signature">
           <defs>
+            <!-- Glowing Spark Filters & Gradients -->
+            <filter id="sparkGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="6" result="blur1" />
+              <feGaussianBlur stdDeviation="16" result="blur2" />
+              <feMerge>
+                <feMergeNode in="blur2" />
+                <feMergeNode in="blur1" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <radialGradient id="sparkCenter" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+              <stop offset="25%" stop-color="#fff4cc" stop-opacity="0.9" />
+              <stop offset="60%" stop-color="#e5b158" stop-opacity="0.6" />
+              <stop offset="100%" stop-color="#c98a2c" stop-opacity="0" />
+            </radialGradient>
+
+            <radialGradient id="starFlareGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+              <stop offset="35%" stop-color="#ffd56b" stop-opacity="0.8" />
+              <stop offset="100%" stop-color="#e5a93b" stop-opacity="0" />
+            </radialGradient>
+
+            <!-- Handwriting Reveal Mask (Choreographed to Match Reference Video) -->
             <mask id="sigHandwriteMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1256" height="552">
               <rect width="1256" height="552" fill="black" />
 
-              <!-- ================= 1. SREY (CONTINUOUS HUMAN CURSIVE FLOW) ================= -->
+              <!-- 1. S (0.1s -> 1.3s) -->
               <path class="sig-mask-stroke"
-                    d="M 365,110 C 415,65 425,28 385,20 C 315,12 190,65 135,115 C 95,150 140,185 235,185 C 295,185 240,245 175,270 C 105,295 30,310 30,335 C 30,355 100,340 185,295 C 255,260 295,230 335,210 C 355,190 375,170 395,170 C 410,170 415,190 415,210 C 425,185 450,165 475,170 C 495,175 470,215 455,215 C 475,185 500,175 525,180 C 540,185 545,215 540,215 C 555,185 570,175 585,175 C 600,175 605,200 595,250 C 585,290 550,325 515,315 C 485,305 530,250 565,235 C 615,215 675,180 740,165 C 800,150 860,152 900,155"
+                    d="M 365,110 C 415,65 425,28 385,20 C 315,12 190,65 135,115 C 95,150 140,185 235,185 C 295,185 240,245 175,270 C 105,295 30,310 30,335 C 30,355 100,340 185,295 C 255,260 295,230 335,210"
                     stroke-width="54"
-                    stroke-dasharray="2350" stroke-dashoffset="2350">
-                <animate attributeName="stroke-dashoffset" from="2350" to="0" dur="1.0s" begin="0.12s" fill="freeze"
+                    stroke-dasharray="1400" stroke-dashoffset="1400">
+                <animate attributeName="stroke-dashoffset" from="1400" to="0" dur="1.2s" begin="0.1s" fill="freeze"
                          calcMode="spline" keyTimes="0; 1" keySplines="0.4 0 0.2 1" />
               </path>
 
-              <!-- ================= 2. CAPITAL A STEM ================= -->
+              <!-- 2. rey + flourish (1.3s -> 2.5s) -->
+              <path class="sig-mask-stroke"
+                    d="M 335,210 C 355,190 375,170 395,170 C 410,170 415,190 415,210 C 425,185 450,165 475,170 C 495,175 470,215 455,215 C 475,185 500,175 525,180 C 540,185 545,215 540,215 C 555,185 570,175 585,175 C 600,175 605,200 595,250 C 585,290 550,325 515,315 C 485,305 530,250 565,235 C 615,215 675,180 740,165 C 800,150 860,152 900,155"
+                    stroke-width="52"
+                    stroke-dasharray="1600" stroke-dashoffset="1600">
+                <animate attributeName="stroke-dashoffset" from="1600" to="0" dur="1.2s" begin="1.3s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.4 0 0.2 1" />
+              </path>
+
+              <!-- 3. Capital A stem (2.55s -> 3.55s) -->
               <path class="sig-mask-stroke"
                     d="M 105,535 C 160,460 240,360 330,285 C 370,250 395,240 395,260 C 395,290 355,380 320,445"
                     stroke-width="56"
                     stroke-dasharray="650" stroke-dashoffset="650">
-                <animate attributeName="stroke-dashoffset" from="650" to="0" dur="0.45s" begin="1.12s" fill="freeze"
+                <animate attributeName="stroke-dashoffset" from="650" to="0" dur="1.0s" begin="2.55s" fill="freeze"
                          calcMode="spline" keyTimes="0; 1" keySplines="0.35 0 0.2 1" />
               </path>
 
-              <!-- ================= 3. A CROSSBAR + RUNRATHA + FLOURISH ================= -->
+              <!-- 4. A crossbar + run + R stem (3.55s -> 4.75s) -->
               <path class="sig-mask-stroke"
-                    d="M 135,430 C 220,395 320,380 405,370 C 430,368 450,335 470,340 C 485,345 490,395 490,410 C 500,370 520,345 540,350 C 555,355 550,405 550,415 C 560,370 580,350 605,355 C 625,360 625,410 625,420 C 640,390 660,345 685,305 C 675,350 645,435 625,495 M 680,310 C 715,260 795,245 830,280 C 855,310 820,355 765,365 C 720,375 680,375 660,385 C 695,410 770,445 840,465 C 870,395 895,395 905,430 C 910,445 895,455 885,455 C 870,455 885,425 915,410 C 935,390 965,305 975,290 C 975,325 940,425 940,445 C 955,425 1020,270 1055,245 C 1075,245 1060,315 1030,390 C 1020,425 1035,445 1055,445 C 1075,445 1085,395 1105,395 C 1125,395 1135,440 1150,440 C 1165,440 1195,395 1250,365"
-                    stroke-width="56"
-                    stroke-dasharray="2950" stroke-dashoffset="2950">
-                <animate attributeName="stroke-dashoffset" from="2950" to="0" dur="1.1s" begin="1.57s" fill="freeze"
+                    d="M 135,430 C 220,395 320,380 405,370 C 430,368 450,335 470,340 C 485,345 490,395 490,410 C 500,370 520,345 540,350 C 555,355 550,405 550,415 C 560,370 580,350 605,355 C 625,360 625,410 625,420 C 640,390 660,345 685,305 C 675,350 645,435 625,495"
+                    stroke-width="54"
+                    stroke-dasharray="1400" stroke-dashoffset="1400">
+                <animate attributeName="stroke-dashoffset" from="1400" to="0" dur="1.2s" begin="3.55s" fill="freeze"
                          calcMode="spline" keyTimes="0; 1" keySplines="0.4 0 0.2 1" />
               </path>
 
-              <!-- ================= 4. T CROSSBAR SLASH ================= -->
+              <!-- 5. R bowl & kicking leg + a (4.75s -> 5.75s) -->
               <path class="sig-mask-stroke"
-                    d="M 915,365 L 1005,355"
-                    stroke-width="48"
-                    stroke-dasharray="100" stroke-dashoffset="100">
-                <animate attributeName="stroke-dashoffset" from="100" to="0" dur="0.15s" begin="2.67s" fill="freeze"
-                         calcMode="spline" keyTimes="0; 1" keySplines="0.1 0 0.1 1" />
+                    d="M 680,310 C 715,260 795,245 830,280 C 855,310 820,355 765,365 C 720,375 680,375 660,385 C 695,410 770,445 840,465 C 870,395 895,395 905,430 C 910,445 895,455 885,455 C 870,455 885,425 915,410"
+                    stroke-width="54"
+                    stroke-dasharray="900" stroke-dashoffset="900">
+                <animate attributeName="stroke-dashoffset" from="900" to="0" dur="1.0s" begin="4.75s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.4 0 0.2 1" />
               </path>
 
-              <!-- ================= 5. PERMANENT CRISP 4X RETINA LOCK ================= -->
+              <!-- 6. t stem + h + a (5.75s -> 6.85s) -->
+              <path class="sig-mask-stroke"
+                    d="M 915,410 C 935,390 965,305 975,290 C 975,325 940,425 940,445 C 955,425 1020,270 1055,245 C 1075,245 1060,315 1030,390 C 1020,425 1035,445 1055,445 C 1075,445 1085,395 1105,395 C 1125,395 1135,440 1150,440"
+                    stroke-width="54"
+                    stroke-dasharray="1100" stroke-dashoffset="1100">
+                <animate attributeName="stroke-dashoffset" from="1100" to="0" dur="1.1s" begin="5.75s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.4 0 0.2 1" />
+              </path>
+
+              <!-- 7. Underline sweeping flourish + t crossbar (6.85s -> 8.0s) -->
+              <path class="sig-mask-stroke"
+                    d="M 500,485 C 650,475 800,465 950,440 C 1060,420 1150,395 1250,365 M 915,365 L 1005,355"
+                    stroke-width="56"
+                    stroke-dasharray="1000" stroke-dashoffset="1000">
+                <animate attributeName="stroke-dashoffset" from="1000" to="0" dur="1.15s" begin="6.85s" fill="freeze"
+                         calcMode="spline" keyTimes="0; 1" keySplines="0.2 0 0.1 1" />
+              </path>
+
+              <!-- Permanent Solid White Reveal at 8.0s (100% crisp retina unclipped freeze) -->
               <rect class="sig-full-reveal" width="1256" height="552" fill="white" opacity="0">
-                <animate attributeName="opacity"
-                         from="0" to="1"
-                         dur="0.2s"
-                         begin="2.82s"
-                         fill="freeze" />
+                <animate attributeName="opacity" from="0" to="1" dur="0.25s" begin="8.0s" fill="freeze" />
               </rect>
             </mask>
           </defs>
-          <image href="assets/signature.png?v=human_flow_v11" id="heroSignatureImg" x="0" y="0" width="1256" height="552" mask="url(#sigHandwriteMask)" />
+
+          <!-- Base Signature Image masked by the exact video motion sequence -->
+          <image href="assets/signature.png?v=spark_motion_v12" id="heroSignatureImg" x="0" y="0" width="1256" height="552" mask="url(#sigHandwriteMask)" />
+
+          <!-- ======================================================================
+               GLOWING GOLDEN LIGHT SPARK / LENS FLARE (Following Pen Tip from Video)
+               ====================================================================== -->
+          <g id="sparkFlareGroup" filter="url(#sparkGlow)">
+            <!-- 4-pointed radiant diamond star flare -->
+            <path d="M 0,-30 Q 0,0 30,0 Q 0,0 0,30 Q 0,0 -30,0 Q 0,0 0,-30" fill="url(#starFlareGrad)" />
+            <!-- Soft wide golden aura -->
+            <circle r="22" fill="url(#sparkCenter)" />
+            <!-- Intense white-hot core -->
+            <circle r="6" fill="#ffffff" />
+            <circle r="3" fill="#ffffff" />
+
+            <!-- Sparkling mini glitter stars -->
+            <circle cx="-14" cy="10" r="1.5" fill="#ffd97d" opacity="0.8" />
+            <circle cx="16" cy="-8" r="1.8" fill="#ffffff" opacity="0.9" />
+            <circle cx="8" cy="15" r="1.2" fill="#ffd97d" opacity="0.7" />
+            <circle cx="-10" cy="-14" r="1.4" fill="#ffffff" opacity="0.8" />
+
+            <!-- Spark Opacity Lifecycle: Active while writing, dissolves at 8.0s -->
+            <animate attributeName="opacity"
+                     values="0; 1; 1; 0.9; 1; 0.95; 1; 1; 0"
+                     keyTimes="0; 0.01; 0.28; 0.32; 0.75; 0.82; 0.92; 0.96; 1"
+                     dur="8.3s"
+                     begin="0.1s"
+                     fill="freeze" />
+
+            <!-- Spark Motion Timeline matching the pen tip across all 7 steps -->
+            <animateMotion dur="1.2s" begin="0.1s" fill="freeze" calcMode="spline" keyTimes="0; 1" keySplines="0.4 0 0.2 1"
+              path="M 365,110 C 415,65 425,28 385,20 C 315,12 190,65 135,115 C 95,150 140,185 235,185 C 295,185 240,245 175,270 C 105,295 30,310 30,335 C 30,355 100,340 185,295 C 255,260 295,230 335,210" />
+
+            <animateMotion dur="1.2s" begin="1.3s" fill="freeze" calcMode="spline" keyTimes="0; 1" keySplines="0.4 0 0.2 1"
+              path="M 335,210 C 355,190 375,170 395,170 C 410,170 415,190 415,210 C 425,185 450,165 475,170 C 495,175 470,215 455,215 C 475,185 500,175 525,180 C 540,185 545,215 540,215 C 555,185 570,175 585,175 C 600,175 605,200 595,250 C 585,290 550,325 515,315 C 485,305 530,250 565,235 C 615,215 675,180 740,165 C 800,150 860,152 900,155" />
+
+            <animateMotion dur="1.0s" begin="2.55s" fill="freeze" calcMode="spline" keyTimes="0; 1" keySplines="0.35 0 0.2 1"
+              path="M 105,535 C 160,460 240,360 330,285 C 370,250 395,240 395,260 C 395,290 355,380 320,445" />
+
+            <animateMotion dur="1.2s" begin="3.55s" fill="freeze" calcMode="spline" keyTimes="0; 1" keySplines="0.4 0 0.2 1"
+              path="M 135,430 C 220,395 320,380 405,370 C 430,368 450,335 470,340 C 485,345 490,395 490,410 C 500,370 520,345 540,350 C 555,355 550,405 550,415 C 560,370 580,350 605,355 C 625,360 625,410 625,420 C 640,390 660,345 685,305 C 675,350 645,435 625,495" />
+
+            <animateMotion dur="1.0s" begin="4.75s" fill="freeze" calcMode="spline" keyTimes="0; 1" keySplines="0.4 0 0.2 1"
+              path="M 680,310 C 715,260 795,245 830,280 C 855,310 820,355 765,365 C 720,375 680,375 660,385 C 695,410 770,445 840,465 C 870,395 895,395 905,430 C 910,445 895,455 885,455 C 870,455 885,425 915,410" />
+
+            <animateMotion dur="1.1s" begin="5.75s" fill="freeze" calcMode="spline" keyTimes="0; 1" keySplines="0.4 0 0.2 1"
+              path="M 915,410 C 935,390 965,305 975,290 C 975,325 940,425 940,445 C 955,425 1020,270 1055,245 C 1075,245 1060,315 1030,390 C 1020,425 1035,445 1055,445 C 1075,445 1085,395 1105,395 C 1125,395 1135,440 1150,440" />
+
+            <animateMotion dur="1.15s" begin="6.85s" fill="freeze" calcMode="spline" keyTimes="0; 1" keySplines="0.2 0 0.1 1"
+              path="M 500,485 C 650,475 800,465 950,440 C 1060,420 1150,395 1250,365" />
+          </g>
         </svg>
         <div class="hero-signature-fallback" id="heroSignatureFallback" style="display: none;">Srey ArunRatha</div>
       </div>
@@ -331,6 +442,6 @@
   </div>
 
   <!-- Main JavaScript Controller -->
-  <script src="js/main.js?v=human_flow_v11"></script>
+  <script src="js/main.js?v=video_spark_v13"></script>
 </body>
 </html>
