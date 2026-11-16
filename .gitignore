@@ -1,5 +1,13 @@
 # Test and scratch files
 test_fonts.html
+*.ps1
+!serve.ps1
+*.html
+!index.html
+*.png
+!assets/**
+reference_video.mp4
+frame_dom.txt
 
 # OS metadata
 Thumbs.db
@@ -13,4 +21,3 @@ $RECYCLE.BIN/
 .idea/
 *.sublime-project
 *.sublime-workspace
-

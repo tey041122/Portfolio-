@@ -233,7 +233,7 @@ a:focus-visible, button:focus-visible {
   top: 0;
   left: 0;
   width: 100%;
-  height: 540px;
+  height: 420px;
   background-image: var(--portrait-image);
   background-size: cover;
   background-position: var(--portrait-position, center top);
@@ -248,7 +248,7 @@ a:focus-visible, button:focus-visible {
   top: 0;
   left: 0;
   width: 100%;
-  height: 540px;
+  height: 420px;
   z-index: 2;
   pointer-events: none;
 }
@@ -260,7 +260,7 @@ a:focus-visible, button:focus-visible {
   top: 0;
   left: 0;
   width: 100%;
-  height: 120px;
+  height: 100px;
   background: linear-gradient(180deg, rgba(5, 13, 25, 0.75) 0%, rgba(5, 13, 25, 0.15) 60%, transparent 100%);
 }
 
@@ -271,12 +271,12 @@ a:focus-visible, button:focus-visible {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 240px;
+  height: 180px;
   background: linear-gradient(
     180deg,
     rgba(5, 13, 25, 0) 0%,
     rgba(5, 13, 25, 0.45) 30%,
-    rgba(5, 13, 25, 0.9) 65%,
+    rgba(5, 13, 25, 0.9) 70%,
     #050d19 100%
   );
 }
@@ -287,7 +287,7 @@ a:focus-visible, button:focus-visible {
   top: 0;
   left: 0;
   width: 100%;
-  height: 540px;
+  height: 420px;
   z-index: 3;
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 28%, transparent 62%, rgba(5, 13, 25, 0.35) 100%);
@@ -299,85 +299,87 @@ a:focus-visible, button:focus-visible {
   z-index: 10;
   width: 100%;
   max-width: 360px;
-  margin: 450px auto 0;
+  margin: 330px auto 0;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Executive Title: C H A I R M A N  &  F O U N D E R */
-.hero-executive-title {
-  font-family: var(--font-sans);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: var(--text-white);
-  margin-bottom: 0.3rem;
-  line-height: 1.4;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95);
-}
-
-.gold-amp {
-  color: #dfa93e;
-  font-weight: 700;
-  margin: 0 0.16em;
-  font-size: 1.05em;
-  text-shadow: 0 0 10px rgba(223, 169, 62, 0.4);
-}
-
-/* Main Signature Presentation: Srey ArunRatha with Single-Play Handwriting Reveal */
-.hero-signature-wrap {
+/* Authentic Video Signature Presentation (Replicating Reference Video) */
+.hero-signature-video-wrap {
   position: relative;
-  width: min(325px, 86vw);
-  height: auto;
-  aspect-ratio: 1256 / 552;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0.1rem auto 0.4rem;
+  width: min(340px, 92vw);
+  aspect-ratio: 16 / 9;
+  margin: 0 auto 0.5rem;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.25s ease;
 }
 
-.hero-signature-wrap:hover .hero-signature-svg {
-  transform: scale(1.02);
+.hero-signature-video-wrap:hover {
+  transform: scale(1.015);
 }
 
-.hero-signature-svg {
+.hero-signature-video,
+.hero-signature-fallback-img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
   display: block;
+  mix-blend-mode: screen;
+  filter: contrast(1.7) brightness(1.15);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 12%, black 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, black 12%, black 100%);
+  pointer-events: none;
 }
 
-.sig-mask-stroke {
-  stroke: white;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
+.hero-signature-fallback-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  mix-blend-mode: screen;
 }
 
-.hero-signature-fallback {
-  font-family: var(--font-signature);
-  font-size: 2.6rem;
-  color: var(--text-white);
-  line-height: 1.1;
-  font-weight: 400;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
-  white-space: nowrap;
+/* Subtle tap-to-replay indicator */
+.signature-replay-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(228, 172, 65, 0.7);
+  background: rgba(5, 13, 25, 0.65);
+  padding: 3px 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(228, 172, 65, 0.25);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
 }
 
-/* Short Gold Decorative Horizontal Line Underneath */
-.gold-divider-short {
-  width: 34px;
-  height: 3.5px;
-  background: linear-gradient(90deg, #dfa93e 0%, #f7d483 100%);
-  margin: 0.35rem auto 1.1rem;
-  border-radius: 2px;
-  box-shadow: 0 0 10px rgba(223, 169, 62, 0.4);
+.hero-signature-video-wrap:hover .signature-replay-hint,
+.hero-signature-video-wrap.is-ended .signature-replay-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.signature-replay-hint svg {
+  width: 11px;
+  height: 11px;
+}
   transform-origin: center;
   transform: scaleX(1);
   opacity: 1;
@@ -693,10 +695,10 @@ a:focus-visible, button:focus-visible {
   .hero-portrait,
   .hero-gradient-overlay,
   .hero-vignette {
-    height: 480px;
+    height: 380px;
   }
   .hero-content {
-    margin-top: 400px;
+    margin-top: 300px;
   }
 }
 
@@ -785,13 +787,9 @@ a:focus-visible, button:focus-visible {
     order: 1;
   }
 
-  .hero-signature-wrap {
+  .hero-signature-video-wrap {
     margin-left: 0;
-    justify-content: flex-start;
-  }
-
-  .gold-divider-short {
-    margin-left: 0;
+    max-width: 440px;
   }
 
   .hero-tagline {

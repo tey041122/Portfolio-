@@ -128,176 +128,71 @@ function applyPortfolioConfiguration() {
 }
 
 /* --------------------------------------------------------------------------
-   3.1. SIGNATURE HANDWRITING MOTION CONTROLLER (SINGLE-PLAY + TAP-TO-REPLAY)
-   Full cross-browser letter-by-letter reveal synchronized with the golden
-   lens flare spark, following the exact motion choreography of the video.
+   3.1. SIGNATURE HANDWRITING MOTION CONTROLLER (AUTHENTIC VIDEO SYNC)
+   Plays the authentic video handwriting motion with sparkling golden lens
+   flare and particle trails directly from the reference video.
+   Smooth single-play on page load, freezes on the crisp completed signature,
+   and seamlessly replays when tapped or clicked.
    -------------------------------------------------------------------------- */
 function initSignatureAnimation() {
-  const svg = document.getElementById('heroSignatureSvg');
-  const sigImg = document.getElementById('heroSignatureImg');
-  const spark = document.getElementById('sparkFlareGroup');
-  const sigWrap = document.getElementById('signatureWrap');
-  if (!svg || !sigImg) return;
+  const video = document.getElementById('heroSignatureVideo');
+  const wrap = document.getElementById('signatureWrap');
+  if (!video || !wrap) return;
 
-  const maskSequence = [
-    { id: 'sigMask1', start: 0.1, end: 1.3, dur: 1.2 }, // S
-    { id: 'sigMask2', start: 1.3, end: 2.6, dur: 1.3 }, // rey + flourish
-    { id: 'sigMask3', start: 2.7, end: 3.9, dur: 1.2 }, // A (full loop + apex + descender)
-    { id: 'sigMask4', start: 3.9, end: 5.1, dur: 1.2 }, // A crossbar + run + R stem
-    { id: 'sigMask5', start: 5.1, end: 6.1, dur: 1.0 }, // R bowl & kicking leg + a
-    { id: 'sigMask6', start: 6.1, end: 7.1, dur: 1.0 }, // t stem + h + a
-    { id: 'sigMask7', start: 7.1, end: 8.2, dur: 1.1 }  // Underline flourish + crossbar
-  ];
+  // Guarantee cross-browser inline autoplay without iOS audio policy blocks
+  video.muted = true;
+  video.defaultMuted = true;
+  video.playsInline = true;
+  video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
 
-  // Pre-calculate path lengths and cache elements
-  const paths = maskSequence.map(item => {
-    const el = document.getElementById(item.id);
-    let len = 1200;
-    if (el && typeof el.getTotalLength === 'function') {
-      try { len = el.getTotalLength(); } catch (_) {}
+  function playVideo() {
+    wrap.classList.remove('is-ended');
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.warn('Signature video autoplay deferred by browser policy:', err);
+      });
     }
-    if (el) {
-      el.style.strokeDasharray = `${len} ${len}`;
-      el.style.strokeDashoffset = `${len}`;
+  }
+
+  // Attempt autoplay immediately
+  playVideo();
+
+  // Once video reaches completion (holds complete signature, title, and gold bar),
+  // freeze cleanly on the final state
+  video.addEventListener('timeupdate', () => {
+    // Reference video is ~10s. At 9.8s, the full signature and title are held complete.
+    if (video.currentTime >= 9.8 && !video.paused) {
+      video.pause();
+      wrap.classList.add('is-ended');
     }
-    return { ...item, el, len };
   });
 
-  let startTime = null;
-  let animId = null;
+  video.addEventListener('ended', () => {
+    wrap.classList.add('is-ended');
+  });
 
-  // Smooth quadratic ease-in-out
-  function easeInOut(t) {
-    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-  }
+  // Tap or click anywhere on the signature to replay from the beginning
+  wrap.addEventListener('click', () => {
+    video.currentTime = 0;
+    playVideo();
+  });
 
-  function updateToTime(elapsed) {
-    // Update each handwriting stroke mask
-    paths.forEach(p => {
-      if (!p.el) return;
-      if (elapsed < p.start) {
-        p.el.style.strokeDashoffset = `${p.len}`;
-      } else if (elapsed >= p.end) {
-        p.el.style.strokeDashoffset = '0';
-      } else {
-        const progress = Math.min(1, Math.max(0, (elapsed - p.start) / p.dur));
-        const eased = easeInOut(progress);
-        const currentOffset = p.len * (1 - eased);
-        p.el.style.strokeDashoffset = `${currentOffset.toFixed(1)}`;
-
-        // Attach golden spark flare directly to the active pen writing tip
-        if (spark && typeof p.el.getPointAtLength === 'function') {
-          try {
-            const pt = p.el.getPointAtLength(p.len * eased);
-            spark.setAttribute('transform', `translate(${pt.x.toFixed(1)}, ${pt.y.toFixed(1)})`);
-            spark.style.opacity = '1';
-          } catch (_) {}
-        }
-      }
-    });
-
-    // Swift smooth transition between flourish tip of 'Srey' (945, 145) and start of 'ArunRatha' (40, 300)
-    if (elapsed >= 2.6 && elapsed < 2.7 && spark) {
-      const tGlide = (elapsed - 2.6) / 0.1;
-      const gx = 945 + (40 - 945) * tGlide;
-      const gy = 145 + (300 - 145) * tGlide;
-      spark.setAttribute('transform', `translate(${gx.toFixed(1)}, ${gy.toFixed(1)})`);
-      spark.style.opacity = (1 - tGlide * 0.35).toFixed(2);
+  wrap.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      video.currentTime = 0;
+      playVideo();
     }
+  });
 
-    // Touchdown flare at start (0.0s -> 0.1s)
-    if (elapsed < 0.1 && spark) {
-      const p1 = paths[0];
-      if (p1 && p1.el && typeof p1.el.getPointAtLength === 'function') {
-        try {
-          const pt = p1.el.getPointAtLength(0);
-          spark.setAttribute('transform', `translate(${pt.x.toFixed(1)}, ${pt.y.toFixed(1)})`);
-        } catch (_) {}
-      }
-      spark.style.opacity = (elapsed / 0.1).toFixed(2);
+  // Re-trigger playback if tab becomes active after backgrounding
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && video.paused && video.currentTime < 1.0) {
+      playVideo();
     }
-
-    // Gentle spark dissolve after underline finish (8.2s -> 8.5s)
-    if (elapsed >= 8.2 && elapsed < 8.5 && spark) {
-      const fade = (elapsed - 8.2) / 0.3;
-      spark.style.opacity = Math.max(0, 1 - fade).toFixed(2);
-    }
-
-    // Invalidate WebKit mask cache every frame to guarantee 60fps on iOS Safari
-    svg.setAttribute('data-frame-tick', Math.floor(elapsed * 15).toString());
-
-    if (elapsed >= 8.5) {
-      // 100% Crisp Retina Clarity Permanent Freeze
-      if (spark) spark.style.opacity = '0';
-      paths.forEach(p => { if (p.el) p.el.style.strokeDashoffset = '0'; });
-      // Remove mask attribute entirely to render 100% unmasked full retina crispness
-      sigImg.removeAttribute('mask');
-      sigImg.style.opacity = '1';
-    } else {
-      if (!sigImg.hasAttribute('mask')) {
-        sigImg.setAttribute('mask', 'url(#sigHandwriteMask)');
-      }
-    }
-  }
-
-  // Expose global controller hook for verification and automated timelines
-  window.setSignatureProgress = updateToTime;
-
-  function renderFrame(timestamp) {
-    if (!startTime) startTime = timestamp || performance.now() || Date.now();
-    const now = timestamp || performance.now() || Date.now();
-    const elapsed = (now - startTime) / 1000; // in seconds
-
-    updateToTime(elapsed);
-
-    if (elapsed < 8.5) {
-      animId = requestAnimationFrame(renderFrame);
-    }
-  }
-
-  function playAnimation() {
-    if (animId) cancelAnimationFrame(animId);
-    startTime = null;
-    sigImg.setAttribute('mask', 'url(#sigHandwriteMask)');
-    paths.forEach(p => {
-      if (p.el) p.el.style.strokeDashoffset = `${p.len}`;
-    });
-    if (spark) spark.style.opacity = '0';
-
-    // Also restart SMIL animations for declarative synchronization
-    try {
-      const anims = svg.querySelectorAll('animate, animateMotion');
-      if (anims && anims.length > 0) {
-        anims.forEach(a => {
-          if (typeof a.beginElement === 'function') {
-            try { a.beginElement(); } catch (_) {}
-          }
-        });
-      }
-      if (typeof svg.setCurrentTime === 'function') {
-        svg.setCurrentTime(0);
-      }
-    } catch (_) {}
-
-    animId = requestAnimationFrame(renderFrame);
-  }
-
-  // Tap-to-replay
-  if (sigWrap) {
-    sigWrap.addEventListener('click', () => {
-      playAnimation();
-    });
-  }
-
-  // Check if previewing a specific time via URL query ?t=4.5
-  const urlParams = new URLSearchParams(window.location.search);
-  const testT = urlParams.get('t');
-  if (testT !== null) {
-    updateToTime(parseFloat(testT));
-  } else {
-    // Trigger initial play
-    playAnimation();
-  }
+  });
 }
 
 /**

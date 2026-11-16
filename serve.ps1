@@ -21,6 +21,7 @@ $MimeTypes = @{
     ".ico"  = "image/x-icon"
     ".vcf"  = "text/vcard; charset=utf-8"
     ".txt"  = "text/plain; charset=utf-8"
+    ".mp4"  = "video/mp4"
 }
 
 $listener = $null
@@ -73,10 +74,10 @@ while ($true) {
 
     try {
         $stream = $client.GetStream()
-        $stream.ReadTimeout = 3000
-        $stream.WriteTimeout = 3000
+        $stream.ReadTimeout = 5000
+        $stream.WriteTimeout = 5000
         
-        $buffer = New-Object byte[] 4096
+        $buffer = New-Object byte[] 8192
         $bytesRead = $stream.Read($buffer, 0, $buffer.Length)
         if ($bytesRead -gt 0) {
             $requestText = [System.Text.Encoding]::ASCII.GetString($buffer, 0, $bytesRead)
@@ -105,18 +106,64 @@ while ($true) {
                             $contentType = $MimeTypes[$ext]
                         }
 
-                        $fileBytes = [System.IO.File]::ReadAllBytes($fullPath)
-                        $header = 'HTTP/1.1 200 OK' + $crlf +
-                                  'Content-Type: ' + $contentType + $crlf +
-                                  'Content-Length: ' + $fileBytes.Length + $crlf +
-                                  'Access-Control-Allow-Origin: *' + $crlf +
-                                  'Cache-Control: no-cache' + $crlf +
-                                  'Connection: close' + $crlf2
-                        
-                        $headerBytes = [System.Text.Encoding]::UTF8.GetBytes($header)
-                        $stream.Write($headerBytes, 0, $headerBytes.Length)
-                        $stream.Write($fileBytes, 0, $fileBytes.Length)
-                        $stream.Flush()
+                        $fileLength = (New-Object System.IO.FileInfo($fullPath)).Length
+
+                        # Check for Range header
+                        $rangeHeader = $null
+                        foreach ($line in ($requestText -split "`r?`n")) {
+                            if ($line -match '^Range:\s*bytes=(\d*)-(\d*)') {
+                                $rangeHeader = $line
+                                break
+                            }
+                        }
+
+                        if ($rangeHeader -and ($rangeHeader -match '^Range:\s*bytes=(\d*)-(\d*)')) {
+                            $startStr = $matches[1]
+                            $endStr = $matches[2]
+                            $start = if ([string]::IsNullOrEmpty($startStr)) { 0 } else { [int64]$startStr }
+                            $end = if ([string]::IsNullOrEmpty($endStr)) { $fileLength - 1 } else { [int64]$endStr }
+                            if ($end -ge $fileLength) { $end = $fileLength - 1 }
+                            $lengthToSend = $end - $start + 1
+
+                            $header = 'HTTP/1.1 206 Partial Content' + $crlf +
+                                      'Content-Type: ' + $contentType + $crlf +
+                                      'Accept-Ranges: bytes' + $crlf +
+                                      'Content-Range: bytes ' + $start + '-' + $end + '/' + $fileLength + $crlf +
+                                      'Content-Length: ' + $lengthToSend + $crlf +
+                                      'Access-Control-Allow-Origin: *' + $crlf +
+                                      'Connection: close' + $crlf2
+
+                            $headerBytes = [System.Text.Encoding]::UTF8.GetBytes($header)
+                            $stream.Write($headerBytes, 0, $headerBytes.Length)
+
+                            $fs = [System.IO.File]::OpenRead($fullPath)
+                            $fs.Seek($start, [System.IO.SeekOrigin]::Begin) | Out-Null
+                            $chunkBuf = New-Object byte[] 65536
+                            $remaining = $lengthToSend
+                            while ($remaining -gt 0) {
+                                $toRead = [int][Math]::Min($chunkBuf.Length, $remaining)
+                                $read = $fs.Read($chunkBuf, 0, $toRead)
+                                if ($read -le 0) { break }
+                                $stream.Write($chunkBuf, 0, $read)
+                                $remaining -= $read
+                            }
+                            $fs.Close()
+                            $stream.Flush()
+                        } else {
+                            $fileBytes = [System.IO.File]::ReadAllBytes($fullPath)
+                            $header = 'HTTP/1.1 200 OK' + $crlf +
+                                      'Content-Type: ' + $contentType + $crlf +
+                                      'Accept-Ranges: bytes' + $crlf +
+                                      'Content-Length: ' + $fileBytes.Length + $crlf +
+                                      'Access-Control-Allow-Origin: *' + $crlf +
+                                      'Cache-Control: no-cache' + $crlf +
+                                      'Connection: close' + $crlf2
+                            
+                            $headerBytes = [System.Text.Encoding]::UTF8.GetBytes($header)
+                            $stream.Write($headerBytes, 0, $headerBytes.Length)
+                            $stream.Write($fileBytes, 0, $fileBytes.Length)
+                            $stream.Flush()
+                        }
                     } else {
                         $body = '<html><body><h1>404 Not Found</h1></body></html>'
                         $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes($body)
