@@ -3,151 +3,88 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#050d19" />
+  <meta name="theme-color" content="#0a0806" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="format-detection" content="telephone=no" />
 
   <title>Srey ArunRatha — Chairman &amp; Founder</title>
-  <meta name="description" content="Executive record and leadership profile of Srey ArunRatha — Chairman &amp; Founder. Your speech makes people trust you in a while but your character makes people trust you forever." />
-  <meta name="keywords" content="Srey ArunRatha, Chairman, Founder, Executive, Leadership, Investment, Enterprise" />
+  <meta name="description" content="Digital card of Srey ArunRatha, Chairman &amp; Founder of LBC, Magic Iron, BG, Statesman and Saravan. Call, message or write to him directly." />
   <meta name="author" content="Srey ArunRatha" />
 
-  <!-- Open Graph / Meta -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Srey ArunRatha — Chairman &amp; Founder" />
   <meta property="og:description" content="Your speech makes people trust you in a while but your character makes people trust you forever." />
   <meta property="og:image" content="assets/portrait.jpg" />
 
-  <!-- Luxury Monogram Favicon -->
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
 
-  <!-- Google Fonts: Alex Brush (Signature Script), Cinzel (Executive Serif), Inter (Clean Sans) -->
+  <!-- Fonts: Marcellus (engraved capitals), Manrope (text) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet" />
 
-  <!-- Main Stylesheet (with cache-busting token) -->
-  <link rel="stylesheet" href="css/style.css?v=pen_write_v17" />
+  <link rel="stylesheet" href="css/style.css?v=goldcard_10" />
 
-  <!-- Pen Writing Signature Animation Engine v17 -->
-  <style>
-    /* ── Signature wrap container ── */
-    .hero-signature-wrap {
-      width: min(360px, 94vw);
-      height: auto;
-      aspect-ratio: 560 / 260;
-      margin: 0.2rem auto 0.5rem;
-      position: relative;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    /* ── The SVG that holds the drawn strokes ── */
-    .sig-draw-svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-      overflow: visible;
-    }
-
-    /* ── All signature stroke paths ── */
-    .sig-stroke {
-      fill: none;
-      stroke: #ffffff;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      stroke-width: 5.5;
-      /* dasharray/dashoffset set by JS per path length */
-    }
-
-    /* ── Pen nib cursor ── */
-    #penCursor {
-      position: absolute;
-      width: 24px;
-      height: 24px;
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      z-index: 10;
-    }
-
-    /* ── ambient golden ember canvas ── */
-    .sig-ember-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    .sr-only {
-      position: absolute; width:1px; height:1px; padding:0;
-      margin:-1px; overflow:hidden; clip:rect(0,0,0,0);
-      white-space:nowrap; border:0;
-    }
-  </style>
+  <!-- Motion and reveal states apply only when JavaScript runs -->
+  <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
 
-  <!-- ========================================================================
-       1. GLOBAL FLOATING HEADER (Exact Reference Composition)
-       ======================================================================== -->
-  <header class="site-header" id="siteHeader">
-    <div class="header-inner">
-      <!-- Signature-Style Brand (Left) -->
-      <a href="#hero" class="brand-mark" aria-label="Srey ArunRatha Homepage">
-        <span class="brand-signature">Srey ArunRatha</span>
-        <span class="brand-line" aria-hidden="true"></span>
-      </a>
+  <!-- Gold fill shared by the contact icons -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="goldFill" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#fff6d0"/>
+        <stop offset="0.45" stop-color="#e2bb57"/>
+        <stop offset="1" stop-color="#a67c26"/>
+      </linearGradient>
+    </defs>
+  </svg>
 
-      <!-- Desktop Executive Navigation / Action -->
-      <div class="desktop-header-actions">
-        <button type="button" class="btn-desktop-profile" id="btnDesktopProfile">
-          <span>Executive Profile</span>
-        </button>
-        <button type="button" class="btn-desktop-contact" id="btnDesktopContact">
-          <span>Get in Touch</span>
-        </button>
-      </div>
+  <main>
 
-      <!-- Hamburger Menu Button (Right) -->
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open executive menu" aria-expanded="false" aria-controls="executiveModal">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
-    </div>
-  </header>
+    <!-- ====================================================================
+         1. THE CARD — a 3D gold card that tilts, shines and turns over
+         ==================================================================== -->
+    <section class="stage" id="top">
+      <canvas class="dust" id="dust" aria-hidden="true"></canvas>
 
-  <!-- ========================================================================
-       2. HERO CARD — EXACT MOBILE REFERENCE COMPOSITION
-       ======================================================================== -->
-  <main class="hero-section" id="hero">
-    <!-- Replaceable Background Portrait Layer (Independent from text/design) -->
-    <div class="hero-portrait" id="heroPortrait" aria-label="Portrait of Chairman Srey ArunRatha"></div>
-
-    <!-- Cinematic Multi-Stop Gradients (Seamless dark fade into bottom) -->
-    <div class="hero-gradient-overlay" aria-hidden="true"></div>
-    <div class="hero-vignette" aria-hidden="true"></div>
-
-    <!-- Hero Content Stack (Lower Portion) -->
-    <div class="hero-content">
-      <!-- Semantic Accessible Heading for SEO & Screen Readers -->
       <h1 class="sr-only">Srey ArunRatha — Chairman &amp; Founder</h1>
 
-      <!-- ═══════════════════════════════════════════════════════
-           PEN SIGNATURE WRITING ANIMATION
-           SVG viewBox = 560 × 260 (matches aspect-ratio above)
-           Paths traced from the actual signature lettering.
-           Each <path> is one continuous pen stroke in writing order.
-           JS animates stroke-dashoffset on each path sequentially.
-           ═══════════════════════════════════════════════════════ -->
-      <div class="hero-signature-wrap" id="signatureWrap"
+      <div class="card-scene" id="cardScene">
+        <div class="card-entrance">
+          <div class="card-tilt" id="cardTilt">
+            <div class="card-flip" id="cardFlip">
+
+              <!-- Card thickness -->
+              <span class="card-edge" aria-hidden="true"></span>
+              <span class="card-edge" aria-hidden="true"></span>
+              <span class="card-edge" aria-hidden="true"></span>
+
+              <!-- FRONT -->
+              <div class="card-face card-front">
+                <div class="card-plate">
+                  <img class="card-portrait js-portrait" src="assets/portrait.jpg" alt="Portrait of Srey ArunRatha" />
+                  <span class="card-shade" aria-hidden="true"></span>
+                  <span class="card-sweep card-sweep-tl" aria-hidden="true"></span>
+                  <span class="card-sweep card-sweep-br" aria-hidden="true"></span>
+                  <!-- A thin streak of light that crosses the portrait -->
+                  <span class="card-streak" aria-hidden="true"></span>
+                  <span class="card-dome" aria-hidden="true"></span>
+                  <span class="card-glare" aria-hidden="true"></span>
+                </div>
+                <span class="card-rim" aria-hidden="true"></span>
+
+                <svg class="card-nfc card-float" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                  <path d="M8 11.5a8 8 0 0 1 0 9"></path>
+                  <path d="M13 8a13 13 0 0 1 0 16"></path>
+                  <path d="M18 4.5a18 18 0 0 1 0 23"></path>
+                  <path d="M23 1.5a23 23 0 0 1 0 29"></path>
+                </svg>
+
+      <div class="hero-signature-wrap card-float" id="signatureWrap"
            role="button" tabindex="0"
            title="Tap to replay signature animation"
            aria-label="Srey ArunRatha handwritten signature — tap to replay">
@@ -179,26 +116,6 @@
         <!-- The signature drawing SVG. viewBox matches the hand-traced paths below. -->
         <svg class="sig-draw-svg" id="sigDrawSvg" viewBox="0 0 560 260"
              xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <!-- Ink glow filter -->
-            <filter id="inkGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="2.5" result="blur"/>
-              <feMerge>
-                <feMergeNode in="blur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-            <!-- Nib tip bright flare filter -->
-            <filter id="nibFlare" x="-80%" y="-80%" width="260%" height="260%">
-              <feGaussianBlur stdDeviation="5" result="b1"/>
-              <feGaussianBlur stdDeviation="12" result="b2"/>
-              <feMerge>
-                <feMergeNode in="b2"/>
-                <feMergeNode in="b1"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
 
           <!-- ══ STROKE GROUP — all strokes rendered with ink glow ══ -->
                                                   <mask id="sigMask">
@@ -223,183 +140,182 @@
             </g>
           </mask>
           <!-- Base original pristine signature revealed by progressive mask -->
-          <image id="maskedSigImg" href="assets/signature.png" x="0" y="0" width="560" height="260" mask="url(#sigMask)" />
-          <!-- Direct SVG letterform stroke group (for spark path following) -->
-          <g id="sigStrokeGroup" opacity="0">
-            <path id="wstroke_1" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 162.7,47.6 L 187.7,26.4 L 190.8,17.4 L 187.3,11.3 L 169.4,8.0 L 141.8,13.2 L 110.1,25.4 L 80.7,42.9 L 65.5,57.5 L 63.8,64.5 L 67.3,70.2 L 86.9,75.8 L 146.7,82.4 L 155.6,88.6 L 155.2,98.9 L 144.9,111.2 L 123.1,127.6 L 77.1,151.7 L 34.8,164.4 L 16.9,163.9 L 12.9,160.6 L 12.5,154.0 L 15.6,148.4 L 34.8,130.0 L 63.8,112.1 L 87.8,102.7" />
-            <path id="wstroke_2" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 192.2,65.5 L 165.4,90.9" />
-            <path id="wstroke_3" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 214.9,78.2 L 192.2,87.1 L 191.3,82.4 L 198.4,71.6 L 197.1,67.4 L 192.2,65.5 L 194.8,58.4" />
-            <path id="wstroke_4" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 222.9,71.6 L 227.8,64.1 L 235.4,63.6 L 233.2,69.7" />
-            <path id="wstroke_5" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 222.9,71.6 L 215.4,78.2 L 218.9,86.2 L 248.8,75.8 L 257.3,65.9 L 248.3,77.2 L 249.7,82.0 L 255.0,81.5 L 270.6,72.5 L 277.8,64.5 L 270.2,73.9 L 266.6,85.7 L 257.3,95.6 L 267.1,86.2 L 300.5,74.4 L 326.4,69.7 L 347.8,71.1" />
-            <path id="wstroke_6" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 256.8,96.1 L 237.6,129.1 L 226.5,139.4 L 218.9,140.4 L 218.5,132.8 L 225.6,120.1 L 243.9,102.2 L 256.4,95.6" />
-            <path id="wstroke_7" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 56.6,255.8 L 112.8,180.4 L 109.7,178.5 L 93.2,181.8 L 61.1,193.1" />
-            <path id="wstroke_8" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 113.2,179.9 L 122.2,174.7 L 123.9,170.0 L 166.8,127.2 L 185.0,114.9 L 161.0,166.3 L 161.4,169.6 L 172.5,169.6 L 122.6,174.3" />
-            <path id="wstroke_9" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 135.1,225.6 L 156.5,171.9 L 162.7,188.4 L 190.4,158.3 L 186.4,166.7 L 192.2,169.6 L 186.8,185.6 L 208.2,176.6 L 217.6,165.8 L 226.5,175.7 L 209.6,183.7 L 207.8,177.6 L 227.4,176.2 L 228.3,181.3 L 231.0,182.3 L 257.7,174.3 L 268.0,167.7 L 270.2,168.6 L 269.7,180.4 L 295.2,171.0 L 300.1,173.3" />
-            <path id="wstroke_10" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 235.0,166.7 L 227.4,175.2 L 245.7,181.3 L 255.9,165.8" />
-            <path id="wstroke_11" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 282.2,141.8 L 284.9,135.2 L 295.2,128.6 L 317.0,120.1 L 331.7,117.8 L 347.8,118.2 L 359.4,122.5 L 364.7,127.2 L 366.9,138.0 L 361.1,149.3 L 342.0,164.4 L 318.3,173.3 L 308.1,175.2 L 302.7,172.9 L 329.0,131.9" />
-            <path id="wstroke_12" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 279.1,213.8 L 300.1,173.8 L 307.2,175.2 L 321.0,189.8 L 349.6,208.2 L 360.3,211.5 L 374.5,211.0" />
-            <path id="wstroke_13" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 371.0,168.2 L 365.6,163.9 L 360.3,165.8 L 351.3,173.3 L 350.4,179.5 L 356.2,179.5 L 369.6,172.4 L 374.1,180.4 L 391.9,174.7 L 406.6,150.7 L 388.3,151.7 L 407.5,150.3 L 412.4,147.4 L 430.7,148.4 L 432.9,150.7 L 446.3,147.0 L 457.9,149.8 L 447.2,144.6 L 466.4,122.9 L 472.2,109.7 L 465.0,111.2 L 454.8,121.5 L 414.6,179.0 L 408.4,179.9 L 397.3,188.9 L 391.5,190.3 L 388.8,187.5 L 391.0,175.7 L 375.4,165.8 L 370.5,171.9" />
-            <path id="wstroke_14" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 413.3,147.0 L 426.2,128.1" />
-            <path id="wstroke_15" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 457.5,176.2 L 440.5,180.4 L 440.5,166.3 L 419.1,174.7" />
-            <path id="wstroke_16" class="sig-mask-path" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 481.5,168.2 L 477.5,163.9 L 469.9,165.3 L 459.2,173.8 L 458.3,178.5 L 465.5,179.5 L 480.2,171.9 L 487.3,164.9 L 480.6,172.9 L 482.4,179.9 L 526.1,172.9 L 547.5,173.8" />
-          </g>
+          <mask id="sigInk">
+            <image id="maskedSigImg" href="assets/signature.png" x="0" y="0" width="560" height="260" mask="url(#sigMask)" />
+          </mask>
+          <linearGradient id="sigGold" x1="0" y1="0" x2="1" y2="0.4">
+            <stop offset="0" stop-color="#e9c96e"/>
+            <stop offset="0.3" stop-color="#fff3c9"/>
+            <stop offset="0.55" stop-color="#d9ae48"/>
+            <stop offset="0.8" stop-color="#fff1bf"/>
+            <stop offset="1" stop-color="#c9992f"/>
+          </linearGradient>
+          <!-- The signature artwork, inked in gold -->
+          <rect width="560" height="260" fill="url(#sigGold)" mask="url(#sigInk)" />
         </svg>
       </div>
 
-      <!-- Executive Title: Below Signature (Exact Composition of Reference Video) -->
-      <div class="hero-executive-title" id="executiveTitle">
-        C H A I R M A N <span class="gold-amp">&amp;</span> F O U N D E R
+                <p class="card-office card-float">Chairman <span>&amp;</span> Founder</p>
+                <span class="card-rule card-float" aria-hidden="true"></span>
+                <p class="card-motto card-float">Vision · Innovation · Success</p>
+
+                <!-- Contact deck: the main actions, inside the card -->
+                <nav class="deck card-float" aria-label="Contact him">
+                  <a class="deck-key social-link-phone" data-contact="phone" href="#contact" hidden>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+                    <span>Call</span>
+                  </a>
+                  <a class="deck-key social-link-telegram" href="https://t.me/arunratha" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.88.03-.24.37-.49 1.02-.75 3.98-1.73 6.64-2.87 7.97-3.44 3.8-1.58 4.59-1.86 5.11-1.87.11 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.18-.04.32z"/></svg>
+                    <span>Telegram</span>
+                  </a>
+                  <a class="deck-key social-link-facebook" href="https://www.facebook.com/share/19figcq498/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                    <span>Facebook</span>
+                  </a>
+                  <a class="deck-key social-link-email" href="mailto:office@arunratha.com">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    <span>Email</span>
+                  </a>
+                </nav>
+
+                <a class="cue card-float" href="#contact" aria-label="More contact details">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+                </a>
+              </div>
+
+              <!-- BACK -->
+              <div class="card-face card-back" aria-hidden="true">
+                <div class="card-plate card-plate-back">
+                  <span class="card-glare" aria-hidden="true"></span>
+                </div>
+                <span class="card-rim" aria-hidden="true"></span>
+
+                <div class="card-back-body card-float">
+                  <p class="back-name foil">Srey ArunRatha</p>
+                  <p class="back-title">Chairman &amp; Founder</p>
+                  <p class="back-ventures">LBC · Magic Iron · BG · Statesman · Saravan</p>
+                  <span class="back-rule" aria-hidden="true"></span>
+
+                  <ul class="back-list">
+                    <li data-contact="phone" hidden>
+                      <a class="back-row social-link-phone" href="#contact">
+                        <span class="back-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span>
+                        <span class="js-phone-value"></span>
+                      </a>
+                    </li>
+                    <li>
+                      <a class="back-row social-link-email" href="mailto:office@arunratha.com">
+                        <span class="back-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+                        <span class="js-email-value">office@arunratha.com</span>
+                      </a>
+                    </li>
+                    <li data-contact="website" hidden>
+                      <a class="back-row js-website-link" href="#contact" target="_blank" rel="noopener noreferrer">
+                        <span class="back-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span>
+                        <span class="js-website-value"></span>
+                      </a>
+                    </li>
+                    <li data-contact="location" hidden>
+                      <span class="back-row">
+                        <span class="back-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg></span>
+                        <span class="js-location-value"></span>
+                      </span>
+                    </li>
+                  </ul>
+
+                  <div class="back-qr js-qr" role="img" aria-label="QR code that opens this page"></div>
+                  <p class="back-scan">Scan to connect</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <span class="card-shadow" aria-hidden="true"></span>
       </div>
 
-      <!-- Short Gold Decorative Line -->
-      <div class="gold-divider-short" id="heroGoldDivider" aria-hidden="true"></div>
+    </section>
 
-      <!-- Personal Statement -->
-      <p class="hero-tagline" id="heroTagline">
-        Your speech makes people trust you in a while but your character makes people trust you forever.
-      </p>
+    <!-- ====================================================================
+         2. CONTACT — four gold keys, one tap each
+         ==================================================================== -->
+    <section class="reach" id="contact">
+      <h2 class="reach-title reveal"><span>His Ventures</span></h2>
 
-      <!-- Primary Action Buttons -->
-      <div class="hero-actions">
-        <!-- Button 1: Explore My Journey -->
-        <a href="#journey" class="btn btn-gold" id="btnExploreJourney">
-          <span>Explore My Journey</span>
-          <svg class="btn-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </a>
-
-        <!-- Button 2: Get in Touch -->
-        <a href="#contact" class="btn btn-outline" id="btnGetInTouch">
-          <span>Get in Touch</span>
-        </a>
+      <!-- The five ventures, as gold coins on an orbit. Built in js/main.js
+           from portfolioConfig.ventures; this list is the fallback. -->
+      <div class="orbit reveal" id="orbit" style="--i: 1">
+        <span class="orbit-rays" aria-hidden="true"></span>
+        <span class="orbit-path" aria-hidden="true"></span>
+        <ol class="orbit-list">
+          <li>LBC</li>
+          <li>Magic Iron</li>
+          <li>BG</li>
+          <li>Statesman</li>
+          <li>Saravan</li>
+        </ol>
       </div>
 
-      <!-- Social Media Circular Icons (5 Items) -->
-      <div class="hero-social-list" aria-label="Executive Social Channels">
-        <!-- 1. Telegram -->
-        <a href="https://t.me/arunratha" target="_blank" rel="noopener noreferrer" class="social-circle-link social-link-telegram" aria-label="Telegram (@arunratha)" title="Telegram (@arunratha)">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.88.03-.24.37-.49 1.02-.75 3.98-1.73 6.64-2.87 7.97-3.44 3.8-1.58 4.59-1.86 5.11-1.87.11 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.18-.04.32z"/>
-          </svg>
-        </a>
-
-        <!-- 2. LinkedIn -->
-        <a class="social-circle-link social-link-linkedin" aria-label="LinkedIn" title="LinkedIn">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-          </svg>
-        </a>
-
-        <!-- 3. Facebook -->
-        <a href="https://www.facebook.com/share/19figcq498/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="social-circle-link social-link-facebook" aria-label="Facebook Page" title="Facebook Page">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/>
-          </svg>
-        </a>
-
-        <!-- 4. YouTube -->
-        <a class="social-circle-link social-link-youtube" aria-label="YouTube" title="YouTube">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M21.58 7.19a2.5 2.5 0 0 0-1.76-1.77C18.26 5 12 5 12 5s-6.26 0-7.82.42a2.5 2.5 0 0 0-1.76 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81a2.5 2.5 0 0 0 1.76 1.77C5.74 19 12 19 12 19s6.26 0 7.82-.42a2.5 2.5 0 0 0 1.76-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/>
-          </svg>
-        </a>
-
-        <!-- 5. Email -->
-        <a class="social-circle-link social-link-email" aria-label="Email" title="Official Email">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-          </svg>
-        </a>
+      <div class="orbit-caption reveal" style="--i: 2" aria-live="polite">
+        <p class="orbit-name foil" id="orbitName">Five ventures</p>
+        <p class="orbit-role">Chairman &amp; Founder</p>
+        <div class="orbit-dots" id="orbitDots" aria-hidden="true"></div>
       </div>
-    </div>
+
+      <h2 class="reach-title reveal" style="--i: 3"><span>Connect With Me</span></h2>
+
+      <nav class="deck reveal" aria-label="Contact him" style="--i: 3">
+        <a class="deck-key social-link-phone" data-contact="phone" href="#contact" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+          <span>Call</span>
+        </a>
+        <a class="deck-key social-link-telegram" href="https://t.me/arunratha" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.88.03-.24.37-.49 1.02-.75 3.98-1.73 6.64-2.87 7.97-3.44 3.8-1.58 4.59-1.86 5.11-1.87.11 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.18-.04.32z"/></svg>
+          <span>Telegram</span>
+        </a>
+        <a class="deck-key social-link-facebook" href="https://www.facebook.com/share/19figcq498/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+          <span>Facebook</span>
+        </a>
+        <a class="deck-key social-link-email" href="mailto:office@arunratha.com">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          <span>Email</span>
+        </a>
+      </nav>
+
+      <div class="reach-actions reveal">
+        <button type="button" class="pill pill-gold" id="saveContact">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0"/><path d="M19 8v6M16 11h6"/></svg>
+          <span class="pill-label">Save Contact</span>
+        </button>
+        <button type="button" class="pill pill-line" id="shareQr">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M8 12h8"/></svg>
+          <span class="pill-label">Share QR Code</span>
+        </button>
+      </div>
+      <p class="save-status" role="status" aria-live="polite"></p>
+
+      <footer class="reach-foot reveal">
+        <span class="reach-mark" aria-hidden="true"></span>
+        <p class="reach-motto">Build a better tomorrow together</p>
+      </footer>
+    </section>
+
   </main>
 
-  <!-- ========================================================================
-       3. LUXURY EXECUTIVE OVERLAY MODAL / DRAWER
-       ======================================================================== -->
-  <div class="executive-modal" id="executiveModal" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="modal-backdrop" id="modalBackdrop"></div>
-    <div class="modal-card">
-      <!-- Close button -->
-      <button type="button" class="modal-close-btn" id="modalCloseBtn" aria-label="Close dialog">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-
-      <!-- Modal Content Header -->
-      <div class="modal-header">
-        <span class="modal-signature">Srey ArunRatha</span>
-        <div class="modal-title">CHAIRMAN &amp; FOUNDER</div>
-        <div class="modal-gold-line"></div>
-      </div>
-
-      <!-- Tab Content or Sections in Modal -->
-      <div class="modal-body" id="modalBody">
-        <div class="modal-bio-quote">
-          “Your speech makes people trust you in a while but your character makes people trust you forever.”
-        </div>
-
-        <div class="modal-info-block">
-          <h4 class="modal-section-heading">Executive Leadership</h4>
-          <p class="modal-text">
-            Chairman &amp; Founder of
-          </p>
-          <div class="modal-locations">
-            <span>LBC</span> • <span>Magic Iron</span> • <span>BG</span> • <span>Statesman</span> • <span>Saravan</span>
-          </div>
-        </div>
-
-        <div class="modal-actions-stack">
-          <!-- Download vCard Button -->
-          <button type="button" class="btn btn-gold download-vcard-btn" style="width: 100%;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span>Save Contact vCard (.vcf)</span>
-          </button>
-
-          <!-- Direct Email Button -->
-          <a href="mailto:office@arunratha.com" class="btn btn-outline" id="modalEmailBtn" style="width: 100%;">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
-            </svg>
-            <span>Direct Email Inquiry</span>
-          </a>
-        </div>
-
-        <!-- Social Channels Inside Drawer -->
-        <div class="modal-socials-wrap">
-          <div class="modal-social-label">OFFICIAL CHANNELS</div>
-          <div class="hero-social-list" style="margin-top: 0.6rem;">
-            <a href="https://t.me/arunratha" target="_blank" rel="noopener noreferrer" class="social-circle-link social-link-telegram" aria-label="Telegram (@arunratha)" title="Telegram (@arunratha)">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.06-.49-.83-.27-1.49-.42-1.43-.88.03-.24.37-.49 1.02-.75 3.98-1.73 6.64-2.87 7.97-3.44 3.8-1.58 4.59-1.86 5.11-1.87.11 0 .37.03.54.17.14.12.18.28.2.45-.02.07-.02.18-.04.32z"/></svg>
-            </a>
-            <a class="social-circle-link social-link-linkedin" aria-label="LinkedIn" title="LinkedIn">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
-            </a>
-            <a href="https://www.facebook.com/share/19figcq498/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="social-circle-link social-link-facebook" aria-label="Facebook Page" title="Facebook Page">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
-            </a>
-            <a class="social-circle-link social-link-youtube" aria-label="YouTube" title="YouTube">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.58 7.19a2.5 2.5 0 0 0-1.76-1.77C18.26 5 12 5 12 5s-6.26 0-7.82.42a2.5 2.5 0 0 0-1.76 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81a2.5 2.5 0 0 0 1.76 1.77C5.74 19 12 19 12 19s6.26 0 7.82-.42a2.5 2.5 0 0 0 1.76-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/></svg>
-            </a>
-            <a class="social-circle-link social-link-email" aria-label="Email" title="Official Email">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-            </a>
-          </div>
-        </div>
-      </div>
+  <!-- QR sheet: lets the visitor pass the card on -->
+  <dialog class="qr-sheet" id="qrSheet" aria-labelledby="qrSheetTitle">
+    <h2 class="qr-sheet-title" id="qrSheetTitle">Share this card</h2>
+    <div class="qr-sheet-code js-qr" role="img" aria-label="QR code that opens this page"></div>
+    <p class="qr-sheet-url js-page-url"></p>
+    <div class="qr-sheet-actions">
+      <button type="button" class="pill pill-gold" id="shareLink"><span class="pill-label">Share link</span></button>
+      <button type="button" class="pill pill-line" id="closeQr"><span class="pill-label">Close</span></button>
     </div>
-  </div>
+  </dialog>
 
-  <!-- Main JavaScript Controller -->
-  <script src="js/main.js?v=pen_write_v17"></script>
+  <script src="js/vendor/uqr.js?v=0.1.3"></script>
+  <script src="js/main.js?v=goldcard_10"></script>
 </body>
 </html>

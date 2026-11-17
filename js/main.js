@@ -1,107 +1,140 @@
 /**
  * ==========================================================================
- * CINEMATIC GOLDEN SIGNATURE WRITING ANIMATION ENGINE
- * Client: Srey ArunRatha — Chairman & Founder
- * 
- * Features:
- *   • Exact SVG Mask Progressive Reveal over original pristine signature
- *   • Golden spark pen tip tracking true SVG letterform path via getPointAtLength()
- *   • Realistic acceleration, deceleration, and natural cursive pacing
- *   • Sparkling golden ember particle trail fading naturally
- *   • Sequential 5-Phase Reveal:
- *       Phase 1: Dark Cinematic Atmosphere
- *       Phase 2: Writing "Srey"
- *       Phase 3: Writing "ArunRatha" & Baseline flourish
- *       Phase 4: Golden sparkle finale
- *       Phase 5: Elegant Reveal of "CHAIRMAN & FOUNDER"
+ * Srey ArunRatha — Chairman & Founder
+ * Digital NFC card: "The Gold Card"
+ *
+ *   1. portfolioConfig      editable content: phone, links, portrait
+ *   2. Signature engine     the handwritten signature writes itself
+ *   3. Card stage           3D tilt, glare, gold dust and the card flip
+ *   4. Contact page         reveals, the gold keys
  * ==========================================================================
  */
 'use strict';
 
 const portfolioConfig = {
   name: 'Srey ArunRatha',
-  position: 'CHAIRMAN & FOUNDER',
+  position: 'Chairman & Founder',
   tagline: 'Your speech makes people trust you in a while but your character makes people trust you forever.',
-  images: { portrait: 'assets/portrait.jpg', signature: 'assets/signature.png' },
+  images: { portrait: 'assets/portrait.jpg' },
+  // The five ventures on page 2. To show a real logo, save the file in
+  // assets/logos/ and put its path in "logo", for example
+  // logo: 'assets/logos/lbc.png'. A transparent PNG or an SVG works best.
+  // While "logo" is empty the coin shows the letters in "mark" instead.
+  ventures: [
+    { name: 'LBC',        mark: 'LBC', logo: '' },
+    { name: 'Magic Iron', mark: 'MI',  logo: '' },
+    { name: 'BG',         mark: 'BG',  logo: '' },
+    { name: 'Statesman',  mark: 'ST',  logo: '' },
+    { name: 'Saravan',    mark: 'SA',  logo: '' }
+  ],
+  // PLACEHOLDER VALUES, copied from the design mock-up on 2026-11-16.
+  // Replace phone, website and location with the real ones before publishing.
+  // Leave any of them empty to hide it everywhere on the page.
+  phone: '+855 12 345 678',
+  website: 'www.arunratha.com',
+  location: 'Phnom Penh, Cambodia',
   social: {
     telegram: 'https://t.me/arunratha',
-    linkedin: '',
     facebook: 'https://www.facebook.com/share/19figcq498/?mibextid=wwXIfr',
-    youtube: '',
     email: 'office@arunratha.com'
-  },
-  office: { ventures: 'LBC • Magic Iron • BG • Statesman • Saravan', role: 'Chairman & Founder' }
+  }
 };
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 document.addEventListener('DOMContentLoaded', () => {
   applyPortfolioConfiguration();
-  initCinematicSignatureEngine();
-  initExecutiveModal();
-  initActionButtons();
-  initVCardDownload();
+  initSignatureEngine();
+  initCardStage();
+  initContactPage();
+  initVentureOrbit();
+  initConnect();
 });
 
 function applyPortfolioConfiguration() {
-  document.querySelectorAll('.brand-signature, .modal-signature').forEach(el => {
-    el.textContent = portfolioConfig.name;
+  const s = portfolioConfig.social;
+  document.querySelectorAll('.social-link-telegram').forEach(el => { if (s.telegram) el.href = s.telegram; });
+  document.querySelectorAll('.social-link-facebook').forEach(el => { if (s.facebook) el.href = s.facebook; });
+  document.querySelectorAll('.social-link-email').forEach(el => {
+    if (!s.email) return;
+    el.href = `mailto:${s.email}`;
+    const value = el.querySelector('.js-email-value');
+    if (value) value.textContent = s.email;
   });
 
-  const exTitleEl = document.getElementById('executiveTitle');
-  if (exTitleEl) {
-    const parts = portfolioConfig.position.split('&');
-    exTitleEl.innerHTML = parts.length === 2
-      ? `${parts[0].trim()} <span class="gold-amp">&amp;</span> ${parts[1].trim()}`
-      : portfolioConfig.position;
+  // Phone: shown only when a number is set
+  const phone = (portfolioConfig.phone || '').trim();
+  if (phone) {
+    const dial = phone.replace(/[^+d]/g, '');
+    document.querySelectorAll('[data-contact="phone"]').forEach(el => { el.hidden = false; });
+    document.querySelectorAll('.social-link-phone').forEach(el => { el.href = `tel:${dial}`; });
+    document.querySelectorAll('.js-phone-value').forEach(el => { el.textContent = phone; });
   }
 
-  const modalTitle = document.querySelector('.modal-title');
-  if (modalTitle) modalTitle.textContent = portfolioConfig.position;
-
-  const taglineEl = document.getElementById('heroTagline');
-  if (taglineEl) taglineEl.textContent = portfolioConfig.tagline.replace(/^"|"$/g, '');
-
-  const modalQuote = document.querySelector('.modal-bio-quote');
-  if (modalQuote) modalQuote.textContent = `"${portfolioConfig.tagline.replace(/^"|"$/g, '')}"`;
-
-  if (portfolioConfig.images.portrait) {
-    const cp = portfolioConfig.images.portrait.startsWith('../')
-      ? portfolioConfig.images.portrait
-      : `../${portfolioConfig.images.portrait.replace(/^\.\//, '')}`;
-    document.documentElement.style.setProperty('--portrait-image', `url("${cp}")`);
+  // Website and location: shown only when set
+  const website = (portfolioConfig.website || '').trim();
+  if (website) {
+    document.querySelectorAll('[data-contact="website"]').forEach(el => { el.hidden = false; });
+    document.querySelectorAll('.js-website-link').forEach(el => { el.href = `https://${website.replace(/^https?:\/\//, '')}`; });
+    document.querySelectorAll('.js-website-value').forEach(el => { el.textContent = website; });
+  }
+  const place = (portfolioConfig.location || '').trim();
+  if (place) {
+    document.querySelectorAll('[data-contact="location"]').forEach(el => { el.hidden = false; });
+    document.querySelectorAll('.js-location-value').forEach(el => { el.textContent = place; });
   }
 
-  bindSocialLinks();
+  const portrait = portfolioConfig.images.portrait;
+  if (portrait) {
+    document.querySelectorAll('.js-portrait').forEach(img => {
+      if (img.getAttribute('src') !== portrait) img.src = portrait;
+    });
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   CINEMATIC SIGNATURE ENGINE
+   SIGNATURE ENGINE
+   The signature PNG is revealed through an SVG mask. Each mask path is one
+   pen stroke; its dash offset is animated in writing order while a spark
+   follows the tip of the stroke.
    ══════════════════════════════════════════════════════════════════════════ */
-function initCinematicSignatureEngine() {
+function initSignatureEngine() {
   const sigWrap   = document.getElementById('signatureWrap');
   const guideSvg  = document.getElementById('sigDrawSvg');
   const penCursor = document.getElementById('penCursor');
   const emberCv   = document.getElementById('sigEmberCanvas');
-  const execTitle = document.getElementById('executiveTitle');
-  const goldDiv   = document.getElementById('heroGoldDivider');
-  const tagline   = document.getElementById('heroTagline');
-  const actions   = document.querySelector('.hero-actions');
-  const socials   = document.querySelector('.hero-social-list');
 
   if (!sigWrap || !guideSvg) return;
 
-  // Mask path elements
   const maskPaths = Array.from(document.querySelectorAll('#maskStrokes .sig-mask-path'));
   if (!maskPaths.length) return;
 
-  // Measure and initialize each stroke
+  // With reduced motion the signature is simply shown, already written.
+  if (reduceMotion) return;
+
   const strokeData = maskPaths.map(p => {
     const len = p.getTotalLength();
     p.style.strokeDasharray = `${len} ${len}`;
     p.style.strokeDashoffset = `${len}`;
-    return { el: p, len: len };
+    return { el: p, len };
   });
+  const totalLength = strokeData.reduce((acc, s) => acc + s.len, 0);
 
-  // Ember Canvas Setup
+  // The traced strokes are narrower than the ink in places (the "e" of Srey).
+  // Once the writing ends, this rectangle opens the mask so the whole
+  // signature artwork shows.
+  const fullReveal = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  fullReveal.setAttribute('width', '560');
+  fullReveal.setAttribute('height', '260');
+  fullReveal.setAttribute('fill', '#ffffff');
+  fullReveal.style.opacity = '0';
+  document.getElementById('sigMask').appendChild(fullReveal);
+
+  const START_DELAY = 1500;          // ms: the portrait develops first
+  const TOTAL_WRITING_TIME = 4600;   // ms
+  const PEN_LIFT = 40;               // ms between strokes
+
+  // Ember canvas
   const pctx = emberCv ? emberCv.getContext('2d') : null;
   function resizeEmber() {
     if (!emberCv) return;
@@ -111,280 +144,720 @@ function initCinematicSignatureEngine() {
   resizeEmber();
   window.addEventListener('resize', resizeEmber);
 
-  // Particles array
   const particles = [];
-  function emitSparkle(x, y, count = 3) {
-    if (!emberCv) return;
-    const wr = sigWrap.getBoundingClientRect();
-    const px = (x / 560) * wr.width;
-    const py = (y / 260) * wr.height;
+  let particleLoop = null;
 
+  function emitSparkle(x, y, count) {
+    if (!emberCv) return;
+    const px = (x / 560) * emberCv.width;
+    const py = (y / 260) * emberCv.height;
     for (let i = 0; i < count; i++) {
-      if (particles.length > 90) break;
+      if (particles.length > 70) break;
       const angle = Math.random() * Math.PI * 2;
-      const speed = 0.4 + Math.random() * 1.5;
+      const speed = 0.3 + Math.random() * 1.1;
       particles.push({
         x: px,
         y: py,
         vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 0.3,
-        size: 0.8 + Math.random() * 1.8,
+        vy: Math.sin(angle) * speed - 0.25,
+        size: 0.6 + Math.random() * 1.4,
         life: 1.0,
-        decay: 0.02 + Math.random() * 0.03,
-        color: Math.random() > 0.3 ? '#ffd56b' : '#ffffff'
+        decay: 0.025 + Math.random() * 0.035,
+        color: Math.random() > 0.3 ? '#f1d48a' : '#ffffff'
       });
     }
   }
 
   function renderParticles() {
-    if (!pctx || !emberCv) return;
+    if (!pctx) return;
     pctx.clearRect(0, 0, emberCv.width, emberCv.height);
-
     for (let i = particles.length - 1; i >= 0; i--) {
       const p = particles[i];
       p.x += p.vx;
       p.y += p.vy;
       p.life -= p.decay;
-
       if (p.life <= 0) {
         particles.splice(i, 1);
         continue;
       }
-
-      pctx.save();
       pctx.globalAlpha = Math.max(0, p.life);
       pctx.beginPath();
       pctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       pctx.fillStyle = p.color;
-      pctx.shadowColor = '#e5a93b';
-      pctx.shadowBlur = 8;
       pctx.fill();
-      pctx.restore();
     }
+    pctx.globalAlpha = 1;
   }
 
-  // Position the Golden Pen Nib
-  function setPen(x, y, opacity = 1) {
+  function setPen(x, y, opacity) {
     if (!penCursor) return;
-    const wr = sigWrap.getBoundingClientRect();
-    const px = (x / 560) * wr.width;
-    const py = (y / 260) * wr.height;
-    penCursor.style.left = `${px}px`;
-    penCursor.style.top = `${py}px`;
+    penCursor.style.left = `${(x / 560) * sigWrap.offsetWidth}px`;
+    penCursor.style.top = `${(y / 260) * sigWrap.offsetHeight}px`;
     penCursor.style.opacity = `${opacity}`;
-    penCursor.style.display = opacity > 0.01 ? 'block' : 'none';
   }
 
-  // Animation controller
   let isAnimating = false;
 
-  function runCinematicWriting() {
+  function write(delay) {
     if (isAnimating) return;
     isAnimating = true;
 
-    // Reset everything
-    maskPaths.forEach(p => {
-      const len = p.getTotalLength();
-      p.style.strokeDashoffset = `${len}`;
-    });
+    strokeData.forEach(s => { s.el.style.strokeDashoffset = `${s.len}`; });
+    fullReveal.style.transition = 'none';
+    fullReveal.style.opacity = '0';
     setPen(0, 0, 0);
 
-    // Initial delay for cinematic intro
-    const TOTAL_WRITING_TIME = 6800; // ms
-    const totalLength = strokeData.reduce((acc, s) => acc + s.len, 0);
-
-    let startTimestamp = null;
-    let particleLoop = null;
-
+    // The ember loop runs only while there is something to draw.
     function particleTicker() {
       renderParticles();
-      particleLoop = requestAnimationFrame(particleTicker);
+      if (isAnimating || particles.length) {
+        particleLoop = requestAnimationFrame(particleTicker);
+      } else {
+        particleLoop = null;
+      }
     }
-    particleTicker();
+    if (!particleLoop) particleTicker();
 
-    // Start pen writing
     setTimeout(() => {
-      const startTime = performance.now();
       let strokeIndex = 0;
-      let strokeStartTime = startTime;
+      let strokeStartTime = performance.now();
 
       function frame(now) {
         if (strokeIndex >= strokeData.length) {
-          // Finished all strokes!
-          completeAnimation();
+          finish();
           return;
         }
 
         const current = strokeData[strokeIndex];
-        // Dynamic duration based on stroke length, with humanized minimum
-        const strokeDuration = Math.max(160, (current.len / totalLength) * TOTAL_WRITING_TIME);
-        const elapsed = now - strokeStartTime;
-        const progress = Math.min(1, elapsed / strokeDuration);
+        const strokeDuration = Math.max(120, (current.len / totalLength) * TOTAL_WRITING_TIME);
+        const progress = Math.min(1, (now - strokeStartTime) / strokeDuration);
 
-        // Smooth natural easing
-        const ease = progress < 0.5 
-          ? 2 * progress * progress 
+        // Ease in and out: the pen gathers speed, then settles
+        const ease = progress < 0.5
+          ? 2 * progress * progress
           : -1 + (4 - 2 * progress) * progress;
 
-        // Reveal the stroke
-        const currentOffset = current.len * (1 - ease);
-        current.el.style.strokeDashoffset = `${currentOffset}`;
+        current.el.style.strokeDashoffset = `${current.len * (1 - ease)}`;
 
-        // Get coordinates of the writing tip directly on the letterform stroke
         const pt = current.el.getPointAtLength(ease * current.len);
         setPen(pt.x, pt.y, 1);
-        emitSparkle(pt.x, pt.y, 3);
+        emitSparkle(pt.x, pt.y, 2);
 
         if (progress < 1) {
           requestAnimationFrame(frame);
         } else {
-          // Advance to next stroke with brief organic pen lift
           strokeIndex++;
-          // Brief pause/lift between strokes for human feel
           setTimeout(() => {
             strokeStartTime = performance.now();
             requestAnimationFrame(frame);
-          }, 45);
+          }, PEN_LIFT);
         }
       }
 
       requestAnimationFrame(frame);
-    }, 400);
+    }, delay);
 
-    function completeAnimation() {
-      // Golden sparkle flourish at the end of the signature
-      const lastStroke = strokeData[strokeData.length - 1];
-      const endPt = lastStroke.el.getPointAtLength(lastStroke.len);
-      emitSparkle(endPt.x, endPt.y, 25);
-
-      // Fade out pen cursor gracefully
-      setTimeout(() => {
-        if (penCursor) penCursor.style.opacity = '0';
-      }, 350);
-
-      // Phase 5: Reveal "CHAIRMAN & FOUNDER" and executive details
-      setTimeout(() => {
-        if (execTitle) {
-          execTitle.style.opacity = '1';
-          execTitle.style.transform = 'translateY(0)';
-          execTitle.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-        }
-        if (goldDiv) {
-          goldDiv.style.opacity = '1';
-          goldDiv.style.transform = 'scaleX(1)';
-          goldDiv.style.transition = 'opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s';
-        }
-        if (tagline) {
-          tagline.style.opacity = '1';
-          tagline.style.transition = 'opacity 0.8s ease 0.4s';
-        }
-        if (actions) {
-          actions.style.opacity = '1';
-          actions.style.transition = 'opacity 0.8s ease 0.6s';
-        }
-        if (socials) {
-          socials.style.opacity = '1';
-          socials.style.transition = 'opacity 0.8s ease 0.8s';
-        }
-        isAnimating = false;
-      }, 600);
+    function finish() {
+      const last = strokeData[strokeData.length - 1];
+      const endPt = last.el.getPointAtLength(last.len);
+      emitSparkle(endPt.x, endPt.y, 22);
+      fullReveal.style.transition = 'opacity 0.7s ease';
+      fullReveal.style.opacity = '1';
+      setTimeout(() => { if (penCursor) penCursor.style.opacity = '0'; }, 300);
+      isAnimating = false;
     }
   }
 
-  // Tap/click to replay
-  sigWrap.addEventListener('click', runCinematicWriting);
+  // Tap, click or key to replay
+  sigWrap.addEventListener('click', () => write(120));
   sigWrap.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      runCinematicWriting();
+      write(120);
     }
   });
 
-  // Auto-play on load
-  runCinematicWriting();
+  write(START_DELAY);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   MODAL & UI CONTROLLERS
+   CARD STAGE
+   The gold card tilts toward the pointer, a finger drag or the phone's own
+   motion, and sways gently when left alone. The tilt drives the glare, the
+   rim light and the gold dust behind the card. One button turns it over.
    ══════════════════════════════════════════════════════════════════════════ */
-function initExecutiveModal() {
-  const modal = document.getElementById('executiveModal');
-  const btnClose = document.getElementById('modalCloseBtn');
-  const backdrop = document.getElementById('modalBackdrop');
-  const hamburger = document.getElementById('hamburgerBtn');
-  const btnDesktopProfile = document.getElementById('btnDesktopProfile');
+function initCardStage() {
+  const stage = document.getElementById('top');
+  const scene = document.getElementById('cardScene');
+  const flip = document.getElementById('cardFlip');
+  const dustCv = document.getElementById('dust');
+  if (!stage || !scene || !flip) return;
 
-  function openModal() {
-    if (!modal) return;
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+  // The card turns over on a double-tap, or a double-click with a mouse.
+  // This works with or without motion.
+  const back = flip.querySelector('.card-back');
+  const front = flip.querySelector('.card-front');
+
+  function turnCard() {
+    const flipped = flip.classList.toggle('is-flipped');
+    if (back) back.setAttribute('aria-hidden', String(!flipped));
+    if (front) front.setAttribute('aria-hidden', String(flipped));
   }
 
-  function closeModal() {
-    if (!modal) return;
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+  let lastTap = null;
+  let lastTouchTurn = 0;
+
+  // Touch: two taps close together in time and place
+  scene.addEventListener('pointerup', e => {
+    if (e.pointerType === 'mouse' || e.target.closest('a')) return;
+    const now = performance.now();
+    if (lastTap && now - lastTap.t < 340 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 34) {
+      lastTap = null;
+      lastTouchTurn = now;
+      turnCard();
+    } else {
+      lastTap = { t: now, x: e.clientX, y: e.clientY };
+    }
+  });
+
+  // Mouse. Some phones also send dblclick after a double-tap: ignore that echo.
+  scene.addEventListener('dblclick', e => {
+    if (e.target.closest('a')) return;
+    if (performance.now() - lastTouchTurn < 700) return;
+    turnCard();
+  });
+
+  if (reduceMotion) return;
+
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const TILT = 0.8;
+  const tiltEl = document.getElementById('cardTilt');
+  const glareEls = scene.querySelectorAll('.card-glare');
+  let lastGlare = '';
+  let frameNo = 0;
+
+  // Tilt, in degrees. target* is where the input points; cur* eases toward it.
+  let targetX = 0, targetY = 0, curX = 0, curY = 0;
+  let inputActive = false;   // a pointer or finger is steering right now
+  let gyroActive = false;
+  let gyroBase = null;
+  let inView = true;
+  let running = false;
+
+  /* --- Mouse: the card looks toward the pointer --------------------------- */
+  stage.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    const r = stage.getBoundingClientRect();
+    targetY = ((e.clientX - r.left) / r.width - 0.5) * 30;
+    targetX = -((e.clientY - r.top) / r.height - 0.5) * 20;
+    inputActive = true;
+  });
+  stage.addEventListener('pointerleave', () => { inputActive = false; });
+
+  /* --- Touch: drag sideways on the card to swing it ----------------------- */
+  let dragStartX = null;
+  scene.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse') return;
+    dragStartX = e.clientX;
+    requestGyro();
+  });
+  scene.addEventListener('pointermove', e => {
+    if (e.pointerType === 'mouse' || dragStartX === null) return;
+    targetY = clamp(((e.clientX - dragStartX) / scene.offsetWidth) * 70, -32, 32);
+    targetX = 0;
+    inputActive = true;
+  });
+  const endDrag = () => { dragStartX = null; inputActive = false; };
+  scene.addEventListener('pointerup', endDrag);
+  scene.addEventListener('pointercancel', endDrag);
+
+  /* --- Phone motion -------------------------------------------------------- */
+  function onOrientation(e) {
+    if (e.gamma === null || e.beta === null) return;
+    if (!gyroBase) gyroBase = { g: e.gamma, b: e.beta };
+    gyroActive = true;
+    if (inputActive) return;
+    targetY = clamp((e.gamma - gyroBase.g) * 0.75, -20, 20);
+    targetX = clamp(-(e.beta - gyroBase.b) * 0.5, -14, 14);
   }
 
-  if (hamburger) hamburger.addEventListener('click', openModal);
-  if (btnDesktopProfile) btnDesktopProfile.addEventListener('click', openModal);
-  if (btnClose) btnClose.addEventListener('click', closeModal);
-  if (backdrop) backdrop.addEventListener('click', closeModal);
-  window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-}
+  let gyroRequested = false;
+  function requestGyro() {
+    if (gyroRequested) return;
+    gyroRequested = true;
+    const DOE = window.DeviceOrientationEvent;
+    // iOS asks the visitor once; it must follow a touch
+    if (DOE && typeof DOE.requestPermission === 'function') {
+      DOE.requestPermission()
+        .then(state => { if (state === 'granted') window.addEventListener('deviceorientation', onOrientation); })
+        .catch(() => {});
+    }
+  }
+  if (window.DeviceOrientationEvent && typeof window.DeviceOrientationEvent.requestPermission !== 'function') {
+    window.addEventListener('deviceorientation', onOrientation);
+  }
 
-function initActionButtons() {
-  const btnExplore = document.getElementById('btnExploreJourney');
-  const btnDesktopContact = document.getElementById('btnDesktopContact');
-  const btnGetInTouch = document.getElementById('btnGetInTouch');
-  const modal = document.getElementById('executiveModal');
+  /* --- Gold dust ----------------------------------------------------------- */
+  const dctx = dustCv ? dustCv.getContext('2d') : null;
+  let dw = 0, dh = 0;
+  const motes = [];
 
-  function openContactModal(e) {
-    e.preventDefault();
-    if (modal) {
-      modal.classList.add('is-open');
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
+  function sizeDust() {
+    if (!dustCv) return;
+    const dpr = 1;   // soft dots need no extra sharpness, and a small canvas is fast
+    dw = stage.offsetWidth;
+    dh = stage.offsetHeight;
+    dustCv.width = Math.round(dw * dpr);
+    dustCv.height = Math.round(dh * dpr);
+    dctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function seedDust() {
+    motes.length = 0;
+    const count = dw < 600 ? 22 : 60;
+    for (let i = 0; i < count; i++) {
+      motes.push({
+        x: Math.random(),
+        y: Math.random(),
+        depth: 0.25 + Math.random() * 0.75,          // nearer motes are larger and move more
+        drift: 0.00006 + Math.random() * 0.00014,
+        phase: Math.random() * Math.PI * 2,
+        twinkle: 0.0006 + Math.random() * 0.0012
+      });
     }
   }
 
-  if (btnDesktopContact) btnDesktopContact.addEventListener('click', openContactModal);
-  if (btnGetInTouch) btnGetInTouch.addEventListener('click', openContactModal);
+  function drawDust(now) {
+    if (!dctx) return;
+    dctx.clearRect(0, 0, dw, dh);
+    for (const m of motes) {
+      m.y -= m.drift * m.depth * 32;
+      if (m.y < -0.03) { m.y = 1.03; m.x = Math.random(); }
+      const x = m.x * dw + curY * m.depth * 1.6 + Math.sin(now * 0.0004 + m.phase) * 6 * m.depth;
+      const y = m.y * dh - curX * m.depth * 1.6;
+      const glow = 0.35 + 0.65 * Math.abs(Math.sin(now * m.twinkle + m.phase));
+      dctx.globalAlpha = glow * (0.18 + m.depth * 0.5);
+      dctx.fillStyle = m.depth > 0.8 ? '#fff1bf' : '#d4a843';
+      dctx.beginPath();
+      dctx.arc(x, y, 0.5 + m.depth * 1.5, 0, Math.PI * 2);
+      dctx.fill();
+    }
+    dctx.globalAlpha = 1;
+  }
+
+  if (dctx) {
+    sizeDust();
+    seedDust();
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => { sizeDust(); seedDust(); }, 160);
+    });
+  }
+
+  /* --- The loop: runs only while the card is on screen -------------------- */
+  function frame(now) {
+    if (!inView || document.hidden) {
+      running = false;
+      return;
+    }
+
+    // Left alone, the card sways so the light keeps moving across it
+    let goalX = targetX;
+    let goalY = targetY;
+    if (!inputActive) {
+      const sway = gyroActive ? 0.35 : 1;
+      goalX += Math.sin(now / 2100) * 4.5 * sway;
+      goalY += Math.sin(now / 2900) * 10 * sway;
+      if (!gyroActive) { targetX *= 0.94; targetY *= 0.94; }
+    }
+
+    curX += (goalX - curX) * 0.085;
+    curY += (goalY - curY) * 0.085;
+
+    // Only transforms change each frame. Transforms are moved by the phone's
+    // graphics chip; anything else would repaint the full-screen card.
+    const floatY = Math.sin(now / 1700) * 6;
+    tiltEl.style.transform =
+      `translate3d(0, ${floatY.toFixed(1)}px, 0) rotateX(${(curX * TILT).toFixed(2)}deg) rotateY(${(curY * TILT).toFixed(2)}deg)`;
+    const glare = `${(curY * 14).toFixed(0)}%`;
+    if (glare !== lastGlare) {
+      lastGlare = glare;
+      glareEls.forEach(el => el.style.setProperty('--glare', glare));
+    }
+
+    // The dust is drawn on every second frame
+    frameNo++;
+    if (frameNo % 2 === 0) drawDust(now);
+    requestAnimationFrame(frame);
+  }
+
+  function start() {
+    if (running) return;
+    running = true;
+    requestAnimationFrame(frame);
+  }
+
+  new IntersectionObserver(entries => {
+    inView = entries[0].isIntersecting;
+    if (inView) start();
+  }).observe(stage);
+
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && inView) start(); });
+  start();
 }
 
-function initVCardDownload() {
-  document.querySelectorAll('.download-vcard-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const vcard = [
+/* ══════════════════════════════════════════════════════════════════════════
+   CONTACT PAGE: reveals, the keys swinging up, light under the finger
+   ══════════════════════════════════════════════════════════════════════════ */
+function initContactPage() {
+  // A page that is off screen stops animating (see [data-offscreen] in the CSS)
+  if ('IntersectionObserver' in window) {
+    const rest = new IntersectionObserver(entries => {
+      entries.forEach(entry => entry.target.toggleAttribute('data-offscreen', !entry.isIntersecting));
+    });
+    document.querySelectorAll('.stage, .reach').forEach(el => rest.observe(el));
+  }
+
+  const keyItems = Array.from(document.querySelectorAll('.key-item:not([hidden])'));
+  const targets = Array.from(document.querySelectorAll('.reveal')).concat(keyItems);
+
+  keyItems.forEach((item, i) => item.style.setProperty('--k', i));
+
+  if (!('IntersectionObserver' in window) || reduceMotion) {
+    targets.forEach(el => el.classList.add('in'));
+  } else {
+    // The keys list is watched as a whole, so its keys swing up in order
+    const list = document.querySelector('.keys');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        if (entry.target === list) keyItems.forEach(item => item.classList.add('in'));
+        else entry.target.classList.add('in');
+        io.unobserve(entry.target);
+      });
+    });
+
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    if (list) io.observe(list);
+  }
+
+  if (reduceMotion) return;
+
+  // Light follows the finger or pointer along each key
+  document.querySelectorAll('.key').forEach(key => {
+    const light = e => {
+      const r = key.getBoundingClientRect();
+      key.style.setProperty('--mx', `${(((e.clientX - r.left) / r.width) * 100).toFixed(1)}%`);
+    };
+    key.addEventListener('pointermove', light);
+    key.addEventListener('pointerdown', light);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   VENTURE ORBIT
+   Five gold coins travel a tilted ring. The ring turns to the next venture
+   every few seconds, follows a sideways drag, and jumps to a tapped coin.
+   Each coin shows the venture's logo, or its letters until a logo is set.
+   ══════════════════════════════════════════════════════════════════════════ */
+function initVentureOrbit() {
+  const orbit = document.getElementById('orbit');
+  const nameEl = document.getElementById('orbitName');
+  const dotsEl = document.getElementById('orbitDots');
+  const ventures = portfolioConfig.ventures || [];
+  if (!orbit || !ventures.length) return;
+
+  const N = ventures.length;
+  const STEP = (Math.PI * 2) / N;
+
+  /* --- Build the coins and the dots --------------------------------------- */
+  const coins = ventures.map((v, i) => {
+    const coin = document.createElement('button');
+    coin.type = 'button';
+    coin.className = 'orbit-coin';
+    coin.style.setProperty('--k', i);
+    coin.setAttribute('aria-label', `${v.name}, ${portfolioConfig.position}`);
+
+    const face = document.createElement('span');
+    face.className = 'coin-face';
+    if (v.logo) {
+      const img = document.createElement('img');
+      img.className = 'coin-logo';
+      img.src = v.logo;
+      img.alt = '';
+      img.draggable = false;
+      face.appendChild(img);
+    } else {
+      const mark = document.createElement('span');
+      mark.className = 'coin-mark foil';
+      mark.textContent = v.mark || v.name.slice(0, 2).toUpperCase();
+      face.appendChild(mark);
+    }
+    coin.appendChild(face);
+    orbit.appendChild(coin);
+    return coin;
+  });
+
+  const dots = ventures.map(() => {
+    const dot = document.createElement('span');
+    if (dotsEl) dotsEl.appendChild(dot);
+    return dot;
+  });
+
+  orbit.classList.add('is-live');
+
+  /* --- State -------------------------------------------------------------- */
+  // "cur" is the ring's position in ventures: 0 puts the first in front, 1 the
+  // second, and so on. It eases toward "goal".
+  let cur = 0;
+  let goal = 0;
+  let R = 0;              // ring radius in px
+  let spread = 1;         // 0 = coins gathered at the centre, 1 = on the ring
+  let front = -1;
+  let running = false;
+  let inView = false;
+  let introStart = 0;
+  let introDone = reduceMotion;
+  let dragging = false;
+  let lastTouch = 0;
+
+  function measure() {
+    const w = orbit.offsetWidth;
+    const coinSize = coins[0].offsetWidth || 80;
+    R = Math.max(60, Math.min(w / 2 - coinSize * 0.52, 190));
+    orbit.style.setProperty('--R', `${R}px`);
+  }
+
+  function setFront(i) {
+    if (i === front) return;
+    front = i;
+    coins.forEach((c, k) => c.classList.toggle('is-front', k === i));
+    dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
+    if (nameEl) {
+      nameEl.textContent = ventures[i].name;
+      nameEl.classList.remove('is-swapping');
+      void nameEl.offsetWidth;            // restart the entrance of the name
+      nameEl.classList.add('is-swapping');
+    }
+  }
+
+  function place() {
+    for (let i = 0; i < N; i++) {
+      const a = (i - cur) * STEP;
+      const depth = Math.cos(a);                         // 1 in front, -1 at the back
+      const near = (depth + 1) / 2;
+      const x = Math.sin(a) * R * spread;
+      const y = depth * R * 0.2 * spread;                // the ring is tilted toward the viewer
+      const scale = (0.56 + 0.44 * near) * (0.35 + 0.65 * spread);
+      const coin = coins[i];
+      coin.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
+      coin.style.opacity = (0.38 + 0.62 * near).toFixed(2);
+      coin.style.zIndex = String(Math.round(near * 100));
+    }
+    setFront(((Math.round(cur) % N) + N) % N);
+  }
+
+  /* --- The loop ----------------------------------------------------------- */
+  function frame(now) {
+    let busy = false;
+
+    if (!introDone) {
+      // The coins burst out from the centre while the ring spins up to rest
+      if (!introStart) introStart = now;
+      const t = Math.min(1, (now - introStart) / 1700);
+      const back = 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2);   // overshoots, then settles
+      spread = Math.max(0, back);
+      cur = goal - (1 - t) * (1 - t) * 2.4;
+      if (t >= 1) { introDone = true; spread = 1; cur = goal; }
+      busy = true;
+    } else if (!dragging) {
+      const diff = goal - cur;
+      if (Math.abs(diff) > 0.0015) {
+        cur += diff * 0.075;
+        busy = true;
+      } else {
+        cur = goal;
+      }
+    } else {
+      busy = true;
+    }
+
+    place();
+    if (busy && inView) requestAnimationFrame(frame);
+    else running = false;
+  }
+
+  function start() {
+    if (running) return;
+    running = true;
+    requestAnimationFrame(frame);
+  }
+
+  /* --- Turning by itself -------------------------------------------------- */
+  if (!reduceMotion) {
+    setInterval(() => {
+      if (!inView || dragging || !introDone || document.hidden) return;
+      if (performance.now() - lastTouch < 4500) return;   // give the visitor time after a touch
+      goal = Math.round(goal) + 1;
+      start();
+    }, 2800);
+  }
+
+  /* --- Drag sideways to turn the ring ------------------------------------- */
+  let dragX = 0;
+  let dragCur = 0;
+  let moved = false;
+
+  orbit.addEventListener('pointerdown', e => {
+    dragX = e.clientX;
+    dragCur = cur;
+    moved = false;
+    dragging = true;
+    lastTouch = performance.now();
+    introDone = true;
+    spread = 1;
+    start();
+  });
+
+  window.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - dragX;
+    if (Math.abs(dx) > 6) moved = true;
+    cur = dragCur - dx / (R * 0.75);
+    goal = cur;
+  });
+
+  const release = () => {
+    if (!dragging) return;
+    dragging = false;
+    goal = Math.round(cur);
+    lastTouch = performance.now();
+    start();
+  };
+  window.addEventListener('pointerup', release);
+  window.addEventListener('pointercancel', release);
+
+  /* --- Tap a coin to bring it to the front -------------------------------- */
+  coins.forEach((coin, i) => {
+    coin.addEventListener('click', () => {
+      if (moved) return;
+      // Take the short way round
+      let diff = (i - cur) % N;
+      if (diff > N / 2) diff -= N;
+      if (diff < -N / 2) diff += N;
+      goal = Math.round(cur + diff);
+      lastTouch = performance.now();
+      if (reduceMotion) { cur = goal; place(); } else start();
+    });
+  });
+
+  /* --- Start when the page scrolls into view ------------------------------ */
+  measure();
+  place();
+  window.addEventListener('resize', () => { measure(); place(); });
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(entries => {
+      inView = entries[0].isIntersecting;
+      if (inView && !reduceMotion) start();
+    }, { threshold: 0.25 }).observe(orbit);
+  } else {
+    inView = true;
+    if (!reduceMotion) start();
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CONNECT: Save Contact (vCard), the QR code, and sharing the card
+   ══════════════════════════════════════════════════════════════════════════ */
+function initConnect() {
+  const cfg = portfolioConfig;
+  const status = document.querySelector('.save-status');
+
+  // The address the QR code and the share button point to: this page itself
+  const pageUrl = window.location.href.split('#')[0];
+
+  /* --- QR code, drawn locally by js/vendor/uqr.js ------------------------- */
+  if (window.UQR) {
+    try {
+      const qr = window.UQR.encode(pageUrl, { ecc: 'M', border: 0 });
+      let path = '';
+      for (let y = 0; y < qr.size; y++) {
+        for (let x = 0; x < qr.size; x++) {
+          if (qr.data[y][x]) path += `M${x} ${y}h1v1h-1z`;
+        }
+      }
+      const svg = `<svg viewBox="0 0 ${qr.size} ${qr.size}" shape-rendering="crispEdges" aria-hidden="true"><path fill="#1a1206" d="${path}"/></svg>`;
+      document.querySelectorAll('.js-qr').forEach(el => { el.innerHTML = svg; });
+    } catch (err) {
+      document.querySelectorAll('.js-qr').forEach(el => { el.hidden = true; });
+    }
+  }
+  document.querySelectorAll('.js-page-url').forEach(el => { el.textContent = pageUrl.replace(/^https?:\/\//, ''); });
+
+  /* --- Save Contact -------------------------------------------------------- */
+  const saveBtn = document.getElementById('saveContact');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', () => {
+      const lines = [
         'BEGIN:VCARD',
         'VERSION:3.0',
-        'FN:Srey ArunRatha',
+        `FN:${cfg.name}`,
         'N:ArunRatha;Srey;;;',
-        'TITLE:Chairman & Founder',
-        'EMAIL;TYPE=INTERNET,WORK:office@arunratha.com',
-        'URL:https://t.me/arunratha',
-        'NOTE:Your speech makes people trust you in a while but your character makes people trust you forever.',
-        'END:VCARD'
-      ].join('\r\n');
+        `TITLE:${cfg.position}`
+      ];
+      if (cfg.phone) lines.push(`TEL;TYPE=CELL:${cfg.phone.replace(/[^+\d]/g, '')}`);
+      if (cfg.social.email) lines.push(`EMAIL;TYPE=INTERNET,WORK:${cfg.social.email}`);
+      if (cfg.website) lines.push(`URL:https://${cfg.website.replace(/^https?:\/\//, '')}`);
+      if (cfg.location) lines.push(`ADR;TYPE=WORK:;;;${cfg.location.replace(/,\s*/g, ';')}`);
+      if (cfg.social.telegram) lines.push(`X-SOCIALPROFILE;TYPE=telegram:${cfg.social.telegram}`);
+      lines.push('END:VCARD');
 
-      const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8;' });
+      const blob = new Blob([lines.join('\r\n')], { type: 'text/vcard;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'Srey_ArunRatha_Chairman.vcf');
+      link.setAttribute('download', 'Srey_ArunRatha.vcf');
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    });
-  });
-}
 
-function bindSocialLinks() {
-  const s = portfolioConfig.social;
-  document.querySelectorAll('.social-link-telegram').forEach(el => { if (s.telegram) el.href = s.telegram; });
-  document.querySelectorAll('.social-link-facebook').forEach(el => { if (s.facebook) el.href = s.facebook; });
-  document.querySelectorAll('.social-link-email').forEach(el => { if (s.email) el.href = `mailto:${s.email}`; });
+      if (status) status.textContent = 'Contact card saved. Open it to add him to your contacts.';
+    });
+  }
+
+  /* --- Share QR Code ------------------------------------------------------- */
+  const sheet = document.getElementById('qrSheet');
+  const openBtn = document.getElementById('shareQr');
+  const closeBtn = document.getElementById('closeQr');
+  const shareBtn = document.getElementById('shareLink');
+
+  if (sheet && openBtn && typeof sheet.showModal === 'function') {
+    openBtn.addEventListener('click', () => sheet.showModal());
+    if (closeBtn) closeBtn.addEventListener('click', () => sheet.close());
+    // A tap on the dark area outside the sheet closes it
+    sheet.addEventListener('click', e => { if (e.target === sheet) sheet.close(); });
+  } else if (openBtn) {
+    openBtn.hidden = true;
+  }
+
+  if (shareBtn) {
+    const label = shareBtn.querySelector('.pill-label');
+    if (!navigator.share) label.textContent = 'Copy link';
+    shareBtn.addEventListener('click', async () => {
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: `${cfg.name} — ${cfg.position}`, url: pageUrl });
+        } else {
+          await navigator.clipboard.writeText(pageUrl);
+          label.textContent = 'Link copied';
+          setTimeout(() => { label.textContent = 'Copy link'; }, 2200);
+        }
+      } catch (err) {
+        // The visitor closed the share sheet, or copying is blocked: nothing to do
+      }
+    });
+  }
 }

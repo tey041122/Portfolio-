@@ -17,8 +17,10 @@ Desktop.ini
 $RECYCLE.BIN/
 .DS_Store
 
-# Editor directories
+# Editor and tool directories
 .vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
+.claude/
+.impeccable/

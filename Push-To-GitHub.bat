@@ -2,7 +2,7 @@
 set "PATH=%LOCALAPPDATA%\Programs\MinGit\cmd;%PATH%"
 cd /d "%~dp0"
 echo ======================================================================
-echo   Updating Portfolio on GitHub: https://github.com/tey041122/portfolio_boss
+echo   Updating Portfolio on GitHub: https://github.com/tey041122/Portfolio-
 echo ======================================================================
 echo.
 echo 1. Staging any new changes...
