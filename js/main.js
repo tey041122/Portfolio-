@@ -556,13 +556,10 @@ function initContactPage() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   VENTURE ORBIT: 3D Amphitheater Showcase
-   - Keeps all 5 logos in their permanent amphitheater layout (never switches seats):
-     Brand Growth centered in foreground hero position;
-     Vireakchun Civil & LBC elevated higher behind;
-     Vireakchun Police & Magic Iron on outer wings.
-   - Active highlight and wave motion advance smoothly from LEFT to RIGHT.
-   - Direct click/tap selection with radiant golden bloom and smooth caption update.
+   VENTURE ORBIT: 3D Amphitheater Motion System
+   - Clicking ANY logo immediately glides it to the FRONT LOGO position (Hero Center)!
+   - Automatic motion continuously glides from LEFT to RIGHT one by one.
+   - Smooth 60fps spring-eased 3D trajectory along the golden torus amphitheater.
    ══════════════════════════════════════════════════════════════════════════ */
 function initVentureOrbit() {
   const orbit = document.getElementById('orbit');
@@ -574,64 +571,134 @@ function initVentureOrbit() {
   const N = ventures.length;
   const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
 
-  // Permanent 3D Waypoints (from Left to Right across stage) - NEVER SWAP SEATS:
-  // 0: Police (Far Left)
-  // 1: Civil (Elevated Left)
-  // 2: Brand Growth (Center Hero Foreground)
-  // 3: LBC (Elevated Right)
-  // 4: Magic Iron (Far Right)
-  const COIN_CONFIG = [
-    { x: 14.5, y: 52.0, scale: 0.65, z: 12 },
-    { x: 32.5, y: 32.0, scale: 0.72, z: 22 },
-    { x: 50.0, y: 68.0, scale: 1.00, z: 50 },
-    { x: 67.5, y: 32.0, scale: 0.72, z: 22 },
-    { x: 85.5, y: 52.0, scale: 0.65, z: 12 }
-  ];
+  // Calibrated 3D Waypoints along the amphitheater loop:
+  // p = 0: Left Outer Wing (Police) -> x: 14.5%, y: 52.0%, s: 0.65, z: 12
+  // p = 1: Elevated Left Flank (Civil) -> x: 32.5%, y: 32.0%, s: 0.72, z: 22
+  // p = 2: Center Front Hero -> x: 50.0%, y: 68.0%, s: 1.00, z: 50 (FRONT LOGO)
+  // p = 3: Elevated Right Flank (LBC) -> x: 67.5%, y: 32.0%, s: 0.72, z: 22
+  // p = 4: Right Outer Wing (Magic Iron) -> x: 85.5%, y: 52.0%, s: 0.65, z: 12
+  // p = 4.5: High Back Transit -> x: 50.0%, y: 18.0%, s: 0.48, z: 5
+  function getTrackPoint(p) {
+    p = ((p % N) + N) % N;
+    let p0, p1, t;
 
-  // Set initial fixed positions
-  coins.forEach((coin, i) => {
-    const cfg = COIN_CONFIG[i] || COIN_CONFIG[2];
-    coin.style.left = `${cfg.x}%`;
-    coin.style.top = `${cfg.y}%`;
-    coin.style.setProperty('--base-scale', String(cfg.scale));
-    coin.style.zIndex = String(cfg.z);
-  });
+    if (p < 1) {
+      p0 = { x: 14.5, y: 52.0, s: 0.65, z: 12 };
+      p1 = { x: 32.5, y: 32.0, s: 0.72, z: 22 };
+      t = p;
+    } else if (p < 2) {
+      p0 = { x: 32.5, y: 32.0, s: 0.72, z: 22 };
+      p1 = { x: 50.0, y: 68.0, s: 1.00, z: 50 };
+      t = p - 1;
+    } else if (p < 3) {
+      p0 = { x: 50.0, y: 68.0, s: 1.00, z: 50 };
+      p1 = { x: 67.5, y: 32.0, s: 0.72, z: 22 };
+      t = p - 2;
+    } else if (p < 4) {
+      p0 = { x: 67.5, y: 32.0, s: 0.72, z: 22 };
+      p1 = { x: 85.5, y: 52.0, s: 0.65, z: 12 };
+      t = p - 3;
+    } else if (p < 4.5) {
+      p0 = { x: 85.5, y: 52.0, s: 0.65, z: 12 };
+      p1 = { x: 50.0, y: 18.0, s: 0.48, z: 5 };
+      t = (p - 4) / 0.5;
+    } else {
+      p0 = { x: 50.0, y: 18.0, s: 0.48, z: 5 };
+      p1 = { x: 14.5, y: 52.0, s: 0.65, z: 12 };
+      t = (p - 4.5) / 0.5;
+    }
 
-  // Active venture index. Starts at 2 (Brand Growth Hero)
-  let activeIdx = 2;
+    const ease = t * t * (3 - 2 * t);
+    return {
+      x: p0.x + (p1.x - p0.x) * ease,
+      y: p0.y + (p1.y - p0.y) * ease,
+      s: p0.s + (p1.s - p0.s) * ease,
+      z: Math.round(p0.z + (p1.z - p0.z) * ease)
+    };
+  }
+
+  // cur = 0 starts with Brand Growth (venture index 2) at p = 2 (FRONT LOGO)
+  let cur = 0;
+  let goal = 0;
+  let running = false;
   let lastTouch = 0;
   let inView = true;
 
-  function setActive(idx, userInitiated = false) {
-    activeIdx = ((idx % N) + N) % N;
-    if (userInitiated) {
-      lastTouch = performance.now();
+  function renderPositions() {
+    for (let i = 0; i < N; i++) {
+      const p = ((i - cur) % N + N) % N;
+      const pt = getTrackPoint(p);
+      const coin = coins[i];
+
+      coin.style.left = `${pt.x.toFixed(2)}%`;
+      coin.style.top = `${pt.y.toFixed(2)}%`;
+      coin.style.transform = `translate(-50%, -50%) scale(${pt.s.toFixed(3)})`;
+      coin.style.zIndex = String(pt.z);
+
+      // Front hero active golden halo glow
+      const distToFront = Math.abs(p - 2);
+      coin.classList.toggle('is-active', distToFront < 0.35);
     }
 
-    // Toggle active state without changing physical coordinates!
-    coins.forEach((coin, i) => {
-      const isActive = i === activeIdx;
-      coin.classList.toggle('is-active', isActive);
-      const cfg = COIN_CONFIG[i] || COIN_CONFIG[2];
-      if (isActive) {
-        coin.style.zIndex = String(cfg.z + 10);
-      } else {
-        coin.style.zIndex = String(cfg.z);
-      }
-    });
+    // Active front venture index
+    const frontIdx = (((Math.round(cur) + 2) % N) + N) % N;
+    updateHeroInfo(frontIdx);
+  }
 
-    // Update dots
+  let lastReportedFront = -1;
+  function updateHeroInfo(frontIdx) {
+    if (frontIdx === lastReportedFront) return;
+    lastReportedFront = frontIdx;
+
     dots.forEach((dot, k) => {
-      dot.classList.toggle('is-on', k === activeIdx);
+      dot.classList.toggle('is-on', k === frontIdx);
     });
 
-    // Smoothly swap venture title
-    if (nameEl && ventures[activeIdx]) {
-      nameEl.textContent = ventures[activeIdx].name;
+    if (nameEl && ventures[frontIdx]) {
+      nameEl.textContent = ventures[frontIdx].name;
       nameEl.classList.remove('is-swapping');
-      void nameEl.offsetWidth; // restart entrance animation
+      void nameEl.offsetWidth; // trigger reflow for smooth text entrance
       nameEl.classList.add('is-swapping');
     }
+  }
+
+  function frame() {
+    let busy = false;
+    const diff = goal - cur;
+
+    if (Math.abs(diff) > 0.001) {
+      cur += diff * 0.12;
+      busy = true;
+    } else {
+      cur = goal;
+    }
+
+    renderPositions();
+
+    if (busy && inView) {
+      requestAnimationFrame(frame);
+    } else {
+      running = false;
+    }
+  }
+
+  function startAnimation() {
+    if (running) return;
+    running = true;
+    requestAnimationFrame(frame);
+  }
+
+  // Moves the clicked logo DIRECTLY to the Front Hero position (p = 2)!
+  function goTo(targetIdx) {
+    lastTouch = performance.now();
+    const desired = targetIdx - 2;
+    const curNorm = ((cur % N) + N) % N;
+    const desiredNorm = ((desired % N) + N) % N;
+    let diff = desiredNorm - curNorm;
+    if (diff > N / 2) diff -= N;
+    if (diff < -N / 2) diff += N;
+    goal = cur + diff;
+    startAnimation();
   }
 
   // Build dots
@@ -643,19 +710,19 @@ function initVentureOrbit() {
     dot.type = 'button';
     dot.className = 'orbit-dot';
     dot.setAttribute('aria-label', `Select ${v.name}`);
-    dot.addEventListener('click', () => setActive(i, true));
+    dot.addEventListener('click', () => goTo(i));
     if (dotsEl) dotsEl.appendChild(dot);
     return dot;
   });
 
-  // Clicking any coin activates it in place immediately!
+  // Clicking ANY coin glides it to the Front Logo position!
   coins.forEach((coin, i) => {
     coin.addEventListener('click', () => {
-      setActive(i, true);
+      goTo(i);
     });
   });
 
-  // Swipe gesture support
+  // Swipe gesture: swipe right moves from left-to-right, swipe left moves right-to-left
   let startX = 0;
   let isSwiping = false;
 
@@ -672,33 +739,38 @@ function initVentureOrbit() {
     const endX = e.changedTouches[0].clientX;
     const diffX = endX - startX;
     if (Math.abs(diffX) > 35) {
-      if (diffX < 0) {
-        // Advance from left to right: 0 -> 1 -> 2 -> 3 -> 4
-        setActive(activeIdx + 1, true);
+      lastTouch = performance.now();
+      if (diffX > 0) {
+        // Move from left to right
+        goal = Math.round(goal) - 1;
       } else {
-        setActive(activeIdx - 1, true);
+        // Move from right to left
+        goal = Math.round(goal) + 1;
       }
+      startAnimation();
     }
   }, { passive: true });
 
-  // Initial render: Brand Growth active at center hero
-  setActive(2, false);
+  // Initial render: Brand Growth (venture index 2) at front logo
+  renderPositions();
   orbit.classList.add('is-live');
 
-  // Motion moving one by one from LEFT to RIGHT:
-  // 0 (Police) -> 1 (Civil) -> 2 (Brand Growth) -> 3 (LBC) -> 4 (Magic Iron) -> loop
+  // Automatic motion: glides one by one from LEFT to RIGHT!
   if (!reduceMotion) {
     setInterval(() => {
       if (!inView || document.hidden) return;
-      if (performance.now() - lastTouch < 5000) return; // pause if visitor tapped
-      setActive(activeIdx + 1, false);
-    }, 3200);
+      if (performance.now() - lastTouch < 5000) return; // pause if visitor just clicked
+      // Advance from LEFT to RIGHT across front stage
+      goal = Math.round(goal) - 1;
+      startAnimation();
+    }, 3400);
   }
 
   // Intersection observer: only animate when in view
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(entries => {
       inView = entries[0].isIntersecting;
+      if (inView && !reduceMotion) startAnimation();
     }, { threshold: 0.15 }).observe(orbit);
   }
 }

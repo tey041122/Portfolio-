@@ -729,12 +729,12 @@ button {
   }
 }
 
-/* Medallions (Coins) - Permanent Amphitheater Positions (NEVER SWAP SEATS) */
+/* Medallions (Coins) */
 .orbit-coin {
   position: absolute;
   width: clamp(6.2rem, 25vw, 8.8rem);
   height: clamp(6.2rem, 25vw, 8.8rem);
-  transform: translate(-50%, -50%) scale(var(--base-scale, 0.72));
+  transform: translate(-50%, -50%);
   margin: 0;
   padding: 0;
   border: 0;
@@ -746,70 +746,40 @@ button {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  will-change: transform, filter;
-  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
+  will-change: left, top, transform;
 }
 
-/* Staggered Floating Zero-G Wave moving smoothly from Left to Right */
-.orbit.is-live .orbit-coin {
-  animation: floatWaveLtoR 4.2s ease-in-out infinite;
-}
-
+/* Initial fallback positions before JS runs */
 .orbit-coin:nth-child(2) { /* 0: Police (Far Left) */
   left: 14.5%;
   top: 52.0%;
-  --base-scale: 0.65;
+  transform: translate(-50%, -50%) scale(0.65);
   z-index: 12;
-  animation-delay: 0.0s;
 }
 .orbit-coin:nth-child(3) { /* 1: Civil (Elevated Left) */
   left: 32.5%;
   top: 32.0%;
-  --base-scale: 0.72;
+  transform: translate(-50%, -50%) scale(0.72);
   z-index: 22;
-  animation-delay: 0.8s;
 }
 .orbit-coin:nth-child(4) { /* 2: Brand Growth (Center Hero Foreground) */
   left: 50.0%;
   top: 68.0%;
-  --base-scale: 1.00;
+  transform: translate(-50%, -50%) scale(1.00);
   z-index: 50;
-  animation-delay: 1.6s;
 }
 .orbit-coin:nth-child(5) { /* 3: LBC (Elevated Right) */
   left: 67.5%;
   top: 32.0%;
-  --base-scale: 0.72;
+  transform: translate(-50%, -50%) scale(0.72);
   z-index: 22;
-  animation-delay: 2.4s;
 }
 .orbit-coin:nth-child(6) { /* 4: Magic Iron (Far Right) */
   left: 85.5%;
   top: 52.0%;
-  --base-scale: 0.65;
+  transform: translate(-50%, -50%) scale(0.65);
   z-index: 12;
-  animation-delay: 3.2s;
 }
-
-@keyframes floatWaveLtoR {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(var(--base-scale)) translateY(0px);
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(var(--base-scale)) translateY(-7px);
-  }
-}
-
-/* Active Highlight: Raised presence and radiant golden aura bloom */
-.orbit-coin.is-active {
-  z-index: 55 !important;
-}
-
-.orbit-coin:nth-child(2).is-active { --base-scale: 0.78; }
-.orbit-coin:nth-child(3).is-active { --base-scale: 0.82; }
-.orbit-coin:nth-child(4).is-active { --base-scale: 1.02; }
-.orbit-coin:nth-child(5).is-active { --base-scale: 0.82; }
-.orbit-coin:nth-child(6).is-active { --base-scale: 0.78; }
 
 .orbit-coin::before {
   display: none;
