@@ -628,8 +628,8 @@ function initVentureOrbit() {
 
   function renderPositions() {
     for (let i = 0; i < N; i++) {
-      // Moves sequentially: 0 (LBC) -> 1 (BG) -> 2 (Magic) -> 3 (Civil) -> 4 (Police)
-      const p = ((2 - i + cur) % N + N) % N;
+      // Moves sequentially: 0 (LBC) -> 1 (Brand Growth) -> 2 (Magic Iron) -> 3 (Civil) -> 4 (Police)
+      const p = ((i + 2 - cur) % N + N) % N;
       const pt = getTrackPoint(p);
       const coin = coins[i];
 
@@ -678,7 +678,7 @@ function initVentureOrbit() {
 
     renderPositions();
 
-    if (busy && inView) {
+    if (busy) {
       requestAnimationFrame(frame);
     } else {
       running = false;
@@ -760,7 +760,7 @@ function initVentureOrbit() {
   // LBC first -> Brand Growth -> Magic Iron -> Vireakchun Civil -> Vireakchun Police -> repeat!
   if (!reduceMotion) {
     setInterval(() => {
-      if (!inView || document.hidden) return;
+      if (document.hidden) return;
       if (performance.now() - lastTouch < 5000) return; // pause if visitor just clicked
       // Advance forward in sequential order
       goal = Math.round(goal) + 1;
@@ -768,12 +768,12 @@ function initVentureOrbit() {
     }, 3400);
   }
 
-  // Intersection observer: only animate when in view
+  // Intersection observer: keep updated
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(entries => {
       inView = entries[0].isIntersecting;
       if (inView && !reduceMotion) startAnimation();
-    }, { threshold: 0.15 }).observe(orbit);
+    }, { threshold: 0.01 }).observe(orbit);
   }
 }
 
