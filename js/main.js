@@ -20,12 +20,14 @@ const portfolioConfig = {
   // assets/logos/ and put its path in "logo", for example
   // logo: 'assets/logos/lbc.png'. A transparent PNG or an SVG works best.
   // While "logo" is empty the coin shows the letters in "mark" instead.
+  // The ventures on page 2 in user-specified sequence:
+  // 1. LBC first -> 2. Brand Growth -> 3. Magic Iron -> 4. Vireakchun Civil -> 5. Vireakchun Police
   ventures: [
-    { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/vireakchun-police.png' },
-    { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/vireakchun-civil.png' },
-    { name: 'Brand Growth',      mark: 'BG',  logo: 'assets/logos/bg.png' },
     { name: 'LBC',               mark: 'LBC', logo: 'assets/logos/lbc.png' },
-    { name: 'Magic Iron',        mark: 'MI',  logo: 'assets/logos/magic-iron.png' }
+    { name: 'Brand Growth',      mark: 'BG',  logo: 'assets/logos/bg.png' },
+    { name: 'Magic Iron',        mark: 'MI',  logo: 'assets/logos/magic-iron.png' },
+    { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/vireakchun-civil.png' },
+    { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/vireakchun-police.png' }
   ],
   // PLACEHOLDER VALUES, copied from the design mock-up on 2026-11-16.
   // Replace phone, website and location with the real ones before publishing.
@@ -557,9 +559,9 @@ function initContactPage() {
 
 /* ══════════════════════════════════════════════════════════════════════════
    VENTURE ORBIT: 3D Amphitheater Motion System
+   - Sequential Order: LBC first -> Brand Growth -> Magic Iron -> Civil -> Police
    - Clicking ANY logo immediately glides it to the FRONT LOGO position (Hero Center)!
-   - Automatic motion continuously glides from LEFT to RIGHT one by one.
-   - Smooth 60fps spring-eased 3D trajectory along the golden torus amphitheater.
+   - Automatic motion advances strictly in order one by one without mixing!
    ══════════════════════════════════════════════════════════════════════════ */
 function initVentureOrbit() {
   const orbit = document.getElementById('orbit');
@@ -572,12 +574,12 @@ function initVentureOrbit() {
   const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
 
   // Calibrated 3D Waypoints along the amphitheater loop (cohesive natural spacing):
-  // p = 0: Left Outer Wing (Police) -> x: 18.5%, y: 53.5%, s: 0.68, z: 12
-  // p = 1: Elevated Left Flank (Civil) -> x: 35.0%, y: 35.0%, s: 0.74, z: 22
-  // p = 2: Center Front Hero -> x: 50.0%, y: 67.0%, s: 1.00, z: 50 (FRONT LOGO)
-  // p = 3: Elevated Right Flank (LBC) -> x: 65.0%, y: 35.0%, s: 0.74, z: 22
-  // p = 4: Right Outer Wing (Magic Iron) -> x: 81.5%, y: 53.5%, s: 0.68, z: 12
-  // p = 4.5: High Back Transit -> x: 50.0%, y: 20.0%, s: 0.50, z: 5
+  // p = 0: Left Outer Wing (Magic Iron)
+  // p = 1: Elevated Left Flank (Brand Growth)
+  // p = 2: Center Front Hero (LBC) -> FRONT LOGO
+  // p = 3: Elevated Right Flank (Police)
+  // p = 4: Right Outer Wing (Civil)
+  // p = 4.5: High Back Transit
   function getTrackPoint(p) {
     p = ((p % N) + N) % N;
     let p0, p1, t;
@@ -617,7 +619,7 @@ function initVentureOrbit() {
     };
   }
 
-  // cur = 0 starts with Brand Growth (venture index 2) at p = 2 (FRONT LOGO)
+  // cur = 0 starts with LBC (index 0) at FRONT HERO (p = 2)
   let cur = 0;
   let goal = 0;
   let running = false;
@@ -626,7 +628,8 @@ function initVentureOrbit() {
 
   function renderPositions() {
     for (let i = 0; i < N; i++) {
-      const p = ((i - cur) % N + N) % N;
+      // Moves sequentially: 0 (LBC) -> 1 (BG) -> 2 (Magic) -> 3 (Civil) -> 4 (Police)
+      const p = ((2 - i + cur) % N + N) % N;
       const pt = getTrackPoint(p);
       const coin = coins[i];
 
@@ -640,8 +643,8 @@ function initVentureOrbit() {
       coin.classList.toggle('is-active', distToFront < 0.35);
     }
 
-    // Active front venture index
-    const frontIdx = (((Math.round(cur) + 2) % N) + N) % N;
+    // Active front venture index strictly matching the current hero
+    const frontIdx = (((Math.round(cur)) % N) + N) % N;
     updateHeroInfo(frontIdx);
   }
 
@@ -691,10 +694,8 @@ function initVentureOrbit() {
   // Moves the clicked logo DIRECTLY to the Front Hero position (p = 2)!
   function goTo(targetIdx) {
     lastTouch = performance.now();
-    const desired = targetIdx - 2;
     const curNorm = ((cur % N) + N) % N;
-    const desiredNorm = ((desired % N) + N) % N;
-    let diff = desiredNorm - curNorm;
+    let diff = targetIdx - curNorm;
     if (diff > N / 2) diff -= N;
     if (diff < -N / 2) diff += N;
     goal = cur + diff;
@@ -722,7 +723,7 @@ function initVentureOrbit() {
     });
   });
 
-  // Swipe gesture: swipe right moves from left-to-right, swipe left moves right-to-left
+  // Swipe gesture: swipe left advances in order, swipe right goes back
   let startX = 0;
   let isSwiping = false;
 
@@ -740,28 +741,29 @@ function initVentureOrbit() {
     const diffX = endX - startX;
     if (Math.abs(diffX) > 35) {
       lastTouch = performance.now();
-      if (diffX > 0) {
-        // Move from left to right
-        goal = Math.round(goal) - 1;
-      } else {
-        // Move from right to left
+      if (diffX < 0) {
+        // Advance in sequential order
         goal = Math.round(goal) + 1;
+      } else {
+        // Go back in sequential order
+        goal = Math.round(goal) - 1;
       }
       startAnimation();
     }
   }, { passive: true });
 
-  // Initial render: Brand Growth (venture index 2) at front logo
+  // Initial render: LBC (index 0) active at front logo
   renderPositions();
   orbit.classList.add('is-live');
 
-  // Automatic motion: glides one by one from LEFT to RIGHT!
+  // Automatic motion: runs strictly IN ORDER:
+  // LBC first -> Brand Growth -> Magic Iron -> Vireakchun Civil -> Vireakchun Police -> repeat!
   if (!reduceMotion) {
     setInterval(() => {
       if (!inView || document.hidden) return;
       if (performance.now() - lastTouch < 5000) return; // pause if visitor just clicked
-      // Advance from LEFT to RIGHT across front stage
-      goal = Math.round(goal) - 1;
+      // Advance forward in sequential order
+      goal = Math.round(goal) + 1;
       startAnimation();
     }, 3400);
   }

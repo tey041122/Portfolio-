@@ -749,36 +749,36 @@ button {
   will-change: left, top, transform;
 }
 
-/* Initial fallback positions before JS runs */
-.orbit-coin:nth-child(2) { /* 0: Police (Far Left) */
-  left: 18.5%;
-  top: 53.5%;
-  transform: translate(-50%, -50%) scale(0.68);
-  z-index: 12;
-}
-.orbit-coin:nth-child(3) { /* 1: Civil (Elevated Left) */
-  left: 35.0%;
-  top: 35.0%;
-  transform: translate(-50%, -50%) scale(0.74);
-  z-index: 22;
-}
-.orbit-coin:nth-child(4) { /* 2: Brand Growth (Center Hero Foreground) */
+/* Initial fallback positions before JS runs (LBC in front) */
+.orbit-coin:nth-child(2) { /* 0: LBC (Center Front Hero) */
   left: 50.0%;
   top: 67.0%;
   transform: translate(-50%, -50%) scale(1.00);
   z-index: 50;
 }
-.orbit-coin:nth-child(5) { /* 3: LBC (Elevated Right) */
-  left: 65.0%;
+.orbit-coin:nth-child(3) { /* 1: Brand Growth (Elevated Left) */
+  left: 35.0%;
   top: 35.0%;
   transform: translate(-50%, -50%) scale(0.74);
   z-index: 22;
 }
-.orbit-coin:nth-child(6) { /* 4: Magic Iron (Far Right) */
+.orbit-coin:nth-child(4) { /* 2: Magic Iron (Left Outer Wing) */
+  left: 18.5%;
+  top: 53.5%;
+  transform: translate(-50%, -50%) scale(0.68);
+  z-index: 12;
+}
+.orbit-coin:nth-child(5) { /* 3: Vireakchun Civil (Right Outer Wing) */
   left: 81.5%;
   top: 53.5%;
   transform: translate(-50%, -50%) scale(0.68);
   z-index: 12;
+}
+.orbit-coin:nth-child(6) { /* 4: Vireakchun Police (Elevated Right) */
+  left: 65.0%;
+  top: 35.0%;
+  transform: translate(-50%, -50%) scale(0.74);
+  z-index: 22;
 }
 
 .orbit-coin::before {
