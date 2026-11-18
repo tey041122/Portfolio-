@@ -752,38 +752,38 @@ button {
   will-change: left, top, transform;
 }
 
-/* Initial fallback positions before JS runs: Left-to-right amphitheater flow
-   (0: LBC front hero, 1: Brand Growth left flank, 2: Magic Iron left wing,
-    3: Vireakchun Civil right wing, 4: Vireakchun Police right flank) */
+/* Initial fallback positions before JS runs: Continuous elliptical orbit
+   (0: LBC front hero, 1: Brand Growth left flank, 2: Magic Iron back left,
+    3: Vireakchun Civil back right, 4: Vireakchun Police right flank) */
 .orbit-coin:nth-child(2) { /* 0: LBC (Center Front Hero) */
   left: 50.0%;
-  top: 65.0%;
+  top: 64.5%;
   transform: translate(-50%, -50%) scale(1.00);
   z-index: 50;
 }
-.orbit-coin:nth-child(3) { /* 1: Brand Growth (Left Flank) */
-  left: 32.0%;
-  top: 22.0%;
-  transform: translate(-50%, -50%) scale(0.70);
-  z-index: 22;
+.orbit-coin:nth-child(3) { /* 1: Brand Growth (Front Left Flank) */
+  left: 15.3%;
+  top: 49.8%;
+  transform: translate(-50%, -50%) scale(0.84);
+  z-index: 35;
 }
-.orbit-coin:nth-child(4) { /* 2: Magic Iron (Left Outer Wing) */
-  left: 13.5%;
-  top: 44.0%;
-  transform: translate(-50%, -50%) scale(0.65);
-  z-index: 12;
+.orbit-coin:nth-child(4) { /* 2: Magic Iron (Back Left) */
+  left: 28.5%;
+  top: 25.2%;
+  transform: translate(-50%, -50%) scale(0.59);
+  z-index: 9;
 }
-.orbit-coin:nth-child(5) { /* 3: Vireakchun Civil (Right Outer Wing) */
-  left: 86.5%;
-  top: 44.0%;
-  transform: translate(-50%, -50%) scale(0.65);
-  z-index: 12;
+.orbit-coin:nth-child(5) { /* 3: Vireakchun Civil (Back Right) */
+  left: 71.5%;
+  top: 25.2%;
+  transform: translate(-50%, -50%) scale(0.59);
+  z-index: 9;
 }
-.orbit-coin:nth-child(6) { /* 4: Vireakchun Police (Right Flank) */
-  left: 68.0%;
-  top: 22.0%;
-  transform: translate(-50%, -50%) scale(0.70);
-  z-index: 22;
+.orbit-coin:nth-child(6) { /* 4: Vireakchun Police (Front Right Flank) */
+  left: 84.7%;
+  top: 49.8%;
+  transform: translate(-50%, -50%) scale(0.84);
+  z-index: 35;
 }
 
 .orbit-coin::before {

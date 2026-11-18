@@ -558,10 +558,12 @@ function initContactPage() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   VENTURE ORBIT: 3D Amphitheater Motion System
-   - Sequential Order: LBC first -> Brand Growth -> Magic Iron -> Civil -> Police
-   - Clicking ANY logo immediately glides it to the FRONT LOGO position (Hero Center)!
-   - Automatic motion advances strictly in order one by one without mixing!
+   VENTURE ORBIT: Continuous 3D Elliptical Orbit System
+   - The motion runs continuously around the 3D glowing ring ("runs around")
+   - No discrete snapping or switching: silky smooth perpetual 60fps/120fps motion
+   - Exact sequential order: LBC -> Brand Growth -> Magic Iron -> Civil -> Police
+   - Clear generous spacing along the ellipse: medallions NEVER touch each other
+   - Clicking ANY logo or dot glides it directly to the Front Hero position
    ══════════════════════════════════════════════════════════════════════════ */
 function initVentureOrbit() {
   const orbit = document.getElementById('orbit');
@@ -573,78 +575,53 @@ function initVentureOrbit() {
   const N = ventures.length;
   const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
 
-  // Calibrated 3D Waypoints along the amphitheater loop (generous natural spacing):
-  // p = 0: Left Outer Wing
-  // p = 1: Elevated Left Flank
-  // p = 2: Center Front Hero -> FRONT HERO
-  // p = 3: Elevated Right Flank
-  // p = 4: Right Outer Wing
-  // p = 4.5: High Back Transit
-  function getTrackPoint(p) {
-    p = ((p % N) + N) % N;
-    let p0, p1, t;
+  // Continuous elliptical orbit geometry matching the golden torus ring:
+  // Center: (50%, 43%), Rx: 36.5%, Ry: 21.5%
+  const CX = 50.0;
+  const CY = 43.0;
+  const RX = 36.5;
+  const RY = 21.5;
+  const STEP = (2 * Math.PI) / N;
 
-    if (p < 1) {
-      p0 = { x: 13.5, y: 44.0, s: 0.65, z: 12 };
-      p1 = { x: 32.0, y: 22.0, s: 0.70, z: 22 };
-      t = p;
-    } else if (p < 2) {
-      p0 = { x: 32.0, y: 22.0, s: 0.70, z: 22 };
-      p1 = { x: 50.0, y: 65.0, s: 1.00, z: 50 };
-      t = p - 1;
-    } else if (p < 3) {
-      p0 = { x: 50.0, y: 65.0, s: 1.00, z: 50 };
-      p1 = { x: 68.0, y: 22.0, s: 0.70, z: 22 };
-      t = p - 2;
-    } else if (p < 4) {
-      p0 = { x: 68.0, y: 22.0, s: 0.70, z: 22 };
-      p1 = { x: 86.5, y: 44.0, s: 0.65, z: 12 };
-      t = p - 3;
-    } else if (p < 4.5) {
-      p0 = { x: 86.5, y: 44.0, s: 0.65, z: 12 };
-      p1 = { x: 50.0, y: 14.0, s: 0.45, z: 4 };
-      t = (p - 4) / 0.5;
-    } else {
-      p0 = { x: 50.0, y: 14.0, s: 0.45, z: 4 };
-      p1 = { x: 13.5, y: 44.0, s: 0.65, z: 12 };
-      t = (p - 4.5) / 0.5;
-    }
-
-    const ease = t * t * (3 - 2 * t);
-    return {
-      x: p0.x + (p1.x - p0.x) * ease,
-      y: p0.y + (p1.y - p0.y) * ease,
-      s: p0.s + (p1.s - p0.s) * ease,
-      z: Math.round(p0.z + (p1.z - p0.z) * ease)
-    };
-  }
-
-  // cur = 0 starts with LBC (index 0) at FRONT HERO (p = 2)
   let cur = 0;
   let goal = 0;
+  let targetActive = false;
   let running = false;
   let lastTouch = 0;
   let inView = true;
+  let isHovered = false;
+
+  // Gentle, luxurious continuous orbiting speed (~22 seconds per full cycle)
+  const BASE_SPEED = 0.0038;
 
   function renderPositions() {
     for (let i = 0; i < N; i++) {
-      // Moves smoothly from left to right in strict sequential order:
-      // 0 (LBC) -> 1 (Brand Growth) -> 2 (Magic Iron) -> 3 (Civil) -> 4 (Police)
-      const p = ((2 - i + cur) % N + N) % N;
-      const pt = getTrackPoint(p);
+      // theta: angle along 3D ellipse for coin i
+      // As cur increases, each coin travels Left -> Front Hero -> Right -> Back -> Left
+      const theta = (cur - i) * STEP;
+      const sinT = Math.sin(theta);
+      const cosT = Math.cos(theta);
+
+      const x = CX + RX * sinT;
+      const y = CY + RY * cosT;
+
+      // depth: 1 at front (cosT = 1), 0 at back (cosT = -1)
+      const depth = (cosT + 1) * 0.5;
+      const scale = 0.55 + 0.45 * depth;
+      const zIndex = Math.round(5 + 45 * depth);
+
       const coin = coins[i];
+      coin.style.left = `${x.toFixed(2)}%`;
+      coin.style.top = `${y.toFixed(2)}%`;
+      coin.style.transform = `translate(-50%, -50%) scale(${scale.toFixed(3)})`;
+      coin.style.zIndex = String(zIndex);
 
-      coin.style.left = `${pt.x.toFixed(2)}%`;
-      coin.style.top = `${pt.y.toFixed(2)}%`;
-      coin.style.transform = `translate(-50%, -50%) scale(${pt.s.toFixed(3)})`;
-      coin.style.zIndex = String(pt.z);
-
-      // Front hero active golden halo glow
-      const distToFront = Math.abs(p - 2);
-      coin.classList.toggle('is-active', distToFront < 0.35);
+      // Normalized angular distance to front hero (theta = 0)
+      const normAngle = Math.abs(((theta % (2 * Math.PI)) + 3 * Math.PI) % (2 * Math.PI) - Math.PI);
+      coin.classList.toggle('is-active', normAngle < 0.38);
     }
 
-    // Active front venture index strictly matching the current hero
+    // Identify which logo is closest to the front hero position
     const frontIdx = (((Math.round(cur)) % N) + N) % N;
     updateHeroInfo(frontIdx);
   }
@@ -661,29 +638,37 @@ function initVentureOrbit() {
     if (nameEl && ventures[frontIdx]) {
       nameEl.textContent = ventures[frontIdx].name;
       nameEl.classList.remove('is-swapping');
-      void nameEl.offsetWidth; // trigger reflow for smooth text entrance
+      void nameEl.offsetWidth; // trigger reflow for smooth entrance
       nameEl.classList.add('is-swapping');
     }
   }
 
   function frame() {
-    let busy = false;
-    const diff = goal - cur;
+    if (!inView || document.hidden) {
+      running = false;
+      return;
+    }
 
-    if (Math.abs(diff) > 0.001) {
-      cur += diff * 0.12;
-      busy = true;
-    } else {
-      cur = goal;
+    if (targetActive) {
+      // Smoothly gliding to a user-selected logo
+      const diff = goal - cur;
+      if (Math.abs(diff) > 0.001) {
+        cur += diff * 0.085;
+      } else {
+        cur = goal;
+        // Pause briefly after user click before resuming continuous orbit
+        if (performance.now() - lastTouch > 4200) {
+          targetActive = false;
+        }
+      }
+    } else if (!reduceMotion && !isHovered) {
+      // Continuous perpetual orbit running around the amphitheater ring
+      cur += BASE_SPEED;
+      goal = cur;
     }
 
     renderPositions();
-
-    if (busy) {
-      requestAnimationFrame(frame);
-    } else {
-      running = false;
-    }
+    requestAnimationFrame(frame);
   }
 
   function startAnimation() {
@@ -692,9 +677,10 @@ function initVentureOrbit() {
     requestAnimationFrame(frame);
   }
 
-  // Moves the clicked logo DIRECTLY to the Front Hero position (p = 2)!
+  // Smoothly glides the clicked logo directly to the Front Hero position!
   function goTo(targetIdx) {
     lastTouch = performance.now();
+    targetActive = true;
     const curNorm = ((cur % N) + N) % N;
     let diff = targetIdx - curNorm;
     if (diff > N / 2) diff -= N;
@@ -717,14 +703,18 @@ function initVentureOrbit() {
     return dot;
   });
 
-  // Clicking ANY coin glides it to the Front Logo position!
+  // Clicking ANY coin glides it to the Front Hero position
   coins.forEach((coin, i) => {
     coin.addEventListener('click', () => {
       goTo(i);
     });
   });
 
-  // Swipe gesture: swipe left advances in order, swipe right goes back
+  // Pause continuous rotation on desktop mouse hover so visitor can easily click
+  orbit.addEventListener('pointerenter', () => { isHovered = true; });
+  orbit.addEventListener('pointerleave', () => { isHovered = false; });
+
+  // Swipe gesture: drag along orbit with touch
   let startX = 0;
   let isSwiping = false;
 
@@ -732,50 +722,47 @@ function initVentureOrbit() {
     if (e.touches.length === 1) {
       startX = e.touches[0].clientX;
       isSwiping = true;
+      targetActive = true;
+      lastTouch = performance.now();
     }
   }, { passive: true });
 
-  orbit.addEventListener('touchend', e => {
+  orbit.addEventListener('touchmove', e => {
+    if (!isSwiping || e.touches.length !== 1) return;
+    const currentX = e.touches[0].clientX;
+    const deltaX = currentX - startX;
+    startX = currentX;
+    // Interactive drag
+    cur -= deltaX * 0.006;
+    goal = cur;
+    renderPositions();
+  }, { passive: true });
+
+  orbit.addEventListener('touchend', () => {
     if (!isSwiping) return;
     isSwiping = false;
-    const endX = e.changedTouches[0].clientX;
-    const diffX = endX - startX;
-    if (Math.abs(diffX) > 35) {
-      lastTouch = performance.now();
-      if (diffX < 0) {
-        // Advance in sequential order
-        goal = Math.round(goal) + 1;
-      } else {
-        // Go back in sequential order
-        goal = Math.round(goal) - 1;
-      }
-      startAnimation();
-    }
+    lastTouch = performance.now();
+    // Snap gently to nearest logo
+    goal = Math.round(cur);
+    startAnimation();
   }, { passive: true });
 
-  // Initial render: LBC (index 0) active at front logo
+  // Initial render
   renderPositions();
   orbit.classList.add('is-live');
+  startAnimation();
 
-  // Automatic motion: runs strictly IN ORDER:
-  // LBC first -> Brand Growth -> Magic Iron -> Vireakchun Civil -> Vireakchun Police -> repeat!
-  if (!reduceMotion) {
-    setInterval(() => {
-      if (document.hidden) return;
-      if (performance.now() - lastTouch < 5000) return; // pause if visitor just clicked
-      // Advance forward in sequential order
-      goal = Math.round(goal) + 1;
-      startAnimation();
-    }, 3400);
-  }
-
-  // Intersection observer: keep updated
+  // Intersection observer: run only when visible
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(entries => {
       inView = entries[0].isIntersecting;
-      if (inView && !reduceMotion) startAnimation();
+      if (inView) startAnimation();
     }, { threshold: 0.01 }).observe(orbit);
   }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && inView) startAnimation();
+  });
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
