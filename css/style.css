@@ -684,7 +684,7 @@ button {
   z-index: 2;
 }
 
-/* Energy trails flowing animation */
+/* Base energy trails flowing animation */
 .trail-primary {
   stroke-dasharray: 620 220;
   animation: trailFlow 6s linear infinite, trailPulse 3s ease-in-out infinite;
@@ -697,6 +697,49 @@ button {
 
 .trail-outer-back {
   animation: trailBreathe 5s ease-in-out infinite;
+}
+
+/* Continuous Running Light Comets (Fast Racing Motion) */
+.trail-runner-1 {
+  stroke-dasharray: 24 76;
+  animation: runComet1 3.6s linear infinite;
+}
+
+.trail-runner-2 {
+  stroke-dasharray: 20 80;
+  animation: runComet2 4.8s linear infinite;
+}
+
+.trail-runner-3 {
+  stroke-dasharray: 18 82;
+  animation: runComet3 3.4s linear infinite;
+}
+
+.trail-runner-connect {
+  stroke-dasharray: 16 84;
+  animation: runConnect 3.2s ease-in-out infinite;
+}
+
+@keyframes runComet1 {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -100; }
+}
+
+@keyframes runComet2 {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -100; }
+}
+
+@keyframes runComet3 {
+  from { stroke-dashoffset: -100; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes runConnect {
+  0% { stroke-dashoffset: 100; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { stroke-dashoffset: -100; opacity: 0; }
 }
 
 @keyframes trailFlow {
@@ -844,11 +887,11 @@ button {
   background: conic-gradient(
     from 0deg,
     rgba(255, 246, 214, 0) 0deg,
-    rgba(255, 246, 214, 0) 260deg,
-    rgba(255, 246, 214, 0.45) 300deg,
+    rgba(255, 246, 214, 0) 250deg,
+    rgba(255, 246, 214, 0.6) 300deg,
     rgba(255, 246, 214, 0) 345deg
   );
-  animation: coin-beam 6s linear infinite;
+  animation: coin-beam 4.2s linear infinite;
   pointer-events: none;
 }
 
@@ -937,49 +980,49 @@ button {
   animation: float-magic 5.6s ease-in-out infinite 2.4s;
 }
 
-/* Floating Keyframes for organic 3D floating effect */
+/* Floating Keyframes for organic 3D zero-gravity floating effect */
 @keyframes float-hero {
   0%, 100% {
-    transform: translate(-50%, -50%) translateY(0);
+    transform: translate(-50%, -50%) translateY(0) scale(1);
   }
   50% {
-    transform: translate(-50%, -50%) translateY(-5px);
+    transform: translate(-50%, -50%) translateY(-9px) scale(1.02);
   }
 }
 
 @keyframes float-civil {
   0%, 100% {
-    transform: translate(-50%, -50%) translateY(0);
+    transform: translate(-50%, -50%) translateY(0) rotate(0deg);
   }
   50% {
-    transform: translate(-50%, -50%) translateY(-4px);
+    transform: translate(-50%, -50%) translateY(-8px) rotate(-1.2deg);
   }
 }
 
 @keyframes float-lbc {
   0%, 100% {
-    transform: translate(-50%, -50%) translateY(0);
+    transform: translate(-50%, -50%) translateY(0) rotate(0deg);
   }
   50% {
-    transform: translate(-50%, -50%) translateY(-4.5px);
+    transform: translate(-50%, -50%) translateY(-8.5px) rotate(1.2deg);
   }
 }
 
 @keyframes float-police {
   0%, 100% {
-    transform: translate(-50%, -50%) translateY(0);
+    transform: translate(-50%, -50%) translateY(0) rotate(0deg);
   }
   50% {
-    transform: translate(-50%, -50%) translateY(-3.5px);
+    transform: translate(-50%, -50%) translateY(-7.5px) rotate(-1.8deg);
   }
 }
 
 @keyframes float-magic {
   0%, 100% {
-    transform: translate(-50%, -50%) translateY(0);
+    transform: translate(-50%, -50%) translateY(0) rotate(0deg);
   }
   50% {
-    transform: translate(-50%, -50%) translateY(-3.8px);
+    transform: translate(-50%, -50%) translateY(-7.5px) rotate(1.8deg);
   }
 }
 
@@ -1076,6 +1119,7 @@ button {
   .trail-primary,
   .trail-secondary,
   .trail-outer-back,
+  .trail-runner,
   .lens-flare-group,
   .sparkle,
   .orbit-coin,

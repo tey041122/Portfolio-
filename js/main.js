@@ -571,21 +571,9 @@ function initVentureOrbit() {
 
   const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
 
-  // Build dots
-  if (dotsEl) {
-    dotsEl.innerHTML = '';
-  }
-  const dots = ventures.map((v, i) => {
-    const dot = document.createElement('button');
-    dot.type = 'button';
-    dot.className = 'orbit-dot';
-    dot.setAttribute('aria-label', `Select ${v.name}`);
-    dot.addEventListener('click', () => selectVenture(i));
-    if (dotsEl) dotsEl.appendChild(dot);
-    return dot;
-  });
-
   let activeIndex = 2; // Brand Growth hero by default
+  let autoTimer = null;
+  let resumeTimer = null;
 
   function selectVenture(i) {
     if (i < 0 || i >= ventures.length) return;
@@ -607,9 +595,55 @@ function initVentureOrbit() {
     }
   }
 
+  function nextVenture() {
+    // Continuously runs through ventures in motion: Police -> Civil -> Brand Growth -> LBC -> Magic Iron -> Police...
+    const next = (activeIndex + 1) % ventures.length;
+    selectVenture(next);
+  }
+
+  function startAutoRun() {
+    stopAutoRun();
+    if (!reduceMotion) {
+      autoTimer = setInterval(nextVenture, 2800);
+    }
+  }
+
+  function stopAutoRun() {
+    if (autoTimer) {
+      clearInterval(autoTimer);
+      autoTimer = null;
+    }
+  }
+
+  function pauseAutoRun() {
+    stopAutoRun();
+    if (resumeTimer) clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(() => {
+      startAutoRun();
+    }, 6000);
+  }
+
+  // Build dots with tap listeners
+  if (dotsEl) {
+    dotsEl.innerHTML = '';
+  }
+  const dots = ventures.map((v, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'orbit-dot';
+    dot.setAttribute('aria-label', `Select ${v.name}`);
+    dot.addEventListener('click', () => {
+      pauseAutoRun();
+      selectVenture(i);
+    });
+    if (dotsEl) dotsEl.appendChild(dot);
+    return dot;
+  });
+
   // Attach tap/click to coins
   coins.forEach((coin, i) => {
     coin.addEventListener('click', () => {
+      pauseAutoRun();
       selectVenture(i);
     });
   });
@@ -617,6 +651,9 @@ function initVentureOrbit() {
   // Default active state: Brand Growth
   selectVenture(2);
   orbit.classList.add('is-live');
+
+  // Start continuous running motion
+  startAutoRun();
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
