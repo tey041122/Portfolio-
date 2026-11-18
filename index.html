@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=orbit_amphitheater_7" />
+  <link rel="stylesheet" href="css/style.css?v=orbit_master_8" />
 
   <!-- Motion and reveal states apply only when JavaScript runs -->
   <script>document.documentElement.classList.add('js');</script>
@@ -241,10 +241,8 @@
          2. CONTACT — His Ventures & Connect With Me
          ==================================================================== -->
     <section class="reach" id="contact">
-      <h2 class="reach-title reveal"><span>His Ventures</span></h2>
-
       <!-- 3D Amphitheater Logo Showcase with Golden Energy Trails -->
-      <div class="orbit reveal" id="orbit" style="--i: 1">
+      <div class="orbit" id="orbit">
         <!-- Golden energy trails & running light comets SVG -->
         <svg class="orbit-trails-svg" viewBox="0 0 1024 520" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
           <defs>
@@ -258,22 +256,15 @@
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
-            <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
-              <feMerge>
-                <feMergeNode in="blur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
           </defs>
 
           <!-- Continuous Luminous Running Light Comets along the Torus Ellipse -->
           <path class="trail-runner trail-runner-1" pathLength="100"
-                d="M 72,240 a 440,142 0 1,0 880,0 a 440,142 0 1,0 -880,0"
-                fill="none" stroke="#ffffff" stroke-width="6" filter="url(#goldGlow)" />
+                d="M 170,225 a 430,135 0 1,0 730,90 a 430,135 0 1,0 -730,-90"
+                fill="none" stroke="#ffffff" stroke-width="5" filter="url(#goldGlow)" />
           <path class="trail-runner trail-runner-2" pathLength="100"
-                d="M 952,240 a 440,142 0 1,1 -880,0 a 440,142 0 1,1 880,0"
-                fill="none" stroke="#fff8dc" stroke-width="4" filter="url(#goldGlow)" />
+                d="M 900,315 a 430,135 0 1,1 -730,-90 a 430,135 0 1,1 730,90"
+                fill="none" stroke="#fff8dc" stroke-width="3.5" filter="url(#goldGlow)" />
 
           <!-- Floating golden dust particles / sparkles around stage -->
           <g class="sparkles-group">
@@ -292,39 +283,39 @@
           </g>
         </svg>
 
-        <!-- 5 Amphitheater Medallions with Original Logos -->
+        <!-- 5 Amphitheater Medallions with Authentic Master 3D Coins -->
         <button type="button" class="orbit-coin" data-index="0" aria-label="Vireakchun Police, Chairman & Founder" style="--i:0">
           <span class="coin-face">
-            <img class="coin-logo" src="assets/logos/vireakchun-police.png" alt="Vireakchun Police logo" draggable="false" />
+            <img class="coin-logo" src="assets/logos/coin-police.png" alt="Vireakchun Police logo" draggable="false" />
           </span>
         </button>
 
         <button type="button" class="orbit-coin" data-index="1" aria-label="Vireakchun Civil, Chairman & Founder" style="--i:1">
           <span class="coin-face">
-            <img class="coin-logo" src="assets/logos/vireakchun-civil.png" alt="Vireakchun Civil logo" draggable="false" />
+            <img class="coin-logo" src="assets/logos/coin-civil.png" alt="Vireakchun Civil logo" draggable="false" />
           </span>
         </button>
 
         <button type="button" class="orbit-coin is-active" data-index="2" aria-label="Brand Growth, Chairman & Founder" style="--i:2">
           <span class="coin-face">
-            <img class="coin-logo" src="assets/logos/bg.png" alt="Brand Growth logo" draggable="false" />
+            <img class="coin-logo" src="assets/logos/coin-bg.png" alt="Brand Growth logo" draggable="false" />
           </span>
         </button>
 
         <button type="button" class="orbit-coin" data-index="3" aria-label="LBC, Chairman & Founder" style="--i:3">
           <span class="coin-face">
-            <img class="coin-logo" src="assets/logos/lbc.png" alt="LBC logo" draggable="false" />
+            <img class="coin-logo" src="assets/logos/coin-lbc.png" alt="LBC logo" draggable="false" />
           </span>
         </button>
 
         <button type="button" class="orbit-coin" data-index="4" aria-label="Magic Iron, Chairman & Founder" style="--i:4">
           <span class="coin-face">
-            <img class="coin-logo" src="assets/logos/magic-iron.png" alt="Magic Iron logo" draggable="false" />
+            <img class="coin-logo" src="assets/logos/coin-magic.png" alt="Magic Iron logo" draggable="false" />
           </span>
         </button>
       </div>
 
-      <div class="orbit-caption reveal" style="--i: 2" aria-live="polite">
+      <div class="orbit-caption" aria-live="polite">
         <p class="orbit-name foil" id="orbitName">Brand Growth</p>
         <p class="orbit-role">Chairman &amp; Founder</p>
         <div class="orbit-dots" id="orbitDots" aria-hidden="true"></div>
@@ -383,6 +374,6 @@
   </dialog>
 
   <script src="js/vendor/uqr.js?v=0.1.3"></script>
-  <script src="js/main.js?v=orbit_amphitheater_7"></script>
+  <script src="js/main.js?v=orbit_master_8"></script>
 </body>
 </html>
