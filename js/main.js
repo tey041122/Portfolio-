@@ -576,28 +576,28 @@ function initVentureOrbit() {
   const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
 
   // Continuous elliptical orbit geometry matching the golden torus ring:
-  // Center: (50%, 43%), Rx: 36.5%, Ry: 21.5%
+  // Center: (50%, 41%), Rx: 37%, Ry: 23%
   const CX = 50.0;
-  const CY = 43.0;
-  const RX = 36.5;
-  const RY = 21.5;
+  const CY = 41.0;
+  const RX = 37.0;
+  const RY = 23.0;
   const STEP = (2 * Math.PI) / N;
 
   let cur = 0;
   let goal = 0;
   let targetActive = false;
   let running = false;
+  let lastTime = 0;
   let lastTouch = 0;
   let inView = true;
   let isHovered = false;
 
-  // Gentle, luxurious continuous orbiting speed (~22 seconds per full cycle)
-  const BASE_SPEED = 0.0038;
+  // Calm, regal, steady orbiting speed (~31 seconds per full 5-logo cycle)
+  const SPEED_PER_SEC = 0.16;
 
   function renderPositions() {
     for (let i = 0; i < N; i++) {
       // theta: angle along 3D ellipse for coin i
-      // As cur increases, each coin travels Left -> Front Hero -> Right -> Back -> Left
       const theta = (cur - i) * STEP;
       const sinT = Math.sin(theta);
       const cosT = Math.cos(theta);
@@ -606,8 +606,10 @@ function initVentureOrbit() {
       const y = CY + RY * cosT;
 
       // depth: 1 at front (cosT = 1), 0 at back (cosT = -1)
-      const depth = (cosT + 1) * 0.5;
-      const scale = 0.55 + 0.45 * depth;
+      const rawDepth = (cosT + 1) * 0.5;
+      // Exponential focus curve so ONE front hero shines while flanks remain compact
+      const depth = Math.pow(rawDepth, 1.35);
+      const scale = 0.58 + 0.44 * depth;
       const zIndex = Math.round(5 + 45 * depth);
 
       const coin = coins[i];
@@ -618,7 +620,7 @@ function initVentureOrbit() {
 
       // Normalized angular distance to front hero (theta = 0)
       const normAngle = Math.abs(((theta % (2 * Math.PI)) + 3 * Math.PI) % (2 * Math.PI) - Math.PI);
-      coin.classList.toggle('is-active', normAngle < 0.38);
+      coin.classList.toggle('is-active', normAngle < 0.32);
     }
 
     // Identify which logo is closest to the front hero position
@@ -636,34 +638,44 @@ function initVentureOrbit() {
     });
 
     if (nameEl && ventures[frontIdx]) {
-      nameEl.textContent = ventures[frontIdx].name;
-      nameEl.classList.remove('is-swapping');
-      void nameEl.offsetWidth; // trigger reflow for smooth entrance
-      nameEl.classList.add('is-swapping');
+      nameEl.style.opacity = '0';
+      nameEl.style.transform = 'translateY(4px)';
+      setTimeout(() => {
+        nameEl.textContent = ventures[frontIdx].name;
+        nameEl.style.opacity = '1';
+        nameEl.style.transform = 'none';
+      }, 140);
     }
   }
 
-  function frame() {
+  function frame(now) {
     if (!inView || document.hidden) {
       running = false;
+      lastTime = 0;
       return;
     }
 
+    if (!lastTime) lastTime = now;
+    // Delta time in seconds, capped at 50ms to prevent jumping on tab switches
+    const dt = Math.min((now - lastTime) / 1000, 0.05);
+    lastTime = now;
+
     if (targetActive) {
-      // Smoothly gliding to a user-selected logo
+      // Smooth framerate-independent exponential spring to user-selected logo
       const diff = goal - cur;
       if (Math.abs(diff) > 0.001) {
-        cur += diff * 0.085;
+        const k = 1 - Math.exp(-7.0 * dt);
+        cur += diff * k;
       } else {
         cur = goal;
-        // Pause briefly after user click before resuming continuous orbit
-        if (performance.now() - lastTouch > 4200) {
+        // Pause briefly after user click before gently resuming continuous orbit
+        if (performance.now() - lastTouch > 4000) {
           targetActive = false;
         }
       }
     } else if (!reduceMotion && !isHovered) {
-      // Continuous perpetual orbit running around the amphitheater ring
-      cur += BASE_SPEED;
+      // Perfectly constant, silky-smooth continuous orbit across any monitor refresh rate (60/120Hz)
+      cur += SPEED_PER_SEC * dt;
       goal = cur;
     }
 

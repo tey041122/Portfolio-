@@ -749,6 +749,7 @@ button {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
+  transition: none !important;
   will-change: left, top, transform;
 }
 
@@ -806,9 +807,7 @@ button {
     inset 0 -3px 5px rgba(45, 30, 8, 0.8),
     0 0 0 1px #805c19,
     0 8px 20px rgba(0, 0, 0, 0.85);
-  animation: zeroGFloat 5s ease-in-out infinite;
-  animation-delay: calc(var(--i, 0) * -0.9s);
-  transition: box-shadow 0.4s ease, filter 0.4s ease;
+  transition: box-shadow 0.45s ease, filter 0.45s ease;
 }
 
 /* Milled knurled reeded rim pattern */
@@ -893,21 +892,8 @@ button {
   line-height: 1.15;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-}
-
-.orbit-name.is-swapping {
-  animation: name-in 0.5s var(--ease) both;
-}
-
-@keyframes name-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  will-change: opacity, transform;
 }
 
 .orbit-role {
