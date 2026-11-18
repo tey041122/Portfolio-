@@ -732,11 +732,11 @@ button {
   }
 }
 
-/* Medallions (Coins) - Bigger & bolder to fill the amphitheater stage */
+/* Medallions (Coins) - Generous spacing so logos never touch or cramp */
 .orbit-coin {
   position: absolute;
-  width: clamp(7.8rem, 33vw, 10.6rem);
-  height: clamp(7.8rem, 33vw, 10.6rem);
+  width: clamp(6.2rem, 25vw, 8.4rem);
+  height: clamp(6.2rem, 25vw, 8.4rem);
   transform: translate(-50%, -50%);
   margin: 0;
   padding: 0;
@@ -757,32 +757,32 @@ button {
     3: Vireakchun Civil right wing, 4: Vireakchun Police right flank) */
 .orbit-coin:nth-child(2) { /* 0: LBC (Center Front Hero) */
   left: 50.0%;
-  top: 67.0%;
+  top: 65.0%;
   transform: translate(-50%, -50%) scale(1.00);
   z-index: 50;
 }
 .orbit-coin:nth-child(3) { /* 1: Brand Growth (Left Flank) */
-  left: 35.0%;
-  top: 35.0%;
-  transform: translate(-50%, -50%) scale(0.74);
+  left: 32.0%;
+  top: 22.0%;
+  transform: translate(-50%, -50%) scale(0.70);
   z-index: 22;
 }
 .orbit-coin:nth-child(4) { /* 2: Magic Iron (Left Outer Wing) */
-  left: 18.5%;
-  top: 53.5%;
-  transform: translate(-50%, -50%) scale(0.68);
+  left: 13.5%;
+  top: 44.0%;
+  transform: translate(-50%, -50%) scale(0.65);
   z-index: 12;
 }
 .orbit-coin:nth-child(5) { /* 3: Vireakchun Civil (Right Outer Wing) */
-  left: 81.5%;
-  top: 53.5%;
-  transform: translate(-50%, -50%) scale(0.68);
+  left: 86.5%;
+  top: 44.0%;
+  transform: translate(-50%, -50%) scale(0.65);
   z-index: 12;
 }
 .orbit-coin:nth-child(6) { /* 4: Vireakchun Police (Right Flank) */
-  left: 65.0%;
-  top: 35.0%;
-  transform: translate(-50%, -50%) scale(0.74);
+  left: 68.0%;
+  top: 22.0%;
+  transform: translate(-50%, -50%) scale(0.70);
   z-index: 22;
 }
 

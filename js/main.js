@@ -573,40 +573,40 @@ function initVentureOrbit() {
   const N = ventures.length;
   const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
 
-  // Calibrated 3D Waypoints along the amphitheater loop (cohesive natural spacing):
-  // p = 0: Left Outer Wing (Magic Iron)
-  // p = 1: Elevated Left Flank (Brand Growth)
-  // p = 2: Center Front Hero (LBC) -> FRONT LOGO
-  // p = 3: Elevated Right Flank (Police)
-  // p = 4: Right Outer Wing (Civil)
+  // Calibrated 3D Waypoints along the amphitheater loop (generous natural spacing):
+  // p = 0: Left Outer Wing
+  // p = 1: Elevated Left Flank
+  // p = 2: Center Front Hero -> FRONT HERO
+  // p = 3: Elevated Right Flank
+  // p = 4: Right Outer Wing
   // p = 4.5: High Back Transit
   function getTrackPoint(p) {
     p = ((p % N) + N) % N;
     let p0, p1, t;
 
     if (p < 1) {
-      p0 = { x: 18.5, y: 53.5, s: 0.68, z: 12 };
-      p1 = { x: 35.0, y: 35.0, s: 0.74, z: 22 };
+      p0 = { x: 13.5, y: 44.0, s: 0.65, z: 12 };
+      p1 = { x: 32.0, y: 22.0, s: 0.70, z: 22 };
       t = p;
     } else if (p < 2) {
-      p0 = { x: 35.0, y: 35.0, s: 0.74, z: 22 };
-      p1 = { x: 50.0, y: 67.0, s: 1.00, z: 50 };
+      p0 = { x: 32.0, y: 22.0, s: 0.70, z: 22 };
+      p1 = { x: 50.0, y: 65.0, s: 1.00, z: 50 };
       t = p - 1;
     } else if (p < 3) {
-      p0 = { x: 50.0, y: 67.0, s: 1.00, z: 50 };
-      p1 = { x: 65.0, y: 35.0, s: 0.74, z: 22 };
+      p0 = { x: 50.0, y: 65.0, s: 1.00, z: 50 };
+      p1 = { x: 68.0, y: 22.0, s: 0.70, z: 22 };
       t = p - 2;
     } else if (p < 4) {
-      p0 = { x: 65.0, y: 35.0, s: 0.74, z: 22 };
-      p1 = { x: 81.5, y: 53.5, s: 0.68, z: 12 };
+      p0 = { x: 68.0, y: 22.0, s: 0.70, z: 22 };
+      p1 = { x: 86.5, y: 44.0, s: 0.65, z: 12 };
       t = p - 3;
     } else if (p < 4.5) {
-      p0 = { x: 81.5, y: 53.5, s: 0.68, z: 12 };
-      p1 = { x: 50.0, y: 20.0, s: 0.50, z: 5 };
+      p0 = { x: 86.5, y: 44.0, s: 0.65, z: 12 };
+      p1 = { x: 50.0, y: 14.0, s: 0.45, z: 4 };
       t = (p - 4) / 0.5;
     } else {
-      p0 = { x: 50.0, y: 20.0, s: 0.50, z: 5 };
-      p1 = { x: 18.5, y: 53.5, s: 0.68, z: 12 };
+      p0 = { x: 50.0, y: 14.0, s: 0.45, z: 4 };
+      p1 = { x: 13.5, y: 44.0, s: 0.65, z: 12 };
       t = (p - 4.5) / 0.5;
     }
 
