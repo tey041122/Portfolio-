@@ -19,7 +19,7 @@ The personal portfolio of Srey ArunRatha, Chairman & Founder. It works as a digi
 
 ## Positioning
 
-A personal record of one founder who chairs six ventures: Magic Iron, LBC, Saravan, Vireakchun Civil, Vireakchun Police and BG. The page is signed by him: his own handwritten signature is the identity mark.
+A personal record of one founder who chairs six ventures: Magic Iron, LBC, Saravan, Vireakchun Civil, Vireakchun Police and Brand Growth. The page is signed by him: his own handwritten signature is the identity mark.
 
 ## Operating Context
 

@@ -26,7 +26,7 @@ const portfolioConfig = {
     { name: 'Saravan',           mark: 'SA',  logo: 'assets/logos/saravan.png' },
     { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/vireakchun-civil.png' },
     { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/vireakchun-police.png' },
-    { name: 'BG',                mark: 'BG',  logo: 'assets/logos/bg.png' }
+    { name: 'Brand Growth',      mark: 'BG',  logo: 'assets/logos/bg.png' }
   ],
   // PLACEHOLDER VALUES, copied from the design mock-up on 2026-11-16.
   // Replace phone, website and location with the real ones before publishing.
