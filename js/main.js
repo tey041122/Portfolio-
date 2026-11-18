@@ -21,11 +21,11 @@ const portfolioConfig = {
   // logo: 'assets/logos/lbc.png'. A transparent PNG or an SVG works best.
   // While "logo" is empty the coin shows the letters in "mark" instead.
   ventures: [
+    { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/vireakchun-police.png' },
+    { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/vireakchun-civil.png' },
     { name: 'Brand Growth',      mark: 'BG',  logo: 'assets/logos/bg.png' },
     { name: 'LBC',               mark: 'LBC', logo: 'assets/logos/lbc.png' },
-    { name: 'Magic Iron',        mark: 'MI',  logo: 'assets/logos/magic-iron.png' },
-    { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/vireakchun-police.png' },
-    { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/vireakchun-civil.png' }
+    { name: 'Magic Iron',        mark: 'MI',  logo: 'assets/logos/magic-iron.png' }
   ],
   // PLACEHOLDER VALUES, copied from the design mock-up on 2026-11-16.
   // Replace phone, website and location with the real ones before publishing.
@@ -557,10 +557,12 @@ function initContactPage() {
 
 /* ══════════════════════════════════════════════════════════════════════════
    VENTURE ORBIT: 3D Amphitheater Motion System
-   Coins glide smoothly along the 3D elliptical track:
-   - When a logo is clicked, it smoothly glides to the Center Front Hero spot.
-   - When untouched, the logos glide one by one automatically every 3.2s.
-   - Smooth 60fps easing loop with waypoint interpolation along the energy trails.
+   Preserves the exact master composition from reference image:
+   - Brand Growth hero centered in foreground with radiant golden rim & flare.
+   - Flanked by Vireakchun Civil & LBC behind, and Police & Magic Iron on wings.
+   - Automatically moves through ventures one by one (3s interval) with
+     smooth 3D zero-G lift and golden aura blooming.
+   - Clicking any logo immediately moves the 3D lift & golden bloom to that logo.
    ══════════════════════════════════════════════════════════════════════════ */
 function initVentureOrbit() {
   const orbit = document.getElementById('orbit');
@@ -569,134 +571,58 @@ function initVentureOrbit() {
   const ventures = portfolioConfig.ventures || [];
   if (!orbit || !ventures.length) return;
 
-  const N = ventures.length;
   const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
+  let activeIndex = 2; // Brand Growth hero by default
+  let autoTimer = null;
+  let resumeTimer = null;
 
-  // Calibrated 3D Waypoints along the amphitheater loop:
-  // p = 0: Left Outer
-  // p = 1: Left Inner
-  // p = 2: Center Hero Front (largest, lowest, glowing gold halo!)
-  // p = 3: Right Inner
-  // p = 4: Right Outer
-  // p = 4.5: High Back Transit
-  function getTrackPoint(p) {
-    p = ((p % 5) + 5) % 5;
-    let p0, p1, t;
+  function selectVenture(i) {
+    if (i < 0 || i >= ventures.length) return;
+    activeIndex = i;
 
-    if (p < 1) {
-      p0 = { x: 12, y: 36, s: 0.74, z: 40 };
-      p1 = { x: 31, y: 21, s: 0.86, z: 60 };
-      t = p;
-    } else if (p < 2) {
-      p0 = { x: 31, y: 21, s: 0.86, z: 60 };
-      p1 = { x: 50, y: 66, s: 1.24, z: 100 };
-      t = p - 1;
-    } else if (p < 3) {
-      p0 = { x: 50, y: 66, s: 1.24, z: 100 };
-      p1 = { x: 69, y: 21, s: 0.86, z: 60 };
-      t = p - 2;
-    } else if (p < 4) {
-      p0 = { x: 69, y: 21, s: 0.86, z: 60 };
-      p1 = { x: 88, y: 36, s: 0.74, z: 40 };
-      t = p - 3;
-    } else if (p < 4.5) {
-      p0 = { x: 88, y: 36, s: 0.74, z: 40 };
-      p1 = { x: 50, y: 13, s: 0.62, z: 20 };
-      t = (p - 4) / 0.5;
-    } else {
-      p0 = { x: 50, y: 13, s: 0.62, z: 20 };
-      p1 = { x: 12, y: 36, s: 0.74, z: 40 };
-      t = (p - 4.5) / 0.5;
-    }
+    coins.forEach((c, k) => {
+      c.classList.toggle('is-active', k === i);
+    });
 
-    const ease = t * t * (3 - 2 * t);
-    return {
-      x: p0.x + (p1.x - p0.x) * ease,
-      y: p0.y + (p1.y - p0.y) * ease,
-      s: p0.s + (p1.s - p0.s) * ease,
-      z: Math.round(p0.z + (p1.z - p0.z) * ease)
-    };
-  }
-
-  // cur is the current continuous rotational offset.
-  // cur = 0 puts venture 0 (Brand Growth) at p = 2 (Center Hero).
-  let cur = 0;
-  let goal = 0;
-  let running = false;
-  let inView = true;
-  let lastTouch = 0;
-  let currentFront = -1;
-
-  function setFront(index) {
-    if (index === currentFront) return;
-    currentFront = index;
-
-    dots.forEach((d, k) => d.classList.toggle('is-on', k === index));
+    dots.forEach((d, k) => {
+      d.classList.toggle('is-on', k === i);
+    });
 
     if (nameEl) {
-      nameEl.textContent = ventures[index].name;
+      nameEl.textContent = ventures[i].name;
       nameEl.classList.remove('is-swapping');
       void nameEl.offsetWidth; // restart entrance animation
       nameEl.classList.add('is-swapping');
     }
   }
 
-  function place() {
-    for (let i = 0; i < N; i++) {
-      // Offset such that when cur == i, coin i is at p = 2 (Hero Front)
-      const p = ((i - cur + 2) % N + N) % N;
-      const pt = getTrackPoint(p);
-      const coin = coins[i];
-
-      coin.style.left = `${pt.x.toFixed(2)}%`;
-      coin.style.top = `${pt.y.toFixed(2)}%`;
-      coin.style.transform = `translate(-50%, -50%) scale(${pt.s.toFixed(3)})`;
-      coin.style.zIndex = String(pt.z);
-
-      // Hero active glow when at or near center front
-      const distToFront = Math.abs(p - 2);
-      coin.classList.toggle('is-active', distToFront < 0.35);
-    }
-
-    const frontIdx = ((Math.round(cur) % N) + N) % N;
-    setFront(frontIdx);
+  function nextVenture() {
+    // Automatically moves through ventures one by one:
+    // 0: Police -> 1: Civil -> 2: Brand Growth -> 3: LBC -> 4: Magic Iron -> loop
+    const next = (activeIndex + 1) % ventures.length;
+    selectVenture(next);
   }
 
-  function frame() {
-    let busy = false;
-    const diff = goal - cur;
-
-    if (Math.abs(diff) > 0.001) {
-      cur += diff * 0.085;
-      busy = true;
-    } else {
-      cur = goal;
-    }
-
-    place();
-
-    if (busy && inView) {
-      requestAnimationFrame(frame);
-    } else {
-      running = false;
+  function startAutoRun() {
+    stopAutoRun();
+    if (!reduceMotion) {
+      autoTimer = setInterval(nextVenture, 3000);
     }
   }
 
-  function start() {
-    if (running) return;
-    running = true;
-    requestAnimationFrame(frame);
+  function stopAutoRun() {
+    if (autoTimer) {
+      clearInterval(autoTimer);
+      autoTimer = null;
+    }
   }
 
-  function goTo(index) {
-    lastTouch = performance.now();
-    // Find shortest rotational direction to bring venture index to front
-    const curNorm = ((cur % N) + N) % N;
-    let diff = index - curNorm;
-    if (diff > N / 2) diff -= N;
-    if (diff < -N / 2) diff += N;
-    goal = cur + diff;
-    start();
+  function pauseAutoRun() {
+    stopAutoRun();
+    if (resumeTimer) clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(() => {
+      startAutoRun();
+    }, 5500); // resumes automatic one-by-one motion after 5.5s
   }
 
   // Build dots
@@ -708,74 +634,38 @@ function initVentureOrbit() {
     dot.type = 'button';
     dot.className = 'orbit-dot';
     dot.setAttribute('aria-label', `Select ${v.name}`);
-    dot.addEventListener('click', () => goTo(i));
+    dot.addEventListener('click', () => {
+      pauseAutoRun();
+      selectVenture(i);
+    });
     if (dotsEl) dotsEl.appendChild(dot);
     return dot;
   });
 
-  // Attach click listener to each coin so clicking moves it directly to the front!
+  // Attach click listener to each coin so clicking moves it immediately!
   coins.forEach((coin, i) => {
     coin.addEventListener('click', () => {
-      goTo(i);
+      pauseAutoRun();
+      selectVenture(i);
     });
   });
 
-  // Drag sideways to turn the 3D track
-  let dragX = 0;
-  let dragCur = 0;
-  let moved = false;
-  let dragging = false;
-
-  orbit.addEventListener('pointerdown', e => {
-    if (e.target.closest('a')) return;
-    dragX = e.clientX;
-    dragCur = cur;
-    moved = false;
-    dragging = true;
-    lastTouch = performance.now();
-    start();
-  });
-
-  window.addEventListener('pointermove', e => {
-    if (!dragging) return;
-    const dx = e.clientX - dragX;
-    if (Math.abs(dx) > 6) moved = true;
-    // Dragging left moves next (clockwise), dragging right moves previous
-    cur = dragCur - dx / 150;
-    goal = cur;
-    place();
-  });
-
-  const release = () => {
-    if (!dragging) return;
-    dragging = false;
-    goal = Math.round(cur);
-    lastTouch = performance.now();
-    start();
-  };
-  window.addEventListener('pointerup', release);
-  window.addEventListener('pointercancel', release);
-
-  // Initial render
-  place();
+  // Initialize with Brand Growth active
+  selectVenture(2);
   orbit.classList.add('is-live');
 
-  // Automatic running motion: moves one by one even when not clicked!
-  if (!reduceMotion) {
-    setInterval(() => {
-      if (!inView || dragging || document.hidden) return;
-      if (performance.now() - lastTouch < 4500) return; // give the visitor time after a click
-      goal = Math.round(goal) + 1;
-      start();
-    }, 3200);
-  }
+  // Start continuous one-by-one motion
+  startAutoRun();
 
-  // Intersection observer: only animate when in view
+  // Stop auto-run when off-screen to save battery
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(entries => {
-      inView = entries[0].isIntersecting;
-      if (inView && !reduceMotion) start();
-    }, { threshold: 0.2 }).observe(orbit);
+      if (entries[0].isIntersecting) {
+        startAutoRun();
+      } else {
+        stopAutoRun();
+      }
+    }, { threshold: 0.15 }).observe(orbit);
   }
 }
 
