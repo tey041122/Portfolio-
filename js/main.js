@@ -625,7 +625,7 @@ function initVentureOrbit() {
   function measure() {
     const w = orbit.offsetWidth;
     const coinSize = coins[0].offsetWidth || 80;
-    R = Math.max(60, Math.min(w / 2 - coinSize * 0.52, 190));
+    R = Math.max(70, Math.min(w / 2 - coinSize * 0.44, 210));
     orbit.style.setProperty('--R', `${R}px`);
   }
 
