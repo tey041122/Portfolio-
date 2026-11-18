@@ -574,39 +574,40 @@ function initVentureOrbit() {
   const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
 
   // Calibrated 3D Waypoints along the amphitheater loop matching reference image:
-  // p = 0: Left Outer (Police) -> x: 22.0%, y: 55.0%, s: 0.72, z: 12
-  // p = 1: Left Inner (Civil)  -> x: 37.0%, y: 38.0%, s: 0.75, z: 22
+  // Generous horizontal spacing so logos never crowd each other:
+  // p = 0: Left Outer Wing (Police) -> x: 14.5%, y: 52.0%, s: 0.65, z: 12
+  // p = 1: Elevated Left Flank (Civil) -> x: 32.5%, y: 32.0%, s: 0.72, z: 22
   // p = 2: Center Front Hero (BG) -> x: 50.0%, y: 68.0%, s: 1.00, z: 50
-  // p = 3: Right Inner (LBC)   -> x: 63.0%, y: 38.0%, s: 0.75, z: 22
-  // p = 4: Right Outer (Magic) -> x: 78.0%, y: 55.0%, s: 0.72, z: 12
-  // p = 4.5: High Back Transit -> x: 50.0%, y: 22.0%, s: 0.55, z: 5
+  // p = 3: Elevated Right Flank (LBC) -> x: 67.5%, y: 32.0%, s: 0.72, z: 22
+  // p = 4: Right Outer Wing (Magic Iron) -> x: 85.5%, y: 52.0%, s: 0.65, z: 12
+  // p = 4.5: High Back Transit -> x: 50.0%, y: 18.0%, s: 0.48, z: 5
   function getTrackPoint(p) {
     p = ((p % N) + N) % N;
     let p0, p1, t;
 
     if (p < 1) {
-      p0 = { x: 22.0, y: 55.0, s: 0.72, z: 12 };
-      p1 = { x: 37.0, y: 38.0, s: 0.75, z: 22 };
+      p0 = { x: 14.5, y: 52.0, s: 0.65, z: 12 };
+      p1 = { x: 32.5, y: 32.0, s: 0.72, z: 22 };
       t = p;
     } else if (p < 2) {
-      p0 = { x: 37.0, y: 38.0, s: 0.75, z: 22 };
+      p0 = { x: 32.5, y: 32.0, s: 0.72, z: 22 };
       p1 = { x: 50.0, y: 68.0, s: 1.00, z: 50 };
       t = p - 1;
     } else if (p < 3) {
       p0 = { x: 50.0, y: 68.0, s: 1.00, z: 50 };
-      p1 = { x: 63.0, y: 38.0, s: 0.75, z: 22 };
+      p1 = { x: 67.5, y: 32.0, s: 0.72, z: 22 };
       t = p - 2;
     } else if (p < 4) {
-      p0 = { x: 63.0, y: 38.0, s: 0.75, z: 22 };
-      p1 = { x: 78.0, y: 55.0, s: 0.72, z: 12 };
+      p0 = { x: 67.5, y: 32.0, s: 0.72, z: 22 };
+      p1 = { x: 85.5, y: 52.0, s: 0.65, z: 12 };
       t = p - 3;
     } else if (p < 4.5) {
-      p0 = { x: 78.0, y: 55.0, s: 0.72, z: 12 };
-      p1 = { x: 50.0, y: 22.0, s: 0.55, z: 5 };
+      p0 = { x: 85.5, y: 52.0, s: 0.65, z: 12 };
+      p1 = { x: 50.0, y: 18.0, s: 0.48, z: 5 };
       t = (p - 4) / 0.5;
     } else {
-      p0 = { x: 50.0, y: 22.0, s: 0.55, z: 5 };
-      p1 = { x: 22.0, y: 55.0, s: 0.72, z: 12 };
+      p0 = { x: 50.0, y: 18.0, s: 0.48, z: 5 };
+      p1 = { x: 14.5, y: 52.0, s: 0.65, z: 12 };
       t = (p - 4.5) / 0.5;
     }
 

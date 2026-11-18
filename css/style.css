@@ -603,6 +603,16 @@ button {
   margin-inline: auto;
 }
 
+.reach > .orbit {
+  max-width: min(100%, 36rem);
+}
+
+@media (min-width: 640px) {
+  .reach > .orbit {
+    max-width: min(100%, 42rem);
+  }
+}
+
 .reach-title {
   display: flex;
   align-items: center;
@@ -721,8 +731,8 @@ button {
 /* Medallions (Coins) */
 .orbit-coin {
   position: absolute;
-  width: clamp(7.4rem, 32vw, 10.2rem);
-  height: clamp(7.4rem, 32vw, 10.2rem);
+  width: clamp(6.2rem, 25vw, 8.8rem);
+  height: clamp(6.2rem, 25vw, 8.8rem);
   transform: translate(-50%, -50%);
   margin: 0;
   padding: 0;
@@ -740,15 +750,15 @@ button {
 
 /* Initial fallback positions before JS runs */
 .orbit-coin:nth-child(2) { /* Police */
-  left: 22.0%;
-  top: 55.0%;
-  transform: translate(-50%, -50%) scale(0.72);
+  left: 14.5%;
+  top: 52.0%;
+  transform: translate(-50%, -50%) scale(0.65);
   z-index: 12;
 }
 .orbit-coin:nth-child(3) { /* Civil */
-  left: 37.0%;
-  top: 38.0%;
-  transform: translate(-50%, -50%) scale(0.75);
+  left: 32.5%;
+  top: 32.0%;
+  transform: translate(-50%, -50%) scale(0.72);
   z-index: 22;
 }
 .orbit-coin:nth-child(4) { /* Brand Growth Hero */
@@ -758,15 +768,15 @@ button {
   z-index: 50;
 }
 .orbit-coin:nth-child(5) { /* LBC */
-  left: 63.0%;
-  top: 38.0%;
-  transform: translate(-50%, -50%) scale(0.75);
+  left: 67.5%;
+  top: 32.0%;
+  transform: translate(-50%, -50%) scale(0.72);
   z-index: 22;
 }
 .orbit-coin:nth-child(6) { /* Magic Iron */
-  left: 78.0%;
-  top: 55.0%;
-  transform: translate(-50%, -50%) scale(0.72);
+  left: 85.5%;
+  top: 52.0%;
+  transform: translate(-50%, -50%) scale(0.65);
   z-index: 12;
 }
 
