@@ -21,11 +21,11 @@ const portfolioConfig = {
   // logo: 'assets/logos/lbc.png'. A transparent PNG or an SVG works best.
   // While "logo" is empty the coin shows the letters in "mark" instead.
   ventures: [
-    { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/coin-police.png' },
-    { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/coin-civil.png' },
-    { name: 'Brand Growth',      mark: 'BG',  logo: 'assets/logos/coin-bg.png' },
-    { name: 'LBC',               mark: 'LBC', logo: 'assets/logos/coin-lbc.png' },
-    { name: 'Magic Iron',        mark: 'MI',  logo: 'assets/logos/coin-magic.png' }
+    { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/vireakchun-police.png' },
+    { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/vireakchun-civil.png' },
+    { name: 'Brand Growth',      mark: 'BG',  logo: 'assets/logos/bg.png' },
+    { name: 'LBC',               mark: 'LBC', logo: 'assets/logos/lbc.png' },
+    { name: 'Magic Iron',        mark: 'MI',  logo: 'assets/logos/magic-iron.png' }
   ],
   // PLACEHOLDER VALUES, copied from the design mock-up on 2026-11-16.
   // Replace phone, website and location with the real ones before publishing.
@@ -574,39 +574,39 @@ function initVentureOrbit() {
   const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
 
   // Calibrated 3D Waypoints along the amphitheater loop matching reference image:
-  // p = 0: Left Outer (Police) -> x: 21.97%, y: 64.42%, s: 0.709, z: 12
-  // p = 1: Left Inner (Civil)  -> x: 38.09%, y: 40.77%, s: 0.653, z: 22
-  // p = 2: Center Front Hero (BG) -> x: 50.00%, y: 68.27%, s: 1.000, z: 50
-  // p = 3: Right Inner (LBC)   -> x: 60.55%, y: 40.77%, s: 0.653, z: 22
-  // p = 4: Right Outer (Magic) -> x: 77.15%, y: 64.42%, s: 0.709, z: 12
-  // p = 4.5: High Back Transit -> x: 50.00%, y: 22.00%, s: 0.500, z: 5
+  // p = 0: Left Outer (Police) -> x: 22.0%, y: 55.0%, s: 0.72, z: 12
+  // p = 1: Left Inner (Civil)  -> x: 37.0%, y: 38.0%, s: 0.75, z: 22
+  // p = 2: Center Front Hero (BG) -> x: 50.0%, y: 68.0%, s: 1.00, z: 50
+  // p = 3: Right Inner (LBC)   -> x: 63.0%, y: 38.0%, s: 0.75, z: 22
+  // p = 4: Right Outer (Magic) -> x: 78.0%, y: 55.0%, s: 0.72, z: 12
+  // p = 4.5: High Back Transit -> x: 50.0%, y: 22.0%, s: 0.55, z: 5
   function getTrackPoint(p) {
     p = ((p % N) + N) % N;
     let p0, p1, t;
 
     if (p < 1) {
-      p0 = { x: 21.97, y: 64.42, s: 0.709, z: 12 };
-      p1 = { x: 38.09, y: 40.77, s: 0.653, z: 22 };
+      p0 = { x: 22.0, y: 55.0, s: 0.72, z: 12 };
+      p1 = { x: 37.0, y: 38.0, s: 0.75, z: 22 };
       t = p;
     } else if (p < 2) {
-      p0 = { x: 38.09, y: 40.77, s: 0.653, z: 22 };
-      p1 = { x: 50.00, y: 68.27, s: 1.000, z: 50 };
+      p0 = { x: 37.0, y: 38.0, s: 0.75, z: 22 };
+      p1 = { x: 50.0, y: 68.0, s: 1.00, z: 50 };
       t = p - 1;
     } else if (p < 3) {
-      p0 = { x: 50.00, y: 68.27, s: 1.000, z: 50 };
-      p1 = { x: 60.55, y: 40.77, s: 0.653, z: 22 };
+      p0 = { x: 50.0, y: 68.0, s: 1.00, z: 50 };
+      p1 = { x: 63.0, y: 38.0, s: 0.75, z: 22 };
       t = p - 2;
     } else if (p < 4) {
-      p0 = { x: 60.55, y: 40.77, s: 0.653, z: 22 };
-      p1 = { x: 77.15, y: 64.42, s: 0.709, z: 12 };
+      p0 = { x: 63.0, y: 38.0, s: 0.75, z: 22 };
+      p1 = { x: 78.0, y: 55.0, s: 0.72, z: 12 };
       t = p - 3;
     } else if (p < 4.5) {
-      p0 = { x: 77.15, y: 64.42, s: 0.709, z: 12 };
-      p1 = { x: 50.00, y: 22.00, s: 0.500, z: 5 };
+      p0 = { x: 78.0, y: 55.0, s: 0.72, z: 12 };
+      p1 = { x: 50.0, y: 22.0, s: 0.55, z: 5 };
       t = (p - 4) / 0.5;
     } else {
-      p0 = { x: 50.00, y: 22.00, s: 0.500, z: 5 };
-      p1 = { x: 21.97, y: 64.42, s: 0.709, z: 12 };
+      p0 = { x: 50.0, y: 22.0, s: 0.55, z: 5 };
+      p1 = { x: 22.0, y: 55.0, s: 0.72, z: 12 };
       t = (p - 4.5) / 0.5;
     }
 
