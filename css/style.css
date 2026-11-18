@@ -586,11 +586,11 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: clamp(0.55rem, 1.8vh, 1.15rem);
+  gap: clamp(0.35rem, 1.3vh, 0.85rem);
   padding:
-    calc(1.25rem + env(safe-area-inset-top))
+    calc(0.9rem + env(safe-area-inset-top))
     var(--gutter)
-    calc(1.25rem + env(safe-area-inset-bottom));
+    calc(1rem + env(safe-area-inset-bottom));
   background:
     radial-gradient(ellipse 100% 45% at 50% 100%, #2f220e 0%, rgba(47, 34, 14, 0) 70%),
     linear-gradient(180deg, var(--bg) 0%, #0e0b07 100%);
@@ -599,7 +599,7 @@ button {
 
 .reach > * {
   width: 100%;
-  max-width: 27.5rem;
+  max-width: 28rem;
   margin-inline: auto;
 }
 
@@ -639,12 +639,12 @@ button {
 .orbit {
   position: relative;
   flex: none;
-  height: clamp(12.5rem, 32vh, 17.5rem);
+  height: clamp(14rem, 35vh, 19.5rem);
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
-  --coin: clamp(6.2rem, 30vw, 8.5rem);
-  --R: 8.8rem;
+  --coin: clamp(7.5rem, 36vw, 10.5rem);
+  --R: 9.6rem;
 }
 
 .orbit.is-live {
@@ -717,7 +717,7 @@ button {
   width: var(--coin);
   height: var(--coin);
   margin: calc(var(--coin) * -0.5) 0 0 calc(var(--coin) * -0.5);
-  padding: calc(var(--coin) * 0.045);
+  padding: calc(var(--coin) * 0.038);
   border: 0;
   border-radius: 50%;
   background: var(--metal);
@@ -739,8 +739,8 @@ button {
   inset: 0;
   border-radius: 50%;
   background: repeating-conic-gradient(rgba(70, 48, 8, 0.5) 0deg 2deg, rgba(70, 48, 8, 0) 2deg 5deg);
-  -webkit-mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 0) 90%, #000 91%);
-  mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 0) 90%, #000 91%);
+  -webkit-mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 0) 91.5%, #000 92.5%);
+  mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 0) 91.5%, #000 92.5%);
   pointer-events: none;
 }
 
