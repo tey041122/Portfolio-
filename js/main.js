@@ -625,7 +625,7 @@ function initVentureOrbit() {
   function measure() {
     const w = orbit.offsetWidth;
     const coinSize = coins[0].offsetWidth || 80;
-    R = Math.max(70, Math.min(w / 2 - coinSize * 0.44, 210));
+    R = Math.max(75, Math.min(w / 2 - coinSize * 0.40, 230));
     orbit.style.setProperty('--R', `${R}px`);
   }
 
@@ -649,10 +649,10 @@ function initVentureOrbit() {
       const near = (depth + 1) / 2;
       const x = Math.sin(a) * R * spread;
       const y = depth * R * 0.2 * spread;                // the ring is tilted toward the viewer
-      const scale = (0.56 + 0.44 * near) * (0.35 + 0.65 * spread);
+      const scale = (0.68 + 0.38 * near) * (0.35 + 0.65 * spread);
       const coin = coins[i];
       coin.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
-      coin.style.opacity = (0.38 + 0.62 * near).toFixed(2);
+      coin.style.opacity = (0.50 + 0.50 * near).toFixed(2);
       coin.style.zIndex = String(Math.round(near * 100));
     }
     setFront(((Math.round(cur) % N) + N) % N);
