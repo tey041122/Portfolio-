@@ -21,11 +21,11 @@ const portfolioConfig = {
   // logo: 'assets/logos/lbc.png'. A transparent PNG or an SVG works best.
   // While "logo" is empty the coin shows the letters in "mark" instead.
   ventures: [
-    { name: 'Magic Iron',        mark: 'MI',  logo: 'assets/logos/magic-iron.png' },
-    { name: 'LBC',               mark: 'LBC', logo: 'assets/logos/lbc.png' },
-    { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/vireakchun-civil.png' },
-    { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/vireakchun-police.png' },
-    { name: 'Brand Growth',      mark: 'BG',  logo: 'assets/logos/bg.png' }
+    { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/vireakchun-police.png', slot: 'left-outer' },
+    { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/vireakchun-civil.png',  slot: 'left-inner' },
+    { name: 'Brand Growth',      mark: 'BG',  logo: 'assets/logos/bg.png',                slot: 'hero', isHero: true },
+    { name: 'LBC',               mark: 'LBC', logo: 'assets/logos/lbc.png',               slot: 'right-inner' },
+    { name: 'Magic Iron',        mark: 'MI',  logo: 'assets/logos/magic-iron.png',        slot: 'right-outer' }
   ],
   // PLACEHOLDER VALUES, copied from the design mock-up on 2026-11-16.
   // Replace phone, website and location with the real ones before publishing.
@@ -556,10 +556,11 @@ function initContactPage() {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   VENTURE ORBIT
-   Five gold coins travel a tilted ring. The ring turns to the next venture
-   every few seconds, follows a sideways drag, and jumps to a tapped coin.
-   Each coin shows the venture's logo, or its letters until a logo is set.
+   VENTURE ORBIT: 3D Amphitheater with Golden Energy Trails
+   Positioned with Brand Growth in the center foreground, flanked by
+   Vireakchun Civil & LBC higher up, and Vireakchun Police & Magic Iron
+   on the wings. Medallions feature gentle floating zero-G motion,
+   golden trails, lens flare starburst, and interactive selection.
    ══════════════════════════════════════════════════════════════════════════ */
 function initVentureOrbit() {
   const orbit = document.getElementById('orbit');
@@ -568,204 +569,54 @@ function initVentureOrbit() {
   const ventures = portfolioConfig.ventures || [];
   if (!orbit || !ventures.length) return;
 
-  const N = ventures.length;
-  const STEP = (Math.PI * 2) / N;
+  const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
 
-  /* --- Build the coins and the dots --------------------------------------- */
-  const coins = ventures.map((v, i) => {
-    const coin = document.createElement('button');
-    coin.type = 'button';
-    coin.className = 'orbit-coin';
-    coin.style.setProperty('--k', i);
-    coin.setAttribute('aria-label', `${v.name}, ${portfolioConfig.position}`);
-
-    const face = document.createElement('span');
-    face.className = 'coin-face';
-    if (v.logo) {
-      const img = document.createElement('img');
-      img.className = 'coin-logo';
-      img.src = v.logo;
-      img.alt = '';
-      img.draggable = false;
-      face.appendChild(img);
-    } else {
-      const mark = document.createElement('span');
-      mark.className = 'coin-mark foil';
-      mark.textContent = v.mark || v.name.slice(0, 2).toUpperCase();
-      face.appendChild(mark);
-    }
-    coin.appendChild(face);
-    orbit.appendChild(coin);
-    return coin;
-  });
-
-  const dots = ventures.map(() => {
-    const dot = document.createElement('span');
+  // Build dots
+  if (dotsEl) {
+    dotsEl.innerHTML = '';
+  }
+  const dots = ventures.map((v, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'orbit-dot';
+    dot.setAttribute('aria-label', `Select ${v.name}`);
+    dot.addEventListener('click', () => selectVenture(i));
     if (dotsEl) dotsEl.appendChild(dot);
     return dot;
   });
 
-  orbit.classList.add('is-live');
+  let activeIndex = 2; // Brand Growth hero by default
 
-  /* --- State -------------------------------------------------------------- */
-  // "cur" is the ring's position in ventures: 0 puts the first in front, 1 the
-  // second, and so on. It eases toward "goal".
-  let cur = 0;
-  let goal = 0;
-  let R = 0;              // ring radius in px
-  let spread = 1;         // 0 = coins gathered at the centre, 1 = on the ring
-  let front = -1;
-  let running = false;
-  let inView = false;
-  let introStart = 0;
-  let introDone = reduceMotion;
-  let dragging = false;
-  let lastTouch = 0;
+  function selectVenture(i) {
+    if (i < 0 || i >= ventures.length) return;
+    activeIndex = i;
 
-  function measure() {
-    const w = orbit.offsetWidth;
-    const coinSize = coins[0].offsetWidth || 100;
-    R = Math.max(85, Math.min(w / 2 - coinSize * 0.36, 260));
-    orbit.style.setProperty('--R', `${R}px`);
-  }
+    coins.forEach((c, k) => {
+      c.classList.toggle('is-active', k === i);
+    });
 
-  function setFront(i) {
-    if (i === front) return;
-    front = i;
-    coins.forEach((c, k) => c.classList.toggle('is-front', k === i));
-    dots.forEach((d, k) => d.classList.toggle('is-on', k === i));
+    dots.forEach((d, k) => {
+      d.classList.toggle('is-on', k === i);
+    });
+
     if (nameEl) {
       nameEl.textContent = ventures[i].name;
       nameEl.classList.remove('is-swapping');
-      void nameEl.offsetWidth;            // restart the entrance of the name
+      void nameEl.offsetWidth; // restart entrance animation
       nameEl.classList.add('is-swapping');
     }
   }
 
-  function place() {
-    for (let i = 0; i < N; i++) {
-      const a = (i - cur) * STEP;
-      const depth = Math.cos(a);                         // 1 in front, -1 at the back
-      const near = (depth + 1) / 2;
-      const x = Math.sin(a) * R * spread;
-      const y = depth * R * 0.2 * spread;                // the ring is tilted toward the viewer
-      const scale = (0.74 + 0.42 * near) * (0.35 + 0.65 * spread);
-      const coin = coins[i];
-      coin.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
-      coin.style.opacity = (0.58 + 0.42 * near).toFixed(2);
-      coin.style.zIndex = String(Math.round(near * 100));
-    }
-    setFront(((Math.round(cur) % N) + N) % N);
-  }
-
-  /* --- The loop ----------------------------------------------------------- */
-  function frame(now) {
-    let busy = false;
-
-    if (!introDone) {
-      // The coins burst out from the centre while the ring spins up to rest
-      if (!introStart) introStart = now;
-      const t = Math.min(1, (now - introStart) / 1700);
-      const back = 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2);   // overshoots, then settles
-      spread = Math.max(0, back);
-      cur = goal - (1 - t) * (1 - t) * 2.4;
-      if (t >= 1) { introDone = true; spread = 1; cur = goal; }
-      busy = true;
-    } else if (!dragging) {
-      const diff = goal - cur;
-      if (Math.abs(diff) > 0.0015) {
-        cur += diff * 0.075;
-        busy = true;
-      } else {
-        cur = goal;
-      }
-    } else {
-      busy = true;
-    }
-
-    place();
-    if (busy && inView) requestAnimationFrame(frame);
-    else running = false;
-  }
-
-  function start() {
-    if (running) return;
-    running = true;
-    requestAnimationFrame(frame);
-  }
-
-  /* --- Turning by itself -------------------------------------------------- */
-  if (!reduceMotion) {
-    setInterval(() => {
-      if (!inView || dragging || !introDone || document.hidden) return;
-      if (performance.now() - lastTouch < 4500) return;   // give the visitor time after a touch
-      goal = Math.round(goal) + 1;
-      start();
-    }, 2800);
-  }
-
-  /* --- Drag sideways to turn the ring ------------------------------------- */
-  let dragX = 0;
-  let dragCur = 0;
-  let moved = false;
-
-  orbit.addEventListener('pointerdown', e => {
-    dragX = e.clientX;
-    dragCur = cur;
-    moved = false;
-    dragging = true;
-    lastTouch = performance.now();
-    introDone = true;
-    spread = 1;
-    start();
-  });
-
-  window.addEventListener('pointermove', e => {
-    if (!dragging) return;
-    const dx = e.clientX - dragX;
-    if (Math.abs(dx) > 6) moved = true;
-    cur = dragCur - dx / (R * 0.75);
-    goal = cur;
-  });
-
-  const release = () => {
-    if (!dragging) return;
-    dragging = false;
-    goal = Math.round(cur);
-    lastTouch = performance.now();
-    start();
-  };
-  window.addEventListener('pointerup', release);
-  window.addEventListener('pointercancel', release);
-
-  /* --- Tap a coin to bring it to the front -------------------------------- */
+  // Attach tap/click to coins
   coins.forEach((coin, i) => {
     coin.addEventListener('click', () => {
-      if (moved) return;
-      // Take the short way round
-      let diff = (i - cur) % N;
-      if (diff > N / 2) diff -= N;
-      if (diff < -N / 2) diff += N;
-      goal = Math.round(cur + diff);
-      lastTouch = performance.now();
-      if (reduceMotion) { cur = goal; place(); } else start();
+      selectVenture(i);
     });
   });
 
-  /* --- Start when the page scrolls into view ------------------------------ */
-  measure();
-  place();
-  window.addEventListener('resize', () => { measure(); place(); });
-
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(entries => {
-      inView = entries[0].isIntersecting;
-      if (inView && !reduceMotion) start();
-    }, { threshold: 0.25 }).observe(orbit);
-  } else {
-    inView = true;
-    if (!reduceMotion) start();
-  }
+  // Default active state: Brand Growth
+  selectVenture(2);
+  orbit.classList.add('is-live');
 }
 
 /* ══════════════════════════════════════════════════════════════════════════

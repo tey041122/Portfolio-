@@ -630,140 +630,225 @@ button {
   transform: scaleX(-1);
 }
 
-/* --- The venture orbit -----------------------------------------------------
-   Five gold coins travel a tilted ring. The one in front is the venture
-   named below. The ring turns by itself, by a sideways drag, or by a tap on
-   a coin. Positions are set in js/main.js; this file gives the coins their
-   metal.
+/* --- 3D Amphitheater Logo Showcase with Golden Energy Trails -------------
+   Positioned with Brand Growth in the center foreground, flanked by
+   Vireakchun Civil & LBC higher up, and Vireakchun Police & Magic Iron
+   on the wings. Medallions feature gentle floating zero-G motion,
+   golden trails, lens flare starburst, and interactive selection.
    -------------------------------------------------------------------------- */
 .orbit {
   position: relative;
   flex: none;
-  height: clamp(14rem, 35vh, 19.5rem);
-  touch-action: pan-y;
+  width: 100%;
+  max-width: 32rem;
+  margin-inline: auto;
+  height: clamp(15.2rem, 36vh, 20.2rem);
+  touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
-  --coin: clamp(7.5rem, 36vw, 10.5rem);
-  --R: 9.6rem;
+  --coin-hero: clamp(7.6rem, 33vw, 10.2rem);
+  --coin-sub: clamp(4.9rem, 22vw, 6.75rem);
+  --coin-outer: clamp(4.5rem, 20vw, 6.1rem);
 }
 
-.orbit.is-live {
-  cursor: grab;
-}
-
-.orbit.is-live:active {
-  cursor: grabbing;
-}
-
-/* Slow rays of light behind the ring */
+/* Ambient radial golden ray burst */
 .orbit-rays {
   position: absolute;
   left: 50%;
-  top: 50%;
-  width: 150%;
+  top: 48%;
+  width: 160%;
   aspect-ratio: 1;
-  margin: -75% 0 0 -75%;
-  background: repeating-conic-gradient(from 0deg, rgba(212, 168, 67, 0.13) 0deg 5deg, rgba(212, 168, 67, 0) 5deg 18deg);
-  -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0) 60%);
-  mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0) 60%);
-  animation: rays 48s linear infinite;
+  margin: -80% 0 0 -80%;
+  background: repeating-conic-gradient(from 0deg, rgba(212, 168, 67, 0.12) 0deg 5deg, rgba(212, 168, 67, 0) 5deg 18deg);
+  -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0) 62%);
+  mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0) 62%);
+  animation: orbitRays 52s linear infinite;
   pointer-events: none;
+  z-index: 1;
 }
 
-@keyframes rays {
+@keyframes orbitRays {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* The ring the coins ride on */
-.orbit-path {
+/* Golden energy trails & SVG canvas */
+.orbit-trails-svg {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: calc(var(--R) * 2);
-  height: calc(var(--R) * 0.4);
-  margin: calc(var(--R) * -0.2) 0 0 calc(var(--R) * -1);
-  border: 1px solid var(--gold-rule);
-  border-radius: 50%;
-  box-shadow: 0 0 0 5px rgba(212, 168, 67, 0.05);
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
+  overflow: visible;
+  z-index: 2;
 }
 
-/* Fallback list, shown only when JavaScript has not built the coins */
-.orbit-list {
-  position: relative;
-  margin: 0;
-  padding: 1rem 0;
-  list-style: none;
-  text-align: center;
-  font-family: var(--display);
-  font-size: 1.25rem;
-  line-height: 1.6;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--gold-hi);
+/* Energy trails flowing animation */
+.trail-primary {
+  stroke-dasharray: 620 220;
+  animation: trailFlow 6s linear infinite, trailPulse 3s ease-in-out infinite;
 }
 
-.orbit.is-live .orbit-list {
-  display: none;
+.trail-secondary {
+  stroke-dasharray: 420 160;
+  animation: trailFlowRev 7.5s linear infinite, trailPulse 3.5s ease-in-out infinite 0.8s;
 }
 
-/* A coin: gold rim with a reeded edge, dark centre holding the logo */
+.trail-outer-back {
+  animation: trailBreathe 5s ease-in-out infinite;
+}
+
+@keyframes trailFlow {
+  0% {
+    stroke-dashoffset: 840;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes trailFlowRev {
+  0% {
+    stroke-dashoffset: -580;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes trailPulse {
+  0%, 100% {
+    opacity: 0.82;
+    filter: drop-shadow(0 0 6px rgba(255, 214, 107, 0.65));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 16px rgba(255, 235, 160, 0.95));
+  }
+}
+
+@keyframes trailBreathe {
+  0%, 100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Lens flare under BG medallion breathing */
+.lens-flare-group {
+  transform-origin: 500px 425px;
+  animation: flareBreathe 4.5s ease-in-out infinite;
+}
+
+@keyframes flareBreathe {
+  0%, 100% {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+}
+
+/* Floating dust sparkles */
+.sparkle {
+  animation: sparkleTwinkle 3s ease-in-out infinite;
+}
+
+.sp-1 { animation-delay: 0.2s; }
+.sp-2 { animation-delay: 0.8s; }
+.sp-3 { animation-delay: 1.4s; }
+.sp-4 { animation-delay: 2.0s; }
+.sp-5 { animation-delay: 0.5s; }
+.sp-6 { animation-delay: 1.1s; }
+.sp-7 { animation-delay: 1.7s; }
+.sp-8 { animation-delay: 2.3s; }
+.sp-9 { animation-delay: 0.9s; }
+.sp-10 { animation-delay: 1.5s; }
+.sp-11 { animation-delay: 2.1s; }
+.sp-12 { animation-delay: 0.4s; }
+
+@keyframes sparkleTwinkle {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+/* Medallions (Coins) */
 .orbit-coin {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--coin);
-  height: var(--coin);
-  margin: calc(var(--coin) * -0.5) 0 0 calc(var(--coin) * -0.5);
-  padding: calc(var(--coin) * 0.038);
+  transform: translate(-50%, -50%);
+  margin: 0;
   border: 0;
   border-radius: 50%;
-  background: var(--metal);
-  background-size: 160% 160%;
-  background-position: 30% 30%;
-  font-size: calc(var(--coin) * 0.3);
   cursor: pointer;
-  will-change: transform, opacity;
+  background: linear-gradient(135deg, #fff2c4 0%, #d4a743 28%, #855b18 52%, #fde089 78%, #91661c 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    0 4px 0 #6b4e18,
-    0 6px 0 #45330e,
-    0 20px 22px -10px rgba(0, 0, 0, 0.95);
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.9),
+    inset 0 -2.5px 4px rgba(45, 30, 8, 0.75),
+    0 0 0 1px #805c19,
+    0 0 16px rgba(212, 168, 67, 0.38),
+    0 12px 22px -6px rgba(0, 0, 0, 0.95);
+  transition: transform 0.35s var(--ease), box-shadow 0.35s ease, filter 0.35s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: transform;
 }
 
+/* Reeded edge knurling around coin */
 .orbit-coin::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: repeating-conic-gradient(rgba(70, 48, 8, 0.5) 0deg 2deg, rgba(70, 48, 8, 0) 2deg 5deg);
-  -webkit-mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 0) 91.5%, #000 92.5%);
-  mask-image: radial-gradient(closest-side, rgba(0, 0, 0, 0) 91.5%, #000 92.5%);
+  background: repeating-conic-gradient(
+    rgba(50, 32, 8, 0.75) 0deg 2deg,
+    rgba(255, 240, 185, 0.9) 2deg 3.8deg,
+    rgba(140, 95, 25, 0.75) 3.8deg 5deg
+  );
+  -webkit-mask-image: radial-gradient(closest-side, transparent 86%, #000 87.5% 96%, transparent 97.5%);
+  mask-image: radial-gradient(closest-side, transparent 86%, #000 87.5% 96%, transparent 97.5%);
   pointer-events: none;
 }
 
+/* Inner coin face containing logo */
 .coin-face {
   position: relative;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   border-radius: 50%;
   overflow: hidden;
-  background: radial-gradient(circle at 34% 26%, #3a2b12 0%, #0d0a06 72%);
-  box-shadow: inset 0 0 0 1px rgba(255, 236, 170, 0.45), inset 0 5px 9px rgba(0, 0, 0, 0.75);
+  background: radial-gradient(circle at 36% 28%, #2d200e 0%, #0a0805 78%);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 238, 178, 0.6),
+    inset 0 4px 8px rgba(0, 0, 0, 0.85);
 }
 
-/* A beam of light that circles each coin */
+/* Polished metallic beam sweep */
 .coin-face::after {
   content: '';
   position: absolute;
   inset: -20%;
-  background: conic-gradient(from 0deg, rgba(255, 246, 214, 0) 0deg, rgba(255, 246, 214, 0) 250deg, rgba(255, 246, 214, 0.4) 300deg, rgba(255, 246, 214, 0) 345deg);
-  animation: coin-beam 5.5s linear infinite;
-  animation-delay: calc(var(--k, 0) * -1.1s);
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 246, 214, 0) 0deg,
+    rgba(255, 246, 214, 0) 260deg,
+    rgba(255, 246, 214, 0.45) 300deg,
+    rgba(255, 246, 214, 0) 345deg
+  );
+  animation: coin-beam 6s linear infinite;
   pointer-events: none;
 }
 
@@ -773,13 +858,6 @@ button {
   }
 }
 
-.coin-mark {
-  position: relative;
-  font-family: var(--display);
-  line-height: 1;
-  letter-spacing: 0.04em;
-}
-
 .coin-logo {
   position: relative;
   width: 100%;
@@ -787,15 +865,147 @@ button {
   object-fit: cover;
   border-radius: 50%;
   display: block;
+  pointer-events: none;
 }
 
-.orbit-coin.is-front {
+/* Amphitheater Positions & Floating Motions */
+.orbit-coin.pos-hero {
+  --sz: var(--coin-hero);
+  width: var(--coin-hero);
+  height: var(--coin-hero);
+  left: 50%;
+  top: 66%;
+  padding: calc(var(--coin-hero) * 0.046);
+  z-index: 10;
+  background: linear-gradient(135deg, #fff7d9 0%, #e2b450 25%, #8a6018 50%, #ffeaa6 75%, #9b7022 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.75),
-    0 0 0 2px rgba(255, 241, 191, 0.55),
-    0 4px 0 #6b4e18,
-    0 6px 0 #45330e,
-    0 24px 26px -10px rgba(0, 0, 0, 0.95);
+    inset 0 2px 2.5px rgba(255, 255, 255, 0.95),
+    inset 0 -3.5px 6px rgba(45, 30, 8, 0.85),
+    0 0 0 1.5px #946d20,
+    0 0 32px rgba(247, 199, 90, 0.65),
+    0 0 60px rgba(212, 168, 67, 0.3),
+    0 18px 30px -6px rgba(0, 0, 0, 0.98);
+  animation: float-hero 5.2s ease-in-out infinite;
+}
+
+.orbit-coin.pos-hero::before {
+  -webkit-mask-image: radial-gradient(closest-side, transparent 84.5%, #000 86% 96.5%, transparent 98%);
+  mask-image: radial-gradient(closest-side, transparent 84.5%, #000 86% 96.5%, transparent 98%);
+}
+
+.orbit-coin.pos-left-inner {
+  --sz: var(--coin-sub);
+  width: var(--coin-sub);
+  height: var(--coin-sub);
+  left: 31%;
+  top: 21%;
+  padding: calc(var(--coin-sub) * 0.04);
+  z-index: 6;
+  animation: float-civil 5.8s ease-in-out infinite 0.6s;
+}
+
+.orbit-coin.pos-right-inner {
+  --sz: var(--coin-sub);
+  width: var(--coin-sub);
+  height: var(--coin-sub);
+  left: 69%;
+  top: 21%;
+  padding: calc(var(--coin-sub) * 0.04);
+  z-index: 6;
+  animation: float-lbc 5.5s ease-in-out infinite 1.8s;
+}
+
+.orbit-coin.pos-left-outer {
+  --sz: var(--coin-outer);
+  width: var(--coin-outer);
+  height: var(--coin-outer);
+  left: 12%;
+  top: 36%;
+  padding: calc(var(--coin-outer) * 0.04);
+  z-index: 4;
+  animation: float-police 6.2s ease-in-out infinite 1.2s;
+}
+
+.orbit-coin.pos-right-outer {
+  --sz: var(--coin-outer);
+  width: var(--coin-outer);
+  height: var(--coin-outer);
+  left: 88%;
+  top: 36%;
+  padding: calc(var(--coin-outer) * 0.04);
+  z-index: 4;
+  animation: float-magic 5.6s ease-in-out infinite 2.4s;
+}
+
+/* Floating Keyframes for organic 3D floating effect */
+@keyframes float-hero {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-5px);
+  }
+}
+
+@keyframes float-civil {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-4px);
+  }
+}
+
+@keyframes float-lbc {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-4.5px);
+  }
+}
+
+@keyframes float-police {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-3.5px);
+  }
+}
+
+@keyframes float-magic {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-3.8px);
+  }
+}
+
+/* Interaction Hover & Active Glow */
+.orbit-coin:hover {
+  filter: brightness(1.1);
+}
+
+.orbit-coin.is-active {
+  box-shadow:
+    inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
+    inset 0 -3px 5px rgba(45, 30, 8, 0.8),
+    0 0 0 2px #fff0be,
+    0 0 32px rgba(255, 214, 107, 0.75),
+    0 0 60px rgba(212, 168, 67, 0.35),
+    0 16px 28px -6px rgba(0, 0, 0, 0.98);
+}
+
+.orbit-coin.pos-hero.is-active {
+  box-shadow:
+    inset 0 2px 2.5px rgba(255, 255, 255, 0.95),
+    inset 0 -3.5px 6px rgba(45, 30, 8, 0.85),
+    0 0 0 2.5px #fff2c4,
+    0 0 38px rgba(255, 218, 115, 0.85),
+    0 0 70px rgba(212, 168, 67, 0.4),
+    0 20px 32px -6px rgba(0, 0, 0, 0.98);
 }
 
 /* The venture in front, named */
@@ -807,20 +1017,20 @@ button {
 .orbit-name {
   margin-block: 0;
   font-family: var(--display);
-  font-size: clamp(1.1rem, 4.6vw, 1.55rem);
+  font-size: clamp(1.15rem, 4.6vw, 1.55rem);
   line-height: 1.15;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .orbit-name.is-swapping {
-  animation: name-in 0.6s var(--ease) both;
+  animation: name-in 0.5s var(--ease) both;
 }
 
 @keyframes name-in {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -839,21 +1049,39 @@ button {
 .orbit-dots {
   display: flex;
   justify-content: center;
-  gap: 0.35rem;
-  margin-top: 0.4rem;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.45rem;
 }
 
-.orbit-dots span {
-  width: 0.3rem;
-  height: 0.3rem;
+.orbit-dot {
+  width: 0.32rem;
+  height: 0.32rem;
+  padding: 0;
+  border: 0;
   border-radius: 999px;
-  background: rgba(212, 168, 67, 0.3);
-  transition: width 0.5s var(--ease), background-color 0.4s ease;
+  background: rgba(212, 168, 67, 0.35);
+  cursor: pointer;
+  transition: width 0.4s var(--ease), background-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-.orbit-dots span.is-on {
-  width: 0.95rem;
+.orbit-dot.is-on {
+  width: 1.05rem;
   background: var(--gold);
+  box-shadow: 0 0 8px rgba(245, 195, 65, 0.75);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-rays,
+  .trail-primary,
+  .trail-secondary,
+  .trail-outer-back,
+  .lens-flare-group,
+  .sparkle,
+  .orbit-coin,
+  .coin-face::after {
+    animation: none !important;
+  }
 }
 
 [hidden] {
