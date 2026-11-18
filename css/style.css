@@ -912,143 +912,82 @@ button {
 }
 
 /* Amphitheater Positions & Floating Motions */
-.orbit-coin.pos-hero {
-  --sz: var(--coin-hero);
-  width: var(--coin-hero);
-  height: var(--coin-hero);
-  left: 50%;
-  top: 66%;
-  padding: calc(var(--coin-hero) * 0.046);
-  z-index: 10;
-  background: linear-gradient(135deg, #fff7d9 0%, #e2b450 25%, #8a6018 50%, #ffeaa6 75%, #9b7022 100%);
+/* Coin Sizing & Gold Styling (3D Motion driven by JavaScript loop) */
+.orbit-coin {
+  position: absolute;
+  width: clamp(6.2rem, 28vw, 8.8rem);
+  height: clamp(6.2rem, 28vw, 8.8rem);
+  padding: calc(clamp(6.2rem, 28vw, 8.8rem) * 0.042);
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  background: linear-gradient(135deg, #fff2c4 0%, #d4a743 28%, #855b18 52%, #fde089 78%, #91661c 100%);
   box-shadow:
-    inset 0 2px 2.5px rgba(255, 255, 255, 0.95),
-    inset 0 -3.5px 6px rgba(45, 30, 8, 0.85),
-    0 0 0 1.5px #946d20,
-    0 0 32px rgba(247, 199, 90, 0.65),
-    0 0 60px rgba(212, 168, 67, 0.3),
-    0 18px 30px -6px rgba(0, 0, 0, 0.98);
-  animation: float-hero 5.2s ease-in-out infinite;
+    inset 0 1px 1.5px rgba(255, 255, 255, 0.9),
+    inset 0 -2.5px 4px rgba(45, 30, 8, 0.75),
+    0 0 0 1px #805c19,
+    0 0 16px rgba(212, 168, 67, 0.38),
+    0 12px 22px -6px rgba(0, 0, 0, 0.95);
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: left, top, transform;
 }
 
-.orbit-coin.pos-hero::before {
-  -webkit-mask-image: radial-gradient(closest-side, transparent 84.5%, #000 86% 96.5%, transparent 98%);
-  mask-image: radial-gradient(closest-side, transparent 84.5%, #000 86% 96.5%, transparent 98%);
+.orbit-coin::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    rgba(50, 32, 8, 0.75) 0deg 2deg,
+    rgba(255, 240, 185, 0.9) 2deg 3.8deg,
+    rgba(140, 95, 25, 0.75) 3.8deg 5deg
+  );
+  -webkit-mask-image: radial-gradient(closest-side, transparent 85.5%, #000 87% 96.5%, transparent 97.8%);
+  mask-image: radial-gradient(closest-side, transparent 85.5%, #000 87% 96.5%, transparent 97.8%);
+  pointer-events: none;
 }
 
-.orbit-coin.pos-left-inner {
-  --sz: var(--coin-sub);
-  width: var(--coin-sub);
-  height: var(--coin-sub);
-  left: 31%;
-  top: 21%;
-  padding: calc(var(--coin-sub) * 0.04);
-  z-index: 6;
-  animation: float-civil 5.8s ease-in-out infinite 0.6s;
+/* Organic 3D zero-gravity floating hover applied to inner face */
+.coin-face {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: radial-gradient(circle at 36% 28%, #2d200e 0%, #0a0805 78%);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 238, 178, 0.6),
+    inset 0 4px 8px rgba(0, 0, 0, 0.85);
+  animation: coin-float 5.4s ease-in-out infinite;
 }
 
-.orbit-coin.pos-right-inner {
-  --sz: var(--coin-sub);
-  width: var(--coin-sub);
-  height: var(--coin-sub);
-  left: 69%;
-  top: 21%;
-  padding: calc(var(--coin-sub) * 0.04);
-  z-index: 6;
-  animation: float-lbc 5.5s ease-in-out infinite 1.8s;
-}
-
-.orbit-coin.pos-left-outer {
-  --sz: var(--coin-outer);
-  width: var(--coin-outer);
-  height: var(--coin-outer);
-  left: 12%;
-  top: 36%;
-  padding: calc(var(--coin-outer) * 0.04);
-  z-index: 4;
-  animation: float-police 6.2s ease-in-out infinite 1.2s;
-}
-
-.orbit-coin.pos-right-outer {
-  --sz: var(--coin-outer);
-  width: var(--coin-outer);
-  height: var(--coin-outer);
-  left: 88%;
-  top: 36%;
-  padding: calc(var(--coin-outer) * 0.04);
-  z-index: 4;
-  animation: float-magic 5.6s ease-in-out infinite 2.4s;
-}
-
-/* Floating Keyframes for organic 3D zero-gravity floating effect */
-@keyframes float-hero {
+@keyframes coin-float {
   0%, 100% {
-    transform: translate(-50%, -50%) translateY(0) scale(1);
+    transform: translateY(0);
   }
   50% {
-    transform: translate(-50%, -50%) translateY(-9px) scale(1.02);
+    transform: translateY(-5px);
   }
 }
 
-@keyframes float-civil {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-8px) rotate(-1.2deg);
-  }
-}
-
-@keyframes float-lbc {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-8.5px) rotate(1.2deg);
-  }
-}
-
-@keyframes float-police {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-7.5px) rotate(-1.8deg);
-  }
-}
-
-@keyframes float-magic {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(0) rotate(0deg);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-7.5px) rotate(1.8deg);
-  }
-}
-
-/* Interaction Hover & Active Glow */
+/* Active front hero glowing aura */
 .orbit-coin:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.08);
 }
 
 .orbit-coin.is-active {
   box-shadow:
-    inset 0 1.5px 2px rgba(255, 255, 255, 0.95),
-    inset 0 -3px 5px rgba(45, 30, 8, 0.8),
-    0 0 0 2px #fff0be,
-    0 0 32px rgba(255, 214, 107, 0.75),
-    0 0 60px rgba(212, 168, 67, 0.35),
-    0 16px 28px -6px rgba(0, 0, 0, 0.98);
-}
-
-.orbit-coin.pos-hero.is-active {
-  box-shadow:
     inset 0 2px 2.5px rgba(255, 255, 255, 0.95),
     inset 0 -3.5px 6px rgba(45, 30, 8, 0.85),
     0 0 0 2.5px #fff2c4,
-    0 0 38px rgba(255, 218, 115, 0.85),
-    0 0 70px rgba(212, 168, 67, 0.4),
+    0 0 42px rgba(255, 218, 115, 0.9),
+    0 0 75px rgba(212, 168, 67, 0.45),
     0 20px 32px -6px rgba(0, 0, 0, 0.98);
+  filter: brightness(1.12);
 }
 
 /* The venture in front, named */
