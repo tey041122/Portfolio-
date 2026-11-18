@@ -604,12 +604,12 @@ button {
 }
 
 .reach > .orbit {
-  max-width: min(100%, 36rem);
+  max-width: min(100%, 30rem);
 }
 
 @media (min-width: 640px) {
   .reach > .orbit {
-    max-width: min(100%, 42rem);
+    max-width: min(100%, 33rem);
   }
 }
 
@@ -732,8 +732,8 @@ button {
 /* Medallions (Coins) */
 .orbit-coin {
   position: absolute;
-  width: clamp(6.2rem, 25vw, 8.8rem);
-  height: clamp(6.2rem, 25vw, 8.8rem);
+  width: clamp(6.6rem, 27vw, 9.2rem);
+  height: clamp(6.6rem, 27vw, 9.2rem);
   transform: translate(-50%, -50%);
   margin: 0;
   padding: 0;
@@ -751,33 +751,33 @@ button {
 
 /* Initial fallback positions before JS runs */
 .orbit-coin:nth-child(2) { /* 0: Police (Far Left) */
-  left: 14.5%;
-  top: 52.0%;
-  transform: translate(-50%, -50%) scale(0.65);
+  left: 18.5%;
+  top: 53.5%;
+  transform: translate(-50%, -50%) scale(0.68);
   z-index: 12;
 }
 .orbit-coin:nth-child(3) { /* 1: Civil (Elevated Left) */
-  left: 32.5%;
-  top: 32.0%;
-  transform: translate(-50%, -50%) scale(0.72);
+  left: 35.0%;
+  top: 35.0%;
+  transform: translate(-50%, -50%) scale(0.74);
   z-index: 22;
 }
 .orbit-coin:nth-child(4) { /* 2: Brand Growth (Center Hero Foreground) */
   left: 50.0%;
-  top: 68.0%;
+  top: 67.0%;
   transform: translate(-50%, -50%) scale(1.00);
   z-index: 50;
 }
 .orbit-coin:nth-child(5) { /* 3: LBC (Elevated Right) */
-  left: 67.5%;
-  top: 32.0%;
-  transform: translate(-50%, -50%) scale(0.72);
+  left: 65.0%;
+  top: 35.0%;
+  transform: translate(-50%, -50%) scale(0.74);
   z-index: 22;
 }
 .orbit-coin:nth-child(6) { /* 4: Magic Iron (Far Right) */
-  left: 85.5%;
-  top: 52.0%;
-  transform: translate(-50%, -50%) scale(0.65);
+  left: 81.5%;
+  top: 53.5%;
+  transform: translate(-50%, -50%) scale(0.68);
   z-index: 12;
 }
 
