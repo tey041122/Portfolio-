@@ -141,7 +141,7 @@ button {
   padding:
     calc(1.25rem + env(safe-area-inset-top))
     var(--gutter)
-    calc(1.25rem + env(safe-area-inset-bottom));
+    0.5rem;
   overflow: hidden;
   background:
     radial-gradient(ellipse 95% 55% at 50% 34%, #33250f 0%, rgba(51, 37, 15, 0) 72%),
@@ -581,14 +581,13 @@ button {
    ========================================================================== */
 .reach {
   position: relative;
-  min-height: 100vh;
-  min-height: 100svh;
+  min-height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: clamp(0.45rem, 1.6vh, 0.95rem);
+  justify-content: flex-start;
+  gap: clamp(0.35rem, 1.2vh, 0.75rem);
   padding:
-    calc(1.2rem + env(safe-area-inset-top))
+    0.5rem
     var(--gutter)
     calc(1.4rem + env(safe-area-inset-bottom));
   background:
@@ -604,12 +603,12 @@ button {
 }
 
 .reach > .orbit {
-  max-width: min(100%, 30rem);
+  max-width: min(100%, 36rem);
 }
 
 @media (min-width: 640px) {
   .reach > .orbit {
-    max-width: min(100%, 33rem);
+    max-width: min(100%, 42rem);
   }
 }
 
@@ -729,11 +728,11 @@ button {
   }
 }
 
-/* Medallions (Coins) */
+/* Medallions (Coins) - Bigger & bolder to fill the amphitheater stage */
 .orbit-coin {
   position: absolute;
-  width: clamp(6.6rem, 27vw, 9.2rem);
-  height: clamp(6.6rem, 27vw, 9.2rem);
+  width: clamp(7.6rem, 32vw, 10.4rem);
+  height: clamp(7.6rem, 32vw, 10.4rem);
   transform: translate(-50%, -50%);
   margin: 0;
   padding: 0;
