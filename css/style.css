@@ -678,15 +678,16 @@ button {
   z-index: 8;
 }
 
-/* Continuous Running Light Comets along torus ellipse */
+/* Continuous Running Light Comets along torus ellipse from LEFT to RIGHT */
 .trail-runner-1 {
   stroke-dasharray: 24 76;
-  animation: runComet1 4s linear infinite;
+  animation: runComet1 3.8s linear infinite;
 }
 
 .trail-runner-2 {
-  stroke-dasharray: 20 80;
-  animation: runComet2 5.5s linear infinite;
+  stroke-dasharray: 18 82;
+  animation: runComet2 5.2s linear infinite;
+  animation-delay: -1.9s;
 }
 
 @keyframes runComet1 {
@@ -695,8 +696,8 @@ button {
 }
 
 @keyframes runComet2 {
-  from { stroke-dashoffset: -100; }
-  to { stroke-dashoffset: 0; }
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -100; }
 }
 
 /* Floating dust sparkles */
@@ -728,12 +729,12 @@ button {
   }
 }
 
-/* Medallions (Coins) */
+/* Medallions (Coins) - Permanent Amphitheater Positions (NEVER SWAP SEATS) */
 .orbit-coin {
   position: absolute;
   width: clamp(6.2rem, 25vw, 8.8rem);
   height: clamp(6.2rem, 25vw, 8.8rem);
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(var(--base-scale, 0.72));
   margin: 0;
   padding: 0;
   border: 0;
@@ -745,40 +746,70 @@ button {
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  will-change: left, top, transform;
+  will-change: transform, filter;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease;
 }
 
-/* Initial fallback positions before JS runs */
-.orbit-coin:nth-child(2) { /* Police */
+/* Staggered Floating Zero-G Wave moving smoothly from Left to Right */
+.orbit.is-live .orbit-coin {
+  animation: floatWaveLtoR 4.2s ease-in-out infinite;
+}
+
+.orbit-coin:nth-child(2) { /* 0: Police (Far Left) */
   left: 14.5%;
   top: 52.0%;
-  transform: translate(-50%, -50%) scale(0.65);
+  --base-scale: 0.65;
   z-index: 12;
+  animation-delay: 0.0s;
 }
-.orbit-coin:nth-child(3) { /* Civil */
+.orbit-coin:nth-child(3) { /* 1: Civil (Elevated Left) */
   left: 32.5%;
   top: 32.0%;
-  transform: translate(-50%, -50%) scale(0.72);
+  --base-scale: 0.72;
   z-index: 22;
+  animation-delay: 0.8s;
 }
-.orbit-coin:nth-child(4) { /* Brand Growth Hero */
+.orbit-coin:nth-child(4) { /* 2: Brand Growth (Center Hero Foreground) */
   left: 50.0%;
   top: 68.0%;
-  transform: translate(-50%, -50%) scale(1.00);
+  --base-scale: 1.00;
   z-index: 50;
+  animation-delay: 1.6s;
 }
-.orbit-coin:nth-child(5) { /* LBC */
+.orbit-coin:nth-child(5) { /* 3: LBC (Elevated Right) */
   left: 67.5%;
   top: 32.0%;
-  transform: translate(-50%, -50%) scale(0.72);
+  --base-scale: 0.72;
   z-index: 22;
+  animation-delay: 2.4s;
 }
-.orbit-coin:nth-child(6) { /* Magic Iron */
+.orbit-coin:nth-child(6) { /* 4: Magic Iron (Far Right) */
   left: 85.5%;
   top: 52.0%;
-  transform: translate(-50%, -50%) scale(0.65);
+  --base-scale: 0.65;
   z-index: 12;
+  animation-delay: 3.2s;
 }
+
+@keyframes floatWaveLtoR {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(var(--base-scale)) translateY(0px);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(var(--base-scale)) translateY(-7px);
+  }
+}
+
+/* Active Highlight: Raised presence and radiant golden aura bloom */
+.orbit-coin.is-active {
+  z-index: 55 !important;
+}
+
+.orbit-coin:nth-child(2).is-active { --base-scale: 0.78; }
+.orbit-coin:nth-child(3).is-active { --base-scale: 0.82; }
+.orbit-coin:nth-child(4).is-active { --base-scale: 1.02; }
+.orbit-coin:nth-child(5).is-active { --base-scale: 0.82; }
+.orbit-coin:nth-child(6).is-active { --base-scale: 0.78; }
 
 .orbit-coin::before {
   display: none;
