@@ -628,8 +628,9 @@ function initVentureOrbit() {
 
   function renderPositions() {
     for (let i = 0; i < N; i++) {
-      // Moves sequentially: 0 (LBC) -> 1 (Brand Growth) -> 2 (Magic Iron) -> 3 (Civil) -> 4 (Police)
-      const p = ((i + 2 - cur) % N + N) % N;
+      // Moves smoothly from left to right in strict sequential order:
+      // 0 (LBC) -> 1 (Brand Growth) -> 2 (Magic Iron) -> 3 (Civil) -> 4 (Police)
+      const p = ((2 - i + cur) % N + N) % N;
       const pt = getTrackPoint(p);
       const coin = coins[i];
 

@@ -136,13 +136,14 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: clamp(1.25rem, 3.6vh, 2.25rem);
+  justify-content: center;
+  gap: clamp(1rem, 3vh, 1.75rem);
   padding:
-    calc(1.25rem + env(safe-area-inset-top))
+    calc(0.75rem + env(safe-area-inset-top))
     var(--gutter)
-    0.5rem;
+    calc(0.75rem + env(safe-area-inset-bottom));
   overflow: hidden;
+  scroll-snap-align: start;
   background:
     radial-gradient(ellipse 95% 55% at 50% 34%, #33250f 0%, rgba(51, 37, 15, 0) 72%),
     linear-gradient(180deg, #0e0b07 0%, var(--bg) 100%);
@@ -581,19 +582,21 @@ button {
    ========================================================================== */
 .reach {
   position: relative;
-  min-height: auto;
+  min-height: 100vh;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: clamp(0.35rem, 1.2vh, 0.75rem);
+  justify-content: space-evenly;
+  gap: clamp(0.35rem, 1.4vh, 0.75rem);
   padding:
-    0.5rem
+    calc(0.75rem + env(safe-area-inset-top))
     var(--gutter)
-    calc(1.4rem + env(safe-area-inset-bottom));
+    calc(1.2rem + env(safe-area-inset-bottom));
   background:
     radial-gradient(ellipse 100% 45% at 50% 100%, #2f220e 0%, rgba(47, 34, 14, 0) 70%),
     linear-gradient(180deg, var(--bg) 0%, #0e0b07 100%);
   overflow: hidden;
+  scroll-snap-align: start;
 }
 
 .reach > * {
@@ -603,12 +606,13 @@ button {
 }
 
 .reach > .orbit {
-  max-width: min(100%, 36rem);
+  max-width: min(100%, 38rem);
+  margin-top: -0.25rem;
 }
 
 @media (min-width: 640px) {
   .reach > .orbit {
-    max-width: min(100%, 42rem);
+    max-width: min(100%, 44rem);
   }
 }
 
@@ -731,8 +735,8 @@ button {
 /* Medallions (Coins) - Bigger & bolder to fill the amphitheater stage */
 .orbit-coin {
   position: absolute;
-  width: clamp(7.6rem, 32vw, 10.4rem);
-  height: clamp(7.6rem, 32vw, 10.4rem);
+  width: clamp(7.8rem, 33vw, 10.6rem);
+  height: clamp(7.8rem, 33vw, 10.6rem);
   transform: translate(-50%, -50%);
   margin: 0;
   padding: 0;
@@ -748,33 +752,35 @@ button {
   will-change: left, top, transform;
 }
 
-/* Initial fallback positions before JS runs (LBC in front, Brand Growth right, Magic Iron far right) */
+/* Initial fallback positions before JS runs: Left-to-right amphitheater flow
+   (0: LBC front hero, 1: Brand Growth left flank, 2: Magic Iron left wing,
+    3: Vireakchun Civil right wing, 4: Vireakchun Police right flank) */
 .orbit-coin:nth-child(2) { /* 0: LBC (Center Front Hero) */
   left: 50.0%;
   top: 67.0%;
   transform: translate(-50%, -50%) scale(1.00);
   z-index: 50;
 }
-.orbit-coin:nth-child(3) { /* 1: Brand Growth (Elevated Right) */
-  left: 65.0%;
+.orbit-coin:nth-child(3) { /* 1: Brand Growth (Left Flank) */
+  left: 35.0%;
   top: 35.0%;
   transform: translate(-50%, -50%) scale(0.74);
   z-index: 22;
 }
-.orbit-coin:nth-child(4) { /* 2: Magic Iron (Far Right) */
-  left: 81.5%;
-  top: 53.5%;
-  transform: translate(-50%, -50%) scale(0.68);
-  z-index: 12;
-}
-.orbit-coin:nth-child(5) { /* 3: Vireakchun Civil (Far Left) */
+.orbit-coin:nth-child(4) { /* 2: Magic Iron (Left Outer Wing) */
   left: 18.5%;
   top: 53.5%;
   transform: translate(-50%, -50%) scale(0.68);
   z-index: 12;
 }
-.orbit-coin:nth-child(6) { /* 4: Vireakchun Police (Elevated Left) */
-  left: 35.0%;
+.orbit-coin:nth-child(5) { /* 3: Vireakchun Civil (Right Outer Wing) */
+  left: 81.5%;
+  top: 53.5%;
+  transform: translate(-50%, -50%) scale(0.68);
+  z-index: 12;
+}
+.orbit-coin:nth-child(6) { /* 4: Vireakchun Police (Right Flank) */
+  left: 65.0%;
   top: 35.0%;
   transform: translate(-50%, -50%) scale(0.74);
   z-index: 22;
