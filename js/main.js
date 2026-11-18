@@ -23,7 +23,6 @@ const portfolioConfig = {
   ventures: [
     { name: 'Magic Iron',        mark: 'MI',  logo: 'assets/logos/magic-iron.png' },
     { name: 'LBC',               mark: 'LBC', logo: 'assets/logos/lbc.png' },
-    { name: 'Saravan',           mark: 'SA',  logo: 'assets/logos/saravan.png' },
     { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/vireakchun-civil.png' },
     { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/vireakchun-police.png' },
     { name: 'Brand Growth',      mark: 'BG',  logo: 'assets/logos/bg.png' }
