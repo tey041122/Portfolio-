@@ -585,22 +585,33 @@ button {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: clamp(0.35rem, 1.3vh, 0.85rem);
+  justify-content: space-between;
   padding:
-    calc(0.9rem + env(safe-area-inset-top))
+    calc(1rem + env(safe-area-inset-top))
     var(--gutter)
-    calc(1rem + env(safe-area-inset-bottom));
+    calc(1.15rem + env(safe-area-inset-bottom));
   background:
     radial-gradient(ellipse 100% 45% at 50% 100%, #2f220e 0%, rgba(47, 34, 14, 0) 70%),
     linear-gradient(180deg, var(--bg) 0%, #0e0b07 100%);
   overflow: hidden;
 }
 
-.reach > * {
+.reach-top,
+.reach-bottom {
   width: 100%;
   max-width: 28rem;
   margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.reach-top {
+  gap: clamp(0.35rem, 1.2vh, 0.75rem);
+}
+
+.reach-bottom {
+  gap: clamp(0.4rem, 1.3vh, 0.75rem);
+  margin-top: auto;
 }
 
 .reach-title {
@@ -1110,9 +1121,9 @@ button {
 .reach-foot {
   display: grid;
   justify-items: center;
-  gap: 0.45rem;
-  margin-top: auto;
-  padding-top: clamp(0.5rem, 1.5vh, 1.25rem);
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+  padding-bottom: 0.15rem;
 }
 
 .reach-mark {
