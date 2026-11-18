@@ -16,16 +16,17 @@ const portfolioConfig = {
   position: 'Chairman & Founder',
   tagline: 'Your speech makes people trust you in a while but your character makes people trust you forever.',
   images: { portrait: 'assets/portrait.jpg' },
-  // The five ventures on page 2. To show a real logo, save the file in
+  // The ventures on page 2. To show a real logo, save the file in
   // assets/logos/ and put its path in "logo", for example
   // logo: 'assets/logos/lbc.png'. A transparent PNG or an SVG works best.
   // While "logo" is empty the coin shows the letters in "mark" instead.
   ventures: [
-    { name: 'LBC',        mark: 'LBC', logo: '' },
-    { name: 'Magic Iron', mark: 'MI',  logo: '' },
-    { name: 'BG',         mark: 'BG',  logo: '' },
-    { name: 'Statesman',  mark: 'ST',  logo: '' },
-    { name: 'Saravan',    mark: 'SA',  logo: '' }
+    { name: 'Magic Iron',        mark: 'MI',  logo: 'assets/logos/magic-iron.png' },
+    { name: 'LBC',               mark: 'LBC', logo: 'assets/logos/lbc.png' },
+    { name: 'Saravan',           mark: 'SA',  logo: 'assets/logos/saravan.png' },
+    { name: 'Vireakchun Civil',  mark: 'VC',  logo: 'assets/logos/vireakchun-civil.png' },
+    { name: 'Vireakchun Police', mark: 'VP',  logo: 'assets/logos/vireakchun-police.png' },
+    { name: 'BG',                mark: 'BG',  logo: 'assets/logos/bg.png' }
   ],
   // PLACEHOLDER VALUES, copied from the design mock-up on 2026-11-16.
   // Replace phone, website and location with the real ones before publishing.
