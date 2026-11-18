@@ -636,13 +636,16 @@ button {
    on the wings. Medallions feature gentle floating zero-G motion,
    golden trails, lens flare starburst, and interactive selection.
    -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   THE 3D AMPHITHEATER SHOWCASE
+   -------------------------------------------------------------------------- */
 .orbit {
   position: relative;
   flex: none;
   width: 100%;
-  max-width: 32rem;
+  max-width: 32.5rem;
   margin-inline: auto;
-  aspect-ratio: 1024 / 540;
+  aspect-ratio: 1024 / 520;
   height: clamp(15.2rem, 36vh, 20.2rem);
   background: url('../assets/orbit-stage.png') center / contain no-repeat;
   touch-action: manipulation;
@@ -650,26 +653,8 @@ button {
   -webkit-user-select: none;
 }
 
-/* Ambient radial golden ray burst */
 .orbit-rays {
-  position: absolute;
-  left: 50%;
-  top: 48%;
-  width: 160%;
-  aspect-ratio: 1;
-  margin: -80% 0 0 -80%;
-  background: repeating-conic-gradient(from 0deg, rgba(212, 168, 67, 0.12) 0deg 5deg, rgba(212, 168, 67, 0) 5deg 18deg);
-  -webkit-mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0) 62%);
-  mask-image: radial-gradient(circle, #000 0%, rgba(0, 0, 0, 0) 62%);
-  animation: orbitRays 52s linear infinite;
-  pointer-events: none;
-  z-index: 1;
-}
-
-@keyframes orbitRays {
-  to {
-    transform: rotate(360deg);
-  }
+  display: none;
 }
 
 /* Golden energy trails & SVG canvas */
@@ -680,43 +665,18 @@ button {
   height: 100%;
   pointer-events: none;
   overflow: visible;
-  z-index: 2;
+  z-index: 8;
 }
 
-/* Base energy trails flowing animation */
-.trail-primary {
-  stroke-dasharray: 620 220;
-  animation: trailFlow 6s linear infinite, trailPulse 3s ease-in-out infinite;
-}
-
-.trail-secondary {
-  stroke-dasharray: 420 160;
-  animation: trailFlowRev 7.5s linear infinite, trailPulse 3.5s ease-in-out infinite 0.8s;
-}
-
-.trail-outer-back {
-  animation: trailBreathe 5s ease-in-out infinite;
-}
-
-/* Continuous Running Light Comets (Fast Racing Motion) */
+/* Continuous Running Light Comets along torus ellipse */
 .trail-runner-1 {
   stroke-dasharray: 24 76;
-  animation: runComet1 3.6s linear infinite;
+  animation: runComet1 4s linear infinite;
 }
 
 .trail-runner-2 {
   stroke-dasharray: 20 80;
-  animation: runComet2 4.8s linear infinite;
-}
-
-.trail-runner-3 {
-  stroke-dasharray: 18 82;
-  animation: runComet3 3.4s linear infinite;
-}
-
-.trail-runner-connect {
-  stroke-dasharray: 16 84;
-  animation: runConnect 3.2s ease-in-out infinite;
+  animation: runComet2 5.5s linear infinite;
 }
 
 @keyframes runComet1 {
@@ -725,75 +685,8 @@ button {
 }
 
 @keyframes runComet2 {
-  from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -100; }
-}
-
-@keyframes runComet3 {
   from { stroke-dashoffset: -100; }
   to { stroke-dashoffset: 0; }
-}
-
-@keyframes runConnect {
-  0% { stroke-dashoffset: 100; opacity: 0; }
-  15% { opacity: 1; }
-  85% { opacity: 1; }
-  100% { stroke-dashoffset: -100; opacity: 0; }
-}
-
-@keyframes trailFlow {
-  0% {
-    stroke-dashoffset: 840;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes trailFlowRev {
-  0% {
-    stroke-dashoffset: -580;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes trailPulse {
-  0%, 100% {
-    opacity: 0.82;
-    filter: drop-shadow(0 0 6px rgba(255, 214, 107, 0.65));
-  }
-  50% {
-    opacity: 1;
-    filter: drop-shadow(0 0 16px rgba(255, 235, 160, 0.95));
-  }
-}
-
-@keyframes trailBreathe {
-  0%, 100% {
-    opacity: 0.45;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
-/* Lens flare under BG medallion breathing */
-.lens-flare-group {
-  transform-origin: 500px 425px;
-  animation: flareBreathe 4.5s ease-in-out infinite;
-}
-
-@keyframes flareBreathe {
-  0%, 100% {
-    transform: scale(0.97);
-    opacity: 0.85;
-  }
-  50% {
-    transform: scale(1.03);
-    opacity: 1;
-  }
 }
 
 /* Floating dust sparkles */
@@ -828,8 +721,11 @@ button {
 /* Medallions (Coins) */
 .orbit-coin {
   position: absolute;
+  width: clamp(5.4rem, 23vw, 7.5rem);
+  height: clamp(5.4rem, 23vw, 7.5rem);
   transform: translate(-50%, -50%);
   margin: 0;
+  padding: 0;
   border: 0;
   border-radius: 50%;
   cursor: pointer;
@@ -840,10 +736,43 @@ button {
     0 0 0 1px #805c19,
     0 0 16px rgba(212, 168, 67, 0.38),
     0 12px 22px -6px rgba(0, 0, 0, 0.95);
-  transition: transform 0.35s var(--ease), box-shadow 0.35s ease, filter 0.35s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  will-change: transform;
+  will-change: left, top, transform;
+}
+
+/* Initial fallback positions before JS runs */
+.orbit-coin:nth-child(2) { /* Police */
+  left: 22.0%;
+  top: 53.7%;
+  transform: translate(-50%, -50%) scale(0.92);
+  z-index: 12;
+}
+.orbit-coin:nth-child(3) { /* Civil */
+  left: 36.6%;
+  top: 37.0%;
+  transform: translate(-50%, -50%) scale(1.0);
+  z-index: 22;
+}
+.orbit-coin:nth-child(4) { /* Brand Growth Hero */
+  left: 50.0%;
+  top: 68.1%;
+  transform: translate(-50%, -50%) scale(1.38);
+  z-index: 50;
+}
+.orbit-coin:nth-child(5) { /* LBC */
+  left: 63.5%;
+  top: 37.8%;
+  transform: translate(-50%, -50%) scale(1.0);
+  z-index: 22;
+}
+.orbit-coin:nth-child(6) { /* Magic Iron */
+  left: 78.1%;
+  top: 55.5%;
+  transform: translate(-50%, -50%) scale(0.92);
+  z-index: 12;
 }
 
 /* Reeded edge knurling around coin */
@@ -876,6 +805,18 @@ button {
   box-shadow:
     inset 0 0 0 1.5px rgba(255, 238, 178, 0.6),
     inset 0 4px 8px rgba(0, 0, 0, 0.85);
+  animation: zeroGFloat 5s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * -0.9s);
+  transition: box-shadow 0.4s ease;
+}
+
+@keyframes zeroGFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4.5px);
+  }
 }
 
 /* Polished metallic beam sweep */
@@ -910,120 +851,20 @@ button {
   pointer-events: none;
 }
 
-/* 5 Medallion Positions Matching Image 1024x540 Measurements */
-.orbit-coin.pos-bg {
-  left: 50.0%;
-  top: 68.1%;
-  width: clamp(7.6rem, 33vw, 10.4rem);
-  height: clamp(7.6rem, 33vw, 10.4rem);
-  padding: calc(clamp(7.6rem, 33vw, 10.4rem) * 0.046);
-  z-index: 10;
-  background: linear-gradient(135deg, #fff7d9 0%, #e2b450 25%, #8a6018 50%, #ffeaa6 75%, #9b7022 100%);
-  animation: float-bg 5.2s ease-in-out infinite;
-}
-
-.orbit-coin.pos-civil {
-  left: 36.6%;
-  top: 37.0%;
-  width: clamp(5.3rem, 23vw, 7.3rem);
-  height: clamp(5.3rem, 23vw, 7.3rem);
-  padding: calc(clamp(5.3rem, 23vw, 7.3rem) * 0.04);
-  z-index: 6;
-  animation: float-civil 5.8s ease-in-out infinite 0.6s;
-}
-
-.orbit-coin.pos-lbc {
-  left: 63.5%;
-  top: 37.8%;
-  width: clamp(5.3rem, 23vw, 7.3rem);
-  height: clamp(5.3rem, 23vw, 7.3rem);
-  padding: calc(clamp(5.3rem, 23vw, 7.3rem) * 0.04);
-  z-index: 6;
-  animation: float-lbc 5.5s ease-in-out infinite 1.8s;
-}
-
-.orbit-coin.pos-police {
-  left: 22.0%;
-  top: 53.7%;
-  width: clamp(5.0rem, 22vw, 7.0rem);
-  height: clamp(5.0rem, 22vw, 7.0rem);
-  padding: calc(clamp(5.0rem, 22vw, 7.0rem) * 0.04);
-  z-index: 4;
-  animation: float-police 6.2s ease-in-out infinite 1.2s;
-}
-
-.orbit-coin.pos-magic {
-  left: 78.1%;
-  top: 55.5%;
-  width: clamp(5.0rem, 22vw, 7.0rem);
-  height: clamp(5.0rem, 22vw, 7.0rem);
-  padding: calc(clamp(5.0rem, 22vw, 7.0rem) * 0.04);
-  z-index: 4;
-  animation: float-magic 5.6s ease-in-out infinite 2.4s;
-}
-
-/* Floating Keyframes */
-@keyframes float-bg {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(0);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-6px);
-  }
-}
-
-@keyframes float-civil {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(0);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-5px);
-  }
-}
-
-@keyframes float-lbc {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(0);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-5.5px);
-  }
-}
-
-@keyframes float-police {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(0);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-4.5px);
-  }
-}
-
-@keyframes float-magic {
-  0%, 100% {
-    transform: translate(-50%, -50%) translateY(0);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-4.8px);
-  }
-}
-
-/* Active Highlight: Lifts up in 3D with radiant golden aura bloom */
 .orbit-coin:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.08);
 }
 
+/* Active Highlight: Radiant golden aura bloom on front hero */
 .orbit-coin.is-active {
   box-shadow:
     inset 0 2px 2.5px rgba(255, 255, 255, 0.95),
     inset 0 -3.5px 6px rgba(45, 30, 8, 0.85),
     0 0 0 2.5px #fff2c4,
-    0 0 42px rgba(255, 218, 115, 0.9),
-    0 0 75px rgba(212, 168, 67, 0.45),
+    0 0 42px rgba(255, 218, 115, 0.95),
+    0 0 75px rgba(212, 168, 67, 0.5),
     0 20px 32px -6px rgba(0, 0, 0, 0.98);
-  filter: brightness(1.18);
-  transform: translate(-50%, -50%) translateY(-8px) scale(1.08) !important;
-  z-index: 15 !important;
+  filter: brightness(1.15);
 }
 
 /* The venture in front, named */

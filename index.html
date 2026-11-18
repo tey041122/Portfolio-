@@ -25,7 +25,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Marcellus&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=amphitheater_4" />
+  <link rel="stylesheet" href="css/style.css?v=orbit_amphitheater_7" />
 
   <!-- Motion and reveal states apply only when JavaScript runs -->
   <script>document.documentElement.classList.add('js');</script>
@@ -245,16 +245,13 @@
 
       <!-- 3D Amphitheater Logo Showcase with Golden Energy Trails -->
       <div class="orbit reveal" id="orbit" style="--i: 1">
-        <!-- Radial ambient gold rays -->
-        <span class="orbit-rays" aria-hidden="true"></span>
-
-        <!-- Golden energy trails, connecting arc & lens flare SVG -->
-        <svg class="orbit-trails-svg" viewBox="0 0 1000 520" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <!-- Golden energy trails & running light comets SVG -->
+        <svg class="orbit-trails-svg" viewBox="0 0 1024 520" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
           <defs>
-            <!-- Glowing Bloom Filters -->
+            <!-- Glowing Bloom Filter -->
             <filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
               <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur1"/>
-              <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur2"/>
+              <feGaussianBlur in="SourceGraphic" stdDeviation="14" result="blur2"/>
               <feMerge>
                 <feMergeNode in="blur2"/>
                 <feMergeNode in="blur1"/>
@@ -268,182 +265,59 @@
                 <feMergeNode in="SourceGraphic"/>
               </feMerge>
             </filter>
-            <filter id="flareGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
-              <feMerge>
-                <feMergeNode in="blur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-
-            <!-- Gradients for Trails -->
-            <linearGradient id="trailGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#d4a843" stop-opacity="0.1"/>
-              <stop offset="25%" stop-color="#ffd56b" stop-opacity="0.85"/>
-              <stop offset="50%" stop-color="#fff4cc" stop-opacity="1"/>
-              <stop offset="75%" stop-color="#ffd56b" stop-opacity="0.85"/>
-              <stop offset="100%" stop-color="#d4a843" stop-opacity="0.1"/>
-            </linearGradient>
-
-            <linearGradient id="trailGrad2" x1="0%" y1="50%" x2="100%" y2="50%">
-              <stop offset="0%" stop-color="#c89228" stop-opacity="0.05"/>
-              <stop offset="20%" stop-color="#f5c85a" stop-opacity="0.75"/>
-              <stop offset="50%" stop-color="#fff8df" stop-opacity="0.95"/>
-              <stop offset="80%" stop-color="#f5c85a" stop-opacity="0.75"/>
-              <stop offset="100%" stop-color="#c89228" stop-opacity="0.05"/>
-            </linearGradient>
-
-            <!-- Connecting Line Gradient -->
-            <linearGradient id="connectLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#8a631d" stop-opacity="0.3"/>
-              <stop offset="15%" stop-color="#e2b450" stop-opacity="0.85"/>
-              <stop offset="50%" stop-color="#fff2c2" stop-opacity="0.95"/>
-              <stop offset="85%" stop-color="#e2b450" stop-opacity="0.85"/>
-              <stop offset="100%" stop-color="#8a631d" stop-opacity="0.3"/>
-            </linearGradient>
-
-            <!-- Horizontal Lens Flare Gradient -->
-            <linearGradient id="flareHoriz" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#ffb833" stop-opacity="0"/>
-              <stop offset="25%" stop-color="#ffd266" stop-opacity="0.45"/>
-              <stop offset="47%" stop-color="#ffffff" stop-opacity="0.95"/>
-              <stop offset="50%" stop-color="#ffffff" stop-opacity="1"/>
-              <stop offset="53%" stop-color="#ffffff" stop-opacity="0.95"/>
-              <stop offset="75%" stop-color="#ffd266" stop-opacity="0.45"/>
-              <stop offset="100%" stop-color="#ffb833" stop-opacity="0"/>
-            </linearGradient>
-
-            <!-- Radial Flare Center -->
-            <radialGradient id="flareCenter" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
-              <stop offset="35%" stop-color="#ffe385" stop-opacity="0.9"/>
-              <stop offset="70%" stop-color="#e5a832" stop-opacity="0.4"/>
-              <stop offset="100%" stop-color="#c98a2c" stop-opacity="0"/>
-            </radialGradient>
-
-            <!-- Ground Reflection -->
-            <radialGradient id="reflectionPool" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#ffd56b" stop-opacity="0.45"/>
-              <stop offset="45%" stop-color="#d49b28" stop-opacity="0.18"/>
-              <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
-            </radialGradient>
           </defs>
 
-          <!-- 1. Background golden reflections on ground plane -->
-          <ellipse class="ground-reflection" cx="500" cy="455" rx="300" ry="36" fill="url(#reflectionPool)" />
-
-          <!-- 2. Outer Elliptical Energy Ring sweeping behind background medallions -->
-          <path class="energy-trail trail-outer-back-glow"
-                d="M 60,240 C 60,115 940,115 940,240 C 940,345 60,345 60,240 Z"
-                fill="none" stroke="url(#trailGrad2)" stroke-width="16" filter="url(#goldGlow)" opacity="0.45" />
-          <path class="energy-trail trail-outer-back"
-                d="M 60,240 C 60,115 940,115 940,240 C 940,345 60,345 60,240 Z"
-                fill="none" stroke="url(#trailGrad2)" stroke-width="5" opacity="0.85" />
-          <path class="energy-trail trail-outer-back-core"
-                d="M 60,240 C 60,115 940,115 940,240 C 940,345 60,345 60,240 Z"
-                fill="none" stroke="#fff9db" stroke-width="2" opacity="0.9" />
-          <!-- Running Light Comet 1 (Continuous 360 loop) -->
+          <!-- Continuous Luminous Running Light Comets along the Torus Ellipse -->
           <path class="trail-runner trail-runner-1" pathLength="100"
-                d="M 60,240 C 60,115 940,115 940,240 C 940,345 60,345 60,240 Z"
-                fill="none" stroke="#ffffff" stroke-width="7" filter="url(#goldGlow)" />
-
-          <!-- 3. Curved connecting line passing behind the 5 medallions -->
-          <path class="connecting-line"
-                d="M 120,187 C 200,120 240,105 310,109 C 390,115 420,290 500,320 C 580,290 610,115 690,109 C 760,105 800,120 880,187"
-                fill="none" stroke="url(#connectLineGrad)" stroke-width="2.5" filter="url(#softGlow)" />
-          <!-- Running pulse across connecting line -->
-          <path class="trail-runner trail-runner-connect" pathLength="100"
-                d="M 120,187 C 200,120 240,105 310,109 C 390,115 420,290 500,320 C 580,290 610,115 690,109 C 760,105 800,120 880,187"
-                fill="none" stroke="#ffffff" stroke-width="5" filter="url(#goldGlow)" />
-
-          <!-- 4. Dynamic Energy Sweep - Main Ribbon looping behind BG -->
-          <path class="energy-trail trail-primary-glow"
-                d="M 50,220 C 130,380 870,380 950,220 C 990,150 850,90 690,115 C 520,140 430,310 180,280 C 80,270 40,180 110,125"
-                fill="none" stroke="url(#trailGrad1)" stroke-width="22" filter="url(#goldGlow)" opacity="0.55" />
-          <path class="energy-trail trail-primary"
-                d="M 50,220 C 130,380 870,380 950,220 C 990,150 850,90 690,115 C 520,140 430,310 180,280 C 80,270 40,180 110,125"
-                fill="none" stroke="url(#trailGrad1)" stroke-width="8" />
-          <path class="energy-trail trail-primary-core"
-                d="M 50,220 C 130,380 870,380 950,220 C 990,150 850,90 690,115 C 520,140 430,310 180,280 C 80,270 40,180 110,125"
-                fill="none" stroke="#ffffff" stroke-width="3" opacity="0.95" />
-          <!-- Running Light Comet 2 (Running along main ribbon) -->
-          <path class="trail-runner trail-runner-2" pathLength="100"
-                d="M 50,220 C 130,380 870,380 950,220 C 990,150 850,90 690,115 C 520,140 430,310 180,280 C 80,270 40,180 110,125"
-                fill="none" stroke="#fff8df" stroke-width="10" filter="url(#flareGlow)" />
-
-          <!-- 5. Secondary luminous golden streak -->
-          <path class="energy-trail trail-secondary"
-                d="M 90,205 C 200,395 800,395 910,205 C 960,130 780,95 620,125 C 470,155 310,275 140,245"
-                fill="none" stroke="#ffd978" stroke-width="4.5" filter="url(#softGlow)" opacity="0.85" />
-          <!-- Running Light Comet 3 (Reverse direction) -->
-          <path class="trail-runner trail-runner-3" pathLength="100"
-                d="M 90,205 C 200,395 800,395 910,205 C 960,130 780,95 620,125 C 470,155 310,275 140,245"
+                d="M 72,240 a 440,142 0 1,0 880,0 a 440,142 0 1,0 -880,0"
                 fill="none" stroke="#ffffff" stroke-width="6" filter="url(#goldGlow)" />
+          <path class="trail-runner trail-runner-2" pathLength="100"
+                d="M 952,240 a 440,142 0 1,1 -880,0 a 440,142 0 1,1 880,0"
+                fill="none" stroke="#fff8dc" stroke-width="4" filter="url(#goldGlow)" />
 
-          <!-- 6. Glowing connection node points behind each medallion center -->
-          <g class="connecting-nodes">
-            <circle cx="120" cy="187" r="5" fill="#fff9db" filter="url(#softGlow)" />
-            <circle cx="310" cy="109" r="5" fill="#fff9db" filter="url(#softGlow)" />
-            <circle cx="500" cy="343" r="6.5" fill="#fff9db" filter="url(#goldGlow)" />
-            <circle cx="690" cy="109" r="5" fill="#fff9db" filter="url(#softGlow)" />
-            <circle cx="880" cy="187" r="5" fill="#fff9db" filter="url(#softGlow)" />
-          </g>
-
-          <!-- 7. Brilliant Lens Flare Beam & Diamond Starburst below BG medallion -->
-          <g class="lens-flare-group">
-            <ellipse cx="500" cy="425" rx="350" ry="6" fill="url(#flareHoriz)" filter="url(#flareGlow)" />
-            <ellipse cx="500" cy="425" rx="150" ry="2.6" fill="#ffffff" />
-            <circle cx="500" cy="425" r="34" fill="url(#flareCenter)" filter="url(#goldGlow)" />
-            <polygon points="500,385 506,425 500,465 494,425" fill="#ffffff" opacity="0.95" />
-            <polygon points="426,425 500,422 574,425 500,428" fill="#ffffff" opacity="0.95" />
-            <polygon points="458,397 500,425 542,453 500,425" fill="#ffeec2" opacity="0.75" />
-            <polygon points="458,453 500,425 542,397 500,425" fill="#ffeec2" opacity="0.75" />
-            <circle cx="500" cy="425" r="5.5" fill="#ffffff" />
-          </g>
-
-          <!-- 8. Floating golden dust particles / sparkles along trails -->
+          <!-- Floating golden dust particles / sparkles around stage -->
           <g class="sparkles-group">
-            <circle class="sparkle sp-1" cx="220" cy="160" r="2.2" fill="#fff6d1" />
+            <circle class="sparkle sp-1" cx="220" cy="180" r="2.2" fill="#fff6d1" />
             <circle class="sparkle sp-2" cx="290" cy="240" r="1.8" fill="#ffd875" />
             <circle class="sparkle sp-3" cx="390" cy="330" r="2.5" fill="#ffffff" />
-            <circle class="sparkle sp-4" cx="440" cy="280" r="1.6" fill="#ffeaa3" />
-            <circle class="sparkle sp-5" cx="570" cy="295" r="2.2" fill="#fff8e0" />
-            <circle class="sparkle sp-6" cx="620" cy="340" r="1.8" fill="#ffd875" />
+            <circle class="sparkle sp-4" cx="440" cy="260" r="1.6" fill="#ffeaa3" />
+            <circle class="sparkle sp-5" cx="580" cy="260" r="2.2" fill="#fff8e0" />
+            <circle class="sparkle sp-6" cx="630" cy="330" r="1.8" fill="#ffd875" />
             <circle class="sparkle sp-7" cx="720" cy="230" r="2.4" fill="#ffffff" />
-            <circle class="sparkle sp-8" cx="780" cy="165" r="1.7" fill="#ffe594" />
-            <circle class="sparkle sp-9" cx="160" cy="290" r="2.0" fill="#ffd978" />
-            <circle class="sparkle sp-10" cx="840" cy="285" r="2.1" fill="#fff2ba" />
-            <circle class="sparkle sp-11" cx="500" cy="220" r="1.5" fill="#ffffff" />
-            <circle class="sparkle sp-12" cx="340" cy="180" r="1.9" fill="#ffd469" />
+            <circle class="sparkle sp-8" cx="800" cy="185" r="1.7" fill="#ffe594" />
+            <circle class="sparkle sp-9" cx="150" cy="280" r="2.0" fill="#ffd978" />
+            <circle class="sparkle sp-10" cx="870" cy="280" r="2.1" fill="#fff2ba" />
+            <circle class="sparkle sp-11" cx="512" cy="190" r="1.5" fill="#ffffff" />
+            <circle class="sparkle sp-12" cx="340" cy="150" r="1.9" fill="#ffd469" />
           </g>
         </svg>
 
         <!-- 5 Amphitheater Medallions with Original Logos -->
-        <button type="button" class="orbit-coin pos-police" data-index="0" aria-label="Vireakchun Police, Chairman & Founder">
+        <button type="button" class="orbit-coin" data-index="0" aria-label="Vireakchun Police, Chairman & Founder" style="--i:0">
           <span class="coin-face">
             <img class="coin-logo" src="assets/logos/vireakchun-police.png" alt="Vireakchun Police logo" draggable="false" />
           </span>
         </button>
 
-        <button type="button" class="orbit-coin pos-civil" data-index="1" aria-label="Vireakchun Civil, Chairman & Founder">
+        <button type="button" class="orbit-coin" data-index="1" aria-label="Vireakchun Civil, Chairman & Founder" style="--i:1">
           <span class="coin-face">
             <img class="coin-logo" src="assets/logos/vireakchun-civil.png" alt="Vireakchun Civil logo" draggable="false" />
           </span>
         </button>
 
-        <button type="button" class="orbit-coin pos-bg is-active" data-index="2" aria-label="Brand Growth, Chairman & Founder">
+        <button type="button" class="orbit-coin is-active" data-index="2" aria-label="Brand Growth, Chairman & Founder" style="--i:2">
           <span class="coin-face">
             <img class="coin-logo" src="assets/logos/bg.png" alt="Brand Growth logo" draggable="false" />
           </span>
         </button>
 
-        <button type="button" class="orbit-coin pos-lbc" data-index="3" aria-label="LBC, Chairman & Founder">
+        <button type="button" class="orbit-coin" data-index="3" aria-label="LBC, Chairman & Founder" style="--i:3">
           <span class="coin-face">
             <img class="coin-logo" src="assets/logos/lbc.png" alt="LBC logo" draggable="false" />
           </span>
         </button>
 
-        <button type="button" class="orbit-coin pos-magic" data-index="4" aria-label="Magic Iron, Chairman & Founder">
+        <button type="button" class="orbit-coin" data-index="4" aria-label="Magic Iron, Chairman & Founder" style="--i:4">
           <span class="coin-face">
             <img class="coin-logo" src="assets/logos/magic-iron.png" alt="Magic Iron logo" draggable="false" />
           </span>
@@ -509,6 +383,6 @@
   </dialog>
 
   <script src="js/vendor/uqr.js?v=0.1.3"></script>
-  <script src="js/main.js?v=amphitheater_4"></script>
+  <script src="js/main.js?v=orbit_amphitheater_7"></script>
 </body>
 </html>

@@ -557,12 +557,11 @@ function initContactPage() {
 
 /* ══════════════════════════════════════════════════════════════════════════
    VENTURE ORBIT: 3D Amphitheater Motion System
-   Preserves the exact master composition from reference image:
-   - Brand Growth hero centered in foreground with radiant golden rim & flare.
-   - Flanked by Vireakchun Civil & LBC behind, and Police & Magic Iron on wings.
-   - Automatically moves through ventures one by one (3s interval) with
-     smooth 3D zero-G lift and golden aura blooming.
-   - Clicking any logo immediately moves the 3D lift & golden bloom to that logo.
+   - Matches the exact master reference composition from reference image.
+   - Smoothly rotates each medallion to the Center Front Hero position.
+   - Advances one by one automatically every 3.2s when untouched.
+   - Instantly glides clicked logos to the Center Front Hero with radiant gold bloom.
+   - 60fps spring-eased interpolation along the 3D torus energy track.
    ══════════════════════════════════════════════════════════════════════════ */
 function initVentureOrbit() {
   const orbit = document.getElementById('orbit');
@@ -571,58 +570,137 @@ function initVentureOrbit() {
   const ventures = portfolioConfig.ventures || [];
   if (!orbit || !ventures.length) return;
 
+  const N = ventures.length;
   const coins = Array.from(orbit.querySelectorAll('.orbit-coin'));
-  let activeIndex = 2; // Brand Growth hero by default
-  let autoTimer = null;
-  let resumeTimer = null;
 
-  function selectVenture(i) {
-    if (i < 0 || i >= ventures.length) return;
-    activeIndex = i;
+  // Calibrated 3D Waypoints along the amphitheater loop matching reference image:
+  // p = 0: Left Outer (Police) -> x: 22.0%, y: 53.7%, s: 0.92, z: 12
+  // p = 1: Left Inner (Civil)  -> x: 36.6%, y: 37.0%, s: 1.00, z: 22
+  // p = 2: Center Front Hero (BG) -> x: 50.0%, y: 68.1%, s: 1.38, z: 50
+  // p = 3: Right Inner (LBC)   -> x: 63.5%, y: 37.8%, s: 1.00, z: 22
+  // p = 4: Right Outer (Magic) -> x: 78.1%, y: 55.5%, s: 0.92, z: 12
+  // p = 4.5: High Back Transit -> x: 50.0%, y: 20.0%, s: 0.70, z: 5
+  function getTrackPoint(p) {
+    p = ((p % N) + N) % N;
+    let p0, p1, t;
 
-    coins.forEach((c, k) => {
-      c.classList.toggle('is-active', k === i);
+    if (p < 1) {
+      p0 = { x: 22.0, y: 53.7, s: 0.92, z: 12 };
+      p1 = { x: 36.6, y: 37.0, s: 1.00, z: 22 };
+      t = p;
+    } else if (p < 2) {
+      p0 = { x: 36.6, y: 37.0, s: 1.00, z: 22 };
+      p1 = { x: 50.0, y: 68.1, s: 1.38, z: 50 };
+      t = p - 1;
+    } else if (p < 3) {
+      p0 = { x: 50.0, y: 68.1, s: 1.38, z: 50 };
+      p1 = { x: 63.5, y: 37.8, s: 1.00, z: 22 };
+      t = p - 2;
+    } else if (p < 4) {
+      p0 = { x: 63.5, y: 37.8, s: 1.00, z: 22 };
+      p1 = { x: 78.1, y: 55.5, s: 0.92, z: 12 };
+      t = p - 3;
+    } else if (p < 4.5) {
+      p0 = { x: 78.1, y: 55.5, s: 0.92, z: 12 };
+      p1 = { x: 50.0, y: 20.0, s: 0.70, z: 5 };
+      t = (p - 4) / 0.5;
+    } else {
+      p0 = { x: 50.0, y: 20.0, s: 0.70, z: 5 };
+      p1 = { x: 22.0, y: 53.7, s: 0.92, z: 12 };
+      t = (p - 4.5) / 0.5;
+    }
+
+    const ease = t * t * (3 - 2 * t);
+    return {
+      x: p0.x + (p1.x - p0.x) * ease,
+      y: p0.y + (p1.y - p0.y) * ease,
+      s: p0.s + (p1.s - p0.s) * ease,
+      z: Math.round(p0.z + (p1.z - p0.z) * ease)
+    };
+  }
+
+  // cur = 0 puts venture 2 (Brand Growth) at p = 2 (Center Hero Front)
+  let cur = 0;
+  let goal = 0;
+  let running = false;
+  let lastTouch = 0;
+  let inView = true;
+
+  function renderPositions() {
+    for (let i = 0; i < N; i++) {
+      const p = ((i - cur) % N + N) % N;
+      const pt = getTrackPoint(p);
+      const coin = coins[i];
+
+      coin.style.left = `${pt.x.toFixed(2)}%`;
+      coin.style.top = `${pt.y.toFixed(2)}%`;
+      coin.style.transform = `translate(-50%, -50%) scale(${pt.s.toFixed(3)})`;
+      coin.style.zIndex = String(pt.z);
+
+      // Hero active golden glow when near center front (p == 2)
+      const distToFront = Math.abs(p - 2);
+      coin.classList.toggle('is-active', distToFront < 0.35);
+    }
+
+    // Active venture index (which venture is currently at p = 2)
+    const frontIdx = (((Math.round(cur) + 2) % N) + N) % N;
+    updateHeroInfo(frontIdx);
+  }
+
+  let lastReportedFront = -1;
+  function updateHeroInfo(frontIdx) {
+    if (frontIdx === lastReportedFront) return;
+    lastReportedFront = frontIdx;
+
+    dots.forEach((dot, k) => {
+      dot.classList.toggle('is-on', k === frontIdx);
     });
 
-    dots.forEach((d, k) => {
-      d.classList.toggle('is-on', k === i);
-    });
-
-    if (nameEl) {
-      nameEl.textContent = ventures[i].name;
+    if (nameEl && ventures[frontIdx]) {
+      nameEl.textContent = ventures[frontIdx].name;
       nameEl.classList.remove('is-swapping');
       void nameEl.offsetWidth; // restart entrance animation
       nameEl.classList.add('is-swapping');
     }
   }
 
-  function nextVenture() {
-    // Automatically moves through ventures one by one:
-    // 0: Police -> 1: Civil -> 2: Brand Growth -> 3: LBC -> 4: Magic Iron -> loop
-    const next = (activeIndex + 1) % ventures.length;
-    selectVenture(next);
-  }
+  function frame() {
+    let busy = false;
+    const diff = goal - cur;
 
-  function startAutoRun() {
-    stopAutoRun();
-    if (!reduceMotion) {
-      autoTimer = setInterval(nextVenture, 3000);
+    if (Math.abs(diff) > 0.001) {
+      cur += diff * 0.12;
+      busy = true;
+    } else {
+      cur = goal;
+    }
+
+    renderPositions();
+
+    if (busy && inView) {
+      requestAnimationFrame(frame);
+    } else {
+      running = false;
     }
   }
 
-  function stopAutoRun() {
-    if (autoTimer) {
-      clearInterval(autoTimer);
-      autoTimer = null;
-    }
+  function startAnimation() {
+    if (running) return;
+    running = true;
+    requestAnimationFrame(frame);
   }
 
-  function pauseAutoRun() {
-    stopAutoRun();
-    if (resumeTimer) clearTimeout(resumeTimer);
-    resumeTimer = setTimeout(() => {
-      startAutoRun();
-    }, 5500); // resumes automatic one-by-one motion after 5.5s
+  // Moves the clicked venture directly to the Center Hero Front
+  function goTo(targetIdx) {
+    lastTouch = performance.now();
+    const desired = targetIdx - 2;
+    const curNorm = ((cur % N) + N) % N;
+    const desiredNorm = ((desired % N) + N) % N;
+    let diff = desiredNorm - curNorm;
+    if (diff > N / 2) diff -= N;
+    if (diff < -N / 2) diff += N;
+    goal = cur + diff;
+    startAnimation();
   }
 
   // Build dots
@@ -634,10 +712,7 @@ function initVentureOrbit() {
     dot.type = 'button';
     dot.className = 'orbit-dot';
     dot.setAttribute('aria-label', `Select ${v.name}`);
-    dot.addEventListener('click', () => {
-      pauseAutoRun();
-      selectVenture(i);
-    });
+    dot.addEventListener('click', () => goTo(i));
     if (dotsEl) dotsEl.appendChild(dot);
     return dot;
   });
@@ -645,26 +720,56 @@ function initVentureOrbit() {
   // Attach click listener to each coin so clicking moves it immediately!
   coins.forEach((coin, i) => {
     coin.addEventListener('click', () => {
-      pauseAutoRun();
-      selectVenture(i);
+      goTo(i);
     });
   });
 
-  // Initialize with Brand Growth active
-  selectVenture(2);
+  // Swipe gesture support
+  let startX = 0;
+  let isSwiping = false;
+
+  orbit.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      startX = e.touches[0].clientX;
+      isSwiping = true;
+    }
+  }, { passive: true });
+
+  orbit.addEventListener('touchend', e => {
+    if (!isSwiping) return;
+    isSwiping = false;
+    const endX = e.changedTouches[0].clientX;
+    const diffX = endX - startX;
+    if (Math.abs(diffX) > 40) {
+      lastTouch = performance.now();
+      if (diffX < 0) {
+        goal = Math.round(goal) + 1;
+      } else {
+        goal = Math.round(goal) - 1;
+      }
+      startAnimation();
+    }
+  }, { passive: true });
+
+  // Initial render at cur = 0 (Brand Growth at Hero Center)
+  renderPositions();
   orbit.classList.add('is-live');
 
-  // Start continuous one-by-one motion
-  startAutoRun();
+  // Automatic running motion: moves one by one even when not clicked!
+  if (!reduceMotion) {
+    setInterval(() => {
+      if (!inView || document.hidden) return;
+      if (performance.now() - lastTouch < 5000) return; // give the visitor time after a click
+      goal = Math.round(goal) + 1;
+      startAnimation();
+    }, 3200);
+  }
 
-  // Stop auto-run when off-screen to save battery
+  // Intersection observer: only animate when in view
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting) {
-        startAutoRun();
-      } else {
-        stopAutoRun();
-      }
+      inView = entries[0].isIntersecting;
+      if (inView && !reduceMotion) startAnimation();
     }, { threshold: 0.15 }).observe(orbit);
   }
 }
